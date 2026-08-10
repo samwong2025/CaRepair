@@ -1,0 +1,80 @@
+import {
+  BadgeCheck,
+  BatteryWarning,
+  CalendarCheck,
+  Camera,
+  CircleDot,
+  CircuitBoard,
+  DatabaseBackup,
+  Droplets,
+  HardDrive,
+  Keyboard,
+  Laptop,
+  ListChecks,
+  MonitorSmartphone,
+  PackageCheck,
+  PlugZap,
+  PowerOff,
+  ReceiptText,
+  RefreshCcwDot,
+  ScanFace,
+  ShieldCheck,
+  Smartphone,
+  SquareDashedBottom,
+  Star,
+  Tablet,
+  Thermometer,
+  Timer,
+  Touchpad,
+  Users,
+  Volume2,
+  Watch,
+  WifiOff,
+  Zap,
+  type LucideIcon,
+} from 'lucide-react';
+
+/**
+ * 資料層以字串記錄圖示名稱，於此集中對應成 lucide 元件，
+ * 避免各頁面重複維護 map，同時確保 tree-shaking 只打包用到的圖示。
+ */
+export const iconRegistry: Record<string, LucideIcon> = {
+  BadgeCheck,
+  BatteryWarning,
+  CalendarCheck,
+  Camera,
+  CircleDot,
+  CircuitBoard,
+  DatabaseBackup,
+  Droplets,
+  HardDrive,
+  Keyboard,
+  Laptop,
+  ListChecks,
+  MonitorSmartphone,
+  PackageCheck,
+  PlugZap,
+  PowerOff,
+  ReceiptText,
+  RefreshCcwDot,
+  ScanFace,
+  ShieldCheck,
+  Smartphone,
+  SquareDashedBottom,
+  Star,
+  Tablet,
+  Thermometer,
+  Timer,
+  Touchpad,
+  Users,
+  Volume2,
+  Watch,
+  WifiOff,
+  Zap,
+};
+
+/** 依名稱取得圖示元件，找不到時回退至通用圖示 */
+export function resolveIcon(name: string | undefined, fallback: LucideIcon = CircleDot): LucideIcon {
+  if (!name) return fallback;
+  return iconRegistry[name] ?? fallback;
+}

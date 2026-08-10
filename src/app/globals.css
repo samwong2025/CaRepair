@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --ring-brand: 10 108 255;
+  }
+
+  * {
+    @apply border-slate-200;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-surface-muted text-ink font-sans antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display text-ink;
+    text-wrap: balance;
+  }
+
+  ::selection {
+    @apply bg-brand-500/20 text-brand-800;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand-500/70 ring-offset-2 ring-offset-white;
+  }
+
+  /* 數字統一使用等寬字形，避免滾動時抖動 */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  .section-shell {
+    @apply mx-auto w-full max-w-[1280px] px-4 sm:px-6 lg:px-8;
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full border border-brand-100 bg-brand-50 px-3.5 py-1.5 text-xs font-semibold tracking-wide text-brand-700;
+  }
+
+  .card-base {
+    @apply rounded-2xl border border-slate-200/80 bg-white shadow-card;
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 ease-smooth hover:-translate-y-1 hover:border-brand-200 hover:shadow-lift;
+  }
+
+  .link-underline {
+    @apply relative after:absolute after:-bottom-0.5 after:left-0 after:h-0.5 after:w-0 after:bg-accent-500 after:transition-all after:duration-300 hover:after:w-full;
+  }
+
+  .glass-bar {
+    @apply border border-white/60 bg-white/85 backdrop-blur-xl;
+  }
+}
+
+@layer utilities {
+  .text-gradient-brand {
+    @apply bg-gradient-to-r from-brand-500 via-brand-600 to-brand-800 bg-clip-text text-transparent;
+  }
+
+  .text-gradient-cta {
+    @apply bg-gradient-to-r from-accent-400 to-accent-600 bg-clip-text text-transparent;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* ─── 尊重使用者的減少動態偏好 ───────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ─── 列印樣式：維修識別標籤 / 售後收據 ────────────── */
+@media print {
+  @page {
+    margin: 8mm;
+  }
+
+  body {
+    background: #ffffff !important;
+  }
+
+  .no-print,
+  header.site-header,
+  footer.site-footer,
+  aside.admin-sidebar {
+    display: none !important;
+  }
+
+  .print-area {
+    position: absolute !important;
+    inset: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: #ffffff !important;
+  }
+
+  .print-sheet {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    box-shadow: none !important;
+  }
+
+  .print-sheet + .print-sheet {
+    break-before: page;
+    page-break-before: always;
+  }
+}
