@@ -3,6 +3,7 @@ import { getModelById } from '../../../data/devices';
 import { getSymptomById } from '../../../data/symptoms';
 import { calculateQuote } from '../../../lib/quote-engine';
 import { loadPricing } from '../../../lib/pricing-store';
+import { loadModels, loadSymptoms, findModel, findSymptom } from '../../../lib/catalog-store';
 
 interface QuoteRequest {
   deviceModelId?: string;
@@ -27,12 +28,14 @@ export async function POST(request: Request) {
     );
   }
 
-  const model = getModelById(body.deviceModelId);
+  const models = await loadModels();
+  const model = findModel(models, body.deviceModelId) ?? getModelById(body.deviceModelId);
   if (!model) {
     return NextResponse.json({ message: `找不到型號：${body.deviceModelId}` }, { status: 404 });
   }
 
-  const unknown = body.symptomIds.filter((id) => !getSymptomById(id));
+  const symptoms = await loadSymptoms();
+  const unknown = body.symptomIds.filter((id) => !findSymptom(symptoms, id) && !getSymptomById(id));
   if (unknown.length > 0) {
     return NextResponse.json(
       { message: `未知的故障項目：${unknown.join('、')}` },
@@ -41,7 +44,7 @@ export async function POST(request: Request) {
   }
 
   const pricing = await loadPricing();
-  const quote = calculateQuote(model.id, body.symptomIds, pricing);
+  const quote = calculateQuote(model.id, body.symptomIds, pricing, model);
 
   return NextResponse.json({
     deviceModelId: model.id,

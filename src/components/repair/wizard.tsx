@@ -16,7 +16,8 @@ import { siteConfig } from '../../config/site';
 import { formatHKD } from '../../lib/format';
 import { EMPTY_QUOTE, calculateQuote } from '../../lib/quote-engine';
 import { loadPricing } from '../../lib/pricing-store';
-import type { CreateOrderResult, DeviceCategory, RepairOrderInput } from '../../types';
+import { loadModels, loadSymptoms, findModel, findSymptom } from '../../lib/catalog-store';
+import type { CreateOrderResult, DeviceCategory, DeviceModel, RepairOrderInput, Symptom } from '../../types';
 
 const HK_PHONE = /^[2-9]\d{7}$/;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -45,25 +46,29 @@ export function RepairWizard({ initialCategory }: { initialCategory?: DeviceCate
   const [submitting, setSubmitting] = React.useState(false);
   const [submitError, setSubmitError] = React.useState('');
   const [result, setResult] = React.useState<CreateOrderResult | null>(null);
+  const [allModels, setAllModels] = React.useState<DeviceModel[]>([]);
+  const [allSymptoms, setAllSymptoms] = React.useState<Symptom[]>([]);
 
   const topRef = React.useRef<HTMLDivElement>(null);
-  const model = modelId ? getModelById(modelId) : undefined;
+  const model = modelId ? findModel(allModels, modelId) ?? getModelById(modelId) : undefined;
   const [pricing, setPricing] = React.useState<import('../../types').SymptomPricing[] | undefined>(
     undefined,
   );
 
   React.useEffect(() => {
     loadPricing().then(setPricing);
+    loadModels().then(setAllModels);
+    loadSymptoms().then(setAllSymptoms);
   }, []);
 
   const quote = React.useMemo(() => {
     if (!modelId || symptomIds.length === 0) return EMPTY_QUOTE;
-    return calculateQuote(modelId, symptomIds, pricing);
-  }, [modelId, symptomIds, pricing]);
+    return calculateQuote(modelId, symptomIds, pricing, model);
+  }, [modelId, symptomIds, pricing, model]);
 
   const symptomNames = React.useMemo(
-    () => symptomIds.map((id) => getSymptomById(id)?.shortName ?? id),
-    [symptomIds],
+    () => symptomIds.map((id) => findSymptom(allSymptoms, id)?.shortName ?? getSymptomById(id)?.shortName ?? id),
+    [symptomIds, allSymptoms],
   );
 
   const scrollToTop = () => {
@@ -235,6 +240,7 @@ export function RepairWizard({ initialCategory }: { initialCategory?: DeviceCate
               modelId={modelId}
               onSelectCategory={handleSelectCategory}
               onSelectModel={handleSelectModel}
+              allModels={allModels}
               mode="full"
             />
           ) : null}
@@ -254,6 +260,7 @@ export function RepairWizard({ initialCategory }: { initialCategory?: DeviceCate
                       category={category}
                       modelId={modelId}
                       onSelectModel={handleSelectModel}
+                      allModels={allModels}
                     />
                   </div>
                 </div>
@@ -264,6 +271,7 @@ export function RepairWizard({ initialCategory }: { initialCategory?: DeviceCate
                     modelName={model?.name ?? ''}
                     selected={symptomIds}
                     onToggle={toggleSymptom}
+                    allSymptoms={allSymptoms}
                   />
 
                   <div className="flex items-center gap-3 border-t border-slate-100 pt-6">

@@ -6,8 +6,10 @@ import {
   ArrowUpRight,
   ClipboardList,
   DollarSign,
+  HardDrive,
   Headphones,
   LayoutDashboard,
+  Stethoscope,
   Users,
   Wrench,
   type LucideIcon,
@@ -19,6 +21,8 @@ const navItems: { href: string; label: string; icon: LucideIcon; description: st
   { href: '/admin/orders', label: '維修工單', icon: ClipboardList, description: '狀態流轉・打印標籤' },
   { href: '/admin/customers', label: 'CRM 客戶', icon: Users, description: '會員檔案與消費' },
   { href: '/admin/aftersales', label: '售後個案', icon: Headphones, description: '保養・投訴跟進' },
+  { href: '/admin/models', label: '機型管理', icon: HardDrive, description: '增刪改機型' },
+  { href: '/admin/symptoms', label: '故障管理', icon: Stethoscope, description: '維修項目設定' },
   { href: '/admin/pricing', label: '維修價格', icon: DollarSign, description: '線上調整報價' },
 ];
 

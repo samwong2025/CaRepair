@@ -3,20 +3,22 @@
 import * as React from 'react';
 import { Check, Flame, Laptop, Search, Smartphone, Tablet, Watch } from 'lucide-react';
 import { Input } from '../ui/input';
-import { deviceGroups, deviceModels, tierLabel, getModelImage } from '../../data/devices';
+import { deviceGroups, tierLabel, getModelImage } from '../../data/devices';
 import { resolveIcon } from '../../lib/icons';
 import { cn } from '../../lib/utils';
-import type { DeviceCategory } from '../../types';
+import type { DeviceCategory, DeviceModel } from '../../types';
 
 /** 步驟 2 內嵌入的型號選擇器：點即跳（搭配 wizard 內部控制） */
 export function ModelPicker({
   category,
   modelId,
   onSelectModel,
+  allModels,
 }: {
   category: DeviceCategory;
   modelId: string | null;
   onSelectModel: (modelId: string) => void;
+  allModels: DeviceModel[];
 }) {
   const [keyword, setKeyword] = React.useState('');
 
@@ -29,11 +31,11 @@ export function ModelPicker({
 
   const models = React.useMemo(() => {
     const kw = keyword.trim().toLowerCase();
-    return deviceModels
+    return allModels
       .filter((model) => model.category === category)
       .filter((model) => (kw ? model.name.toLowerCase().includes(kw) : true))
       .sort((a, b) => b.year - a.year || Number(Boolean(b.hot)) - Number(Boolean(a.hot)));
-  }, [category, keyword]);
+  }, [category, keyword, allModels]);
 
   const grouped = React.useMemo(() => {
     const map = new Map<string, typeof models>();
@@ -146,12 +148,14 @@ export function StepDevice({
   modelId,
   onSelectCategory,
   onSelectModel,
+  allModels,
   mode = 'full',
 }: {
   category: DeviceCategory | null;
   modelId: string | null;
   onSelectCategory: (category: DeviceCategory) => void;
   onSelectModel: (modelId: string) => void;
+  allModels: DeviceModel[];
   /** 'full' = 同屏顯示分類與型號；'category-only' = 只顯示分類卡（點即跳） */
   mode?: 'full' | 'category-only';
 }) {
@@ -167,11 +171,11 @@ export function StepDevice({
   const models = React.useMemo(() => {
     if (!category) return [];
     const kw = keyword.trim().toLowerCase();
-    return deviceModels
+    return allModels
       .filter((model) => model.category === category)
       .filter((model) => (kw ? model.name.toLowerCase().includes(kw) : true))
       .sort((a, b) => b.year - a.year || Number(Boolean(b.hot)) - Number(Boolean(a.hot)));
-  }, [category, keyword]);
+  }, [category, keyword, allModels]);
 
   const grouped = React.useMemo(() => {
     const map = new Map<string, typeof models>();

@@ -1,7 +1,7 @@
 import { getModelById, tierMultiplier } from '../data/devices';
 import { MAX_BUNDLE_DISCOUNT, bundleDiscountRates, findPricingRule } from '../data/pricing';
 import { getSymptomById } from '../data/symptoms';
-import type { DeviceCategory, Quote, QuoteLineItem, SymptomPricing } from '../types';
+import type { DeviceCategory, DeviceModel, Quote, QuoteLineItem, SymptomPricing } from '../types';
 
 /** 金額取整至 10 港元，令報價更貼近實際門市標價 */
 function roundToTen(value: number): number {
@@ -39,8 +39,9 @@ export function calculateQuote(
   modelId: string,
   symptomIds: string[],
   rules?: SymptomPricing[],
+  modelOverride?: DeviceModel,
 ): Quote {
-  const model = getModelById(modelId);
+  const model = modelOverride ?? getModelById(modelId);
   if (!model || symptomIds.length === 0) return EMPTY_QUOTE;
 
   const multiplier = tierMultiplier[model.tier];

@@ -4,6 +4,7 @@ import { statusMeta } from '../../data/seed';
 import { calculateQuote } from '../quote-engine';
 import { generateMemberNo, generateOrderNo } from '../format';
 import { getServerSupabase } from '../supabase/server';
+import { loadModels, findModel, loadPricing } from '../catalog-store';
 import type { DataRepository } from './types';
 import type {
   AfterSalesInput,
@@ -228,10 +229,12 @@ export const supabaseRepository: DataRepository = {
 
   async createRepairOrder(input: RepairOrderInput): Promise<CreateOrderResult> {
     const supabase = client();
-    const model = getModelById(input.deviceModelId);
+    const models = await loadModels();
+    const model = findModel(models, input.deviceModelId) ?? getModelById(input.deviceModelId);
     if (!model) throw new Error('找不到對應的產品型號');
 
-    const quote = calculateQuote(input.deviceModelId, input.symptomIds);
+    const pricing = await loadPricing();
+    const quote = calculateQuote(model.id, input.symptomIds, pricing, model);
     if (quote.items.length === 0) throw new Error('未能為所選故障產生報價');
 
     const now = new Date().toISOString();

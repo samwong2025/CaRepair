@@ -2,16 +2,20 @@ import { NextResponse } from 'next/server';
 import { getModelById } from '../../../data/devices';
 import { getSymptomById } from '../../../data/symptoms';
 import { getRepository } from '../../../lib/repositories';
+import { loadModels, loadSymptoms, findModel, findSymptom } from '../../../lib/catalog-store';
 import type { RepairOrderInput } from '../../../types';
 
 const HK_PHONE = /^[2-9]\d{7}$/;
 
 /** 服務端二次校驗，避免前端被繞過 */
-function validate(input: Partial<RepairOrderInput>): string | null {
-  if (!input.deviceModelId || !getModelById(input.deviceModelId)) return '型號不存在或未選擇';
+async function validate(input: Partial<RepairOrderInput>): Promise<string | null> {
+  const models = await loadModels();
+  const model = findModel(models, input.deviceModelId ?? '') ?? getModelById(input.deviceModelId ?? '');
+  if (!input.deviceModelId || !model) return '型號不存在或未選擇';
   if (!Array.isArray(input.symptomIds) || input.symptomIds.length === 0) return '請至少選擇一項故障';
 
-  const unknown = input.symptomIds.filter((id) => !getSymptomById(id));
+  const symptoms = await loadSymptoms();
+  const unknown = input.symptomIds.filter((id) => !findSymptom(symptoms, id) && !getSymptomById(id));
   if (unknown.length > 0) return `未知的故障項目：${unknown.join('、')}`;
 
   if (!input.customerName || input.customerName.trim().length < 2) return '請填寫有效稱呼';
@@ -41,7 +45,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ message: '請求內容格式不正確' }, { status: 400 });
   }
 
-  const invalidMessage = validate(body);
+  const invalidMessage = await validate(body);
   if (invalidMessage) {
     return NextResponse.json({ message: invalidMessage }, { status: 400 });
   }

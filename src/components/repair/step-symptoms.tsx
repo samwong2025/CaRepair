@@ -3,12 +3,11 @@
 import * as React from 'react';
 import { AlertTriangle, Check, Clock3, ShieldCheck } from 'lucide-react';
 import { Badge } from '../ui/badge';
-import { getSymptomsByCategory } from '../../data/symptoms';
 import { findPricingRule } from '../../data/pricing';
 import { resolveIcon } from '../../lib/icons';
 import { formatDuration } from '../../lib/quote-engine';
 import { cn } from '../../lib/utils';
-import type { DeviceCategory } from '../../types';
+import type { DeviceCategory, Symptom } from '../../types';
 
 /** 步驟 2：勾選故障症狀（可多選） */
 export function StepSymptoms({
@@ -16,15 +15,20 @@ export function StepSymptoms({
   modelName,
   selected,
   onToggle,
+  allSymptoms,
 }: {
   category: DeviceCategory;
   modelName: string;
   selected: string[];
   onToggle: (symptomId: string) => void;
+  allSymptoms: Symptom[];
 }) {
   const list = React.useMemo(
-    () => getSymptomsByCategory(category).sort((a, b) => b.frequency - a.frequency),
-    [category],
+    () =>
+      allSymptoms
+        .filter((s) => s.categories.includes(category))
+        .sort((a, b) => b.frequency - a.frequency),
+    [category, allSymptoms],
   );
 
   return (
