@@ -18,9 +18,9 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <Link
       href={`/shop/${product.id}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-card transition-all duration-200 ease-smooth hover:-translate-y-1 hover:shadow-lift"
+      className="glow-card group flex flex-col rounded-2xl border border-slate-200 bg-white shadow-card transition-all duration-200 ease-smooth hover:-translate-y-1 hover:shadow-lift"
     >
-      <div className="relative">
+      <div className="relative overflow-hidden rounded-t-2xl">
         <SmartImage
           src={product.image}
           alt={product.name}

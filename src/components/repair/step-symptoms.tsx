@@ -34,7 +34,7 @@ export function StepSymptoms({
           你部 {modelName} 出現咩問題？
         </h2>
         <p className="mt-1.5 text-sm text-ink-muted">
-          可以同時勾選多項，系統會自動組合維修方案，兩項或以上更有套餐折扣。
+          可同時勾選多項（呢度只係幫師傅預先準備，最終收費以現場檢測報價為準）；都可以留空，到店再講。
         </p>
       </div>
 

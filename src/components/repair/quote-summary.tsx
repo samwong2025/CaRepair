@@ -24,7 +24,7 @@ export function QuoteSummary({
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">
             Live Quote
           </p>
-          <p className="mt-1 text-lg font-extrabold text-white">即時報價</p>
+          <p className="mt-1 text-lg font-extrabold text-white">預估報價</p>
         </div>
 
         <div className="space-y-4 px-5 py-5">
@@ -33,7 +33,7 @@ export function QuoteSummary({
               <Smartphone className="h-5 w-5" strokeWidth={2} />
             </span>
             <div className="min-w-0">
-              <p className="text-xs text-ink-faint">維修裝置</p>
+              <p className="text-xs text-ink-faint">維修產品</p>
               <p className="mt-0.5 text-[0.95rem] font-bold text-ink">
                 {model ? model.name : '未選擇'}
               </p>
@@ -86,7 +86,7 @@ export function QuoteSummary({
           <div className="flex items-end justify-between border-t border-slate-100 pt-4">
             <span className="text-sm font-bold text-ink">預計總額</span>
             <span className="text-2xl font-extrabold leading-none text-brand-600">
-              {hasItems ? formatHKD(quote.total) : '--'}
+              {hasItems ? formatHKD(quote.total) : '到店報價'}
             </span>
           </div>
 
@@ -114,7 +114,7 @@ export function QuoteSummary({
       </div>
 
       <p className="mt-3 px-1 text-[0.7rem] leading-relaxed text-ink-faint">
-        報價已包含檢測費。若檢測後發現額外損壞，技師必定先致電確認，未經同意不會施工。
+        網上報價僅供參考，最終收費以現場師傅檢測後報價為準；免費檢測，唔修唔收費。
       </p>
     </aside>
   );

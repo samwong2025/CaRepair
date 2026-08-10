@@ -32,7 +32,7 @@ export function StatsBoard() {
             const Icon = iconMap[stat.icon] ?? Users;
             return (
               <Reveal key={stat.id} delay={index * 90}>
-                <div className="group h-full cursor-default rounded-2xl border border-white/12 bg-white/[0.06] p-6 backdrop-blur-sm transition-all duration-300 ease-smooth hover:border-accent-400/50 hover:bg-white/[0.1]">
+                <div className="glow-card group h-full cursor-default rounded-2xl border border-white/12 bg-white/[0.06] p-6 backdrop-blur-sm transition-all duration-300 ease-smooth hover:border-accent-400/50 hover:bg-white/[0.1]">
                   <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/10 text-accent-300 transition-colors duration-300 group-hover:bg-cta-gradient group-hover:text-white">
                     <Icon className="h-5 w-5" strokeWidth={2.1} />
                   </span>

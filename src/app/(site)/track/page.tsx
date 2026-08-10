@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
-import { Camera, MessageSquareText, ShieldCheck } from 'lucide-react';
+import { ClipboardCheck, MessageSquareText, ShieldCheck } from 'lucide-react';
 import { TrackPanel } from '../../../components/track/track-panel';
 
 export const metadata: Metadata = {
-  title: '維修進度追蹤與售後服務｜CathyRepair 凱西維修',
+  title: '維修進度追蹤與售後服務｜CathyRepair',
   description:
     '輸入訂單編號或手提號碼，即時查看 iPhone、iPad、Apple Watch、MacBook 維修進度時間軸，並可提交保養期內售後申請。',
   alternates: { canonical: '/track' },
@@ -11,9 +11,9 @@ export const metadata: Metadata = {
 
 const notes = [
   {
-    icon: Camera,
-    title: '維修全程錄影',
-    description: '每張工單均有施工錄影，取機時可要求即場查看。',
+    icon: ClipboardCheck,
+    title: '27 項出機檢測',
+    description: '每張工單完成維修後均通過觸控、鏡頭、訊號、防水等 27 項檢測。',
   },
   {
     icon: ShieldCheck,
@@ -40,7 +40,7 @@ export default function TrackPage({ searchParams }: { searchParams?: { q?: strin
         <div className="section-shell relative text-center">
           <span className="eyebrow text-brand-300">Order Tracking</span>
           <h1 className="mt-3 text-3xl font-extrabold leading-tight text-white sm:text-4xl">
-            實時追蹤你部機的維修進度
+            即時追蹤你部機的維修進度
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-[0.95rem] leading-relaxed text-white/70">
             由落單、檢測、施工到品檢取機，每個階段都有時間戳與處理人記錄，公開透明。

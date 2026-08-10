@@ -88,6 +88,90 @@
   }
 }
 
+/* ─── 卡片懸停：邊框加粗 3 倍 + 流動光效（全站通用） ──── */
+/* 在卡片作為定位容器，並用 ::after 繪製一層 conic-gradient 光環，
+   透過 mask 只露出邊框，旋轉光環讓光點沿邊框順時針流轉。
+   使用 transform 旋轉避免重排，確保動畫流暢。
+   掛 .glow-card 即可；.product-card 為舊名稱別名，保留相容。 */
+.glow-card,
+.product-card {
+  position: relative;
+  isolation: isolate;
+}
+
+.glow-card::after,
+.product-card::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  padding: 2px;
+  background: conic-gradient(
+    from var(--spin, 0deg),
+    transparent 0deg,
+    transparent 250deg,
+    rgba(56, 189, 248, 0.95) 300deg,
+    rgba(99, 102, 241, 0.95) 330deg,
+    rgba(168, 85, 247, 0.95) 350deg,
+    transparent 360deg
+  );
+  /* 只保留邊框一圈（外圈減內圈） */
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+  z-index: 2;
+}
+
+.glow-card:hover::after,
+.glow-card:focus-visible::after,
+.product-card:hover::after,
+.product-card:focus-visible::after {
+  opacity: 1;
+  animation: card-border-spin 1.6s linear infinite;
+}
+
+/* 邊框加粗 3 倍：hover 時顯示一圈 3px 發光描邊（不改真實 border 寬度，避免抖動） */
+.glow-card::before,
+.product-card::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  border: 3px solid transparent;
+  transition: border-color 0.3s ease, inset 0.3s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.glow-card:hover::before,
+.glow-card:focus-visible::before,
+.product-card:hover::before,
+.product-card:focus-visible::before {
+  inset: -1px;
+  border-color: rgba(99, 102, 241, 0.55);
+}
+
+@keyframes card-border-spin {
+  to {
+    --spin: 360deg;
+  }
+}
+
+/* 支援自定義屬性動畫（舊版 Chrome 需要 @property 註冊） */
+@property --spin {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
 /* ─── 尊重使用者的減少動態偏好 ───────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *,

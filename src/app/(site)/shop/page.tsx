@@ -5,7 +5,7 @@ import { ShopCatalog } from '../../../components/shop/shop-catalog';
 import { SectionHeading } from '../../../components/ui/section';
 
 export const metadata: Metadata = {
-  title: '二手商店｜CathyRepair 凱西維修',
+  title: '二手商店｜CathyRepair',
   description:
     'CathyRepair 二手商店嚴選 iPhone、iPad、Apple Watch、MacBook，全機 32 項功能檢測、分級評估、90 日本店保養，支援送貨上門與到店自取。',
 };
@@ -44,7 +44,7 @@ export default async function ShopPage() {
       </div>
 
       <div className="mt-10">
-        <SectionHeading eyebrow="精選現貨" title="二手裝置目錄" titleEn="Catalog" />
+        <SectionHeading eyebrow="精選現貨" title="二手產品目錄" titleEn="Catalog" />
         <div className="mt-5">
           <ShopCatalog products={products} />
         </div>

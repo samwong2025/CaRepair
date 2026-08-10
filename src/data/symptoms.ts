@@ -99,7 +99,7 @@ export const symptoms: Symptom[] = [
     name: '訊號 / Wi-Fi / 藍牙異常',
     shortName: '訊號故障',
     icon: 'WifiOff',
-    description: '無服務、Wi-Fi 灰掉、藍牙搜尋唔到裝置',
+    description: '無服務、Wi-Fi 灰掉、藍牙搜尋唔到產品',
     categories: ['iphone', 'ipad', 'watch', 'macbook'],
     frequency: 41,
   },

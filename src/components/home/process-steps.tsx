@@ -30,7 +30,7 @@ export function ProcessSteps() {
               const Icon = resolveIcon(item.icon, Smartphone);
               return (
                 <Reveal as="li" key={item.step} delay={index * 110} className="relative">
-                  <div className="flex h-full flex-col items-center rounded-2xl border border-slate-200/70 bg-white/90 p-6 text-center shadow-card backdrop-blur-sm transition-all duration-300 ease-smooth hover:-translate-y-1.5 hover:border-brand-200 hover:shadow-lift">
+                  <div className="glow-card flex h-full flex-col items-center rounded-2xl border border-slate-200/70 bg-white/90 p-6 text-center shadow-card backdrop-blur-sm transition-all duration-300 ease-smooth hover:-translate-y-1.5 hover:shadow-lift">
                     <span className="relative flex h-[4.5rem] w-[4.5rem] items-center justify-center rounded-2xl bg-brand-gradient text-white shadow-brand">
                       <Icon className="h-8 w-8" strokeWidth={2} />
                       <span className="absolute -right-2 -top-2 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-accent-500 text-xs font-extrabold text-white shadow-sm">

@@ -4,10 +4,14 @@ import { siteConfig } from '../config/site';
 
 export const metadata: Metadata = {
   title: {
-    default: `${siteConfig.name} 凱西維修｜${siteConfig.tagline}`,
-    template: `%s｜${siteConfig.name} 凱西維修`,
+    default: `${siteConfig.name}｜${siteConfig.tagline}`,
+    template: `%s｜${siteConfig.name}`,
   },
   description: siteConfig.description,
+  icons: {
+    icon: [{ url: '/logo-mark.png', type: 'image/png' }],
+    apple: [{ url: '/logo-mark.png' }],
+  },
   keywords: [
     'iPhone 維修',
     'iPad 維修',
@@ -19,7 +23,7 @@ export const metadata: Metadata = {
     '荔枝角手機維修',
   ],
   openGraph: {
-    title: `${siteConfig.name} 凱西維修`,
+    title: `${siteConfig.name}`,
     description: siteConfig.slogan,
     locale: 'zh_HK',
     type: 'website',

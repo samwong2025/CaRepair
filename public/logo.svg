@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 72" width="280" height="72" role="img" aria-label="CathyRepair">
+  <defs>
+    <linearGradient id="cr-logo-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0A6CFF"/>
+      <stop offset="55%" stop-color="#0052D9"/>
+      <stop offset="100%" stop-color="#002D6B"/>
+    </linearGradient>
+    <clipPath id="cr-logo-clip">
+      <!-- 將 mark 的 64x72 viewBox 縮放至 60x60，左上對齊 (4, 6) -->
+      <path transform="translate(4 6)" d="M 30 8 C 18 8 8 18 8 30 C 8 46 16 60 26 60 C 30 60 32 58 32 58 C 32 58 34 60 38 60 C 48 60 56 46 56 30 C 56 18 46 8 34 8 C 32 8 32 10 32 10 C 32 10 32 8 30 8 Z"/>
+    </clipPath>
+  </defs>
+
+  <!-- 葉子 -->
+  <path transform="translate(4 6)" d="M 30 10 C 34 4 44 2 50 4 C 48 12 38 14 30 12 Z" fill="#FF8A2B"/>
+
+  <!-- 蘋果主體漸層 -->
+  <path transform="translate(4 6)" d="M 30 8 C 18 8 8 18 8 30 C 8 46 16 60 26 60 C 30 60 32 58 32 58 C 32 58 34 60 38 60 C 48 60 56 46 56 30 C 56 18 46 8 34 8 C 32 8 32 10 32 10 C 32 10 32 8 30 8 Z" fill="url(#cr-logo-bg)"/>
+
+  <!-- 右上咬口 -->
+  <circle transform="translate(4 6)" cx="52" cy="16" r="6" fill="#FFFFFF"/>
+  <circle transform="translate(4 6)" cx="52" cy="16" r="5.2" fill="none" stroke="#FF8A2B" stroke-width="0.6" opacity="0.55"/>
+
+  <!-- 內部女技師剪影 -->
+  <g clip-path="url(#cr-logo-clip)" fill="#FFFFFF">
+    <g transform="translate(4 6)">
+      <!-- 馬尾 -->
+      <path d="M 22 22 C 12 22 10 32 14 40 C 18 46 26 44 26 38 C 22 34 20 28 22 22 Z"/>
+      <!-- 頭部 -->
+      <path d="M 26 24 C 31 22 35 24 36 28 C 36 31 35 33 33 34 L 35 38 L 28 38 L 28 36 C 26 34 25 30 26 26 Z"/>
+      <!-- 身體 -->
+      <path d="M 26 38 C 24 42 24 50 26 56 L 26 62 L 42 62 L 42 46 C 42 42 44 38 46 34 C 46 32 44 32 42 32 L 36 34 C 32 36 28 38 26 38 Z"/>
+      <!-- 左手 -->
+      <path d="M 24 36 L 16 26 L 18 24 L 26 34 Z"/>
+      <!-- 扳手 -->
+      <g transform="translate(11 18) rotate(-25)">
+        <rect x="0" y="0" width="2.6" height="10" rx="0.6"/>
+        <circle cx="1.3" cy="0.6" r="2.4" fill="none" stroke="#FFFFFF" stroke-width="1.4"/>
+      </g>
+      <!-- 右手 -->
+      <path d="M 42 40 L 50 46 L 48 48 L 40 44 Z"/>
+      <!-- 平板 -->
+      <rect x="40" y="44" width="14" height="11" rx="1.5"/>
+      <!-- 齒輪 -->
+      <g transform="translate(47 49.5)">
+        <circle r="2" fill="#0052D9"/>
+        <rect x="-0.4" y="-3" width="0.8" height="2" fill="#0052D9"/>
+        <rect x="-0.4" y="1" width="0.8" height="2" fill="#0052D9"/>
+        <rect x="-3" y="-0.4" width="2" height="0.8" fill="#0052D9"/>
+        <rect x="1" y="-0.4" width="2" height="0.8" fill="#0052D9"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- 字標 -->
+  <text x="80" y="40" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang HK', 'Microsoft JhengHei', sans-serif" font-size="24" font-weight="800" fill="#0F172A" letter-spacing="-0.5">
+    Cathy<tspan fill="#0052D9">Repair</tspan>
+  </text>
+  <text x="80" y="58" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang HK', 'Microsoft JhengHei', sans-serif" font-size="11" font-weight="500" fill="#64748B" letter-spacing="1.5">
+    Apple Product Specialist
+  </text>
+</svg>

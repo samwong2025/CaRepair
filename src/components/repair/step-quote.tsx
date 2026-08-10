@@ -15,13 +15,14 @@ export function StepQuote({ quote, modelName }: { quote: Quote; modelName: strin
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-extrabold text-ink sm:text-2xl">為你配對的維修方案</h2>
+        <h2 className="text-xl font-extrabold text-ink sm:text-2xl">預估維修方案</h2>
         <p className="mt-1.5 text-sm text-ink-muted">
-          以下係 {modelName} 的實際收費明細，配件費與人工費逐項列明，到店收費一致。
+          以下為 {modelName} 的網上預估報價，配件費與人工費逐項列明；實際收費以現場師傅檢測後報價為準。
         </p>
       </div>
 
       {/* 明細表 */}
+      {quote.items.length > 0 ? (
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-card">
         <div className="hidden bg-surface-soft px-6 py-3 text-xs font-bold text-ink-muted sm:grid sm:grid-cols-[1fr_7rem_7rem_7rem]">
           <span>維修項目</span>
@@ -116,8 +117,17 @@ export function StepQuote({ quote, modelName }: { quote: Quote; modelName: strin
           </div>
         </div>
       </div>
+      ) : (
+        <div className="rounded-2xl border border-dashed border-slate-200 bg-surface-soft px-5 py-8 text-center">
+          <p className="text-sm font-semibold text-ink">仲未揀故障項目？冇問題</p>
+          <p className="mx-auto mt-1.5 max-w-md text-xs leading-relaxed text-ink-muted">
+            到店後師傅會即場免費檢測，並同你確認方案與報價，你同意後先施工。網上預估僅供參考，最終收費以現場師傅報價為準。
+          </p>
+        </div>
+      )}
 
       {/* 方案保障 */}
+      {quote.items.length > 0 ? (
       <div className="grid gap-3 sm:grid-cols-3">
         <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-3.5">
           <Clock3 className="h-5 w-5 shrink-0 text-brand-600" />
@@ -145,6 +155,7 @@ export function StepQuote({ quote, modelName }: { quote: Quote; modelName: strin
           </div>
         </div>
       </div>
+      ) : null}
 
       {quote.requiresLab ? (
         <div className="flex items-start gap-2.5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3.5">
@@ -159,13 +170,13 @@ export function StepQuote({ quote, modelName }: { quote: Quote; modelName: strin
       <div className="flex flex-wrap items-center gap-2">
         <Badge variant="success" size="sm">
           <ShieldCheck className="h-3.5 w-3.5" />
-          報價即最終收費
+          網上估價・以現場報價為準
         </Badge>
         <Badge variant="brand" size="sm">
           網上落單再減 HK$50
         </Badge>
         <Badge variant="neutral" size="sm">
-          維修全程錄影
+          專業師傅施工
         </Badge>
       </div>
     </div>

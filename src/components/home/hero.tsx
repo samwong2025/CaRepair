@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useState } from 'react';
 import {
   ArrowRight,
   CheckCircle2,
@@ -25,10 +26,13 @@ const iconMap = {
 const heroPoints = [
   '常見故障 30 分鐘即場完成',
   '配件費・人工費逐項透明列明',
-  '維修全程錄影・180 日保養',
+  '專業師傅施工・180 日保養',
 ];
 
 export function Hero() {
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    deviceGroups[0]?.id ?? 'iphone',
+  );
   return (
     <section className="relative overflow-hidden bg-ink">
       {/* 背景光暈與網格 */}
@@ -53,7 +57,7 @@ export function Hero() {
             </span>
 
             <h1 className="mt-6 text-display-lg text-white">
-              蘋果裝置壞咗？
+              蘋果產品壞咗？
               <br />
               <span className="bg-gradient-to-r from-accent-300 via-accent-400 to-accent-200 bg-clip-text text-transparent">
                 30 分鐘
@@ -63,7 +67,7 @@ export function Hero() {
 
             <p className="mt-5 max-w-xl text-lg leading-relaxed text-white/75">
               iPhone・iPad・Apple Watch・MacBook 專業維修。網上即時報價，
-              配件費與人工費逐項列明，冇隱藏收費；持牌技師施工、全程錄影，保養最長 365 日。
+              配件費與人工費逐項列明，冇隱藏收費；專業師傅施工，保養最長 365 日。
             </p>
 
             <ul className="mt-7 flex flex-col gap-2.5">
@@ -96,20 +100,20 @@ export function Hero() {
             </div>
 
             <p className="mt-5 text-sm text-white/50">
-              營業時間 {siteConfig.serviceHours}・全港順豐免費上門收送
+              營業時間 {siteConfig.serviceHours}・全港順豐免費寄修
             </p>
           </div>
 
           {/* 右：快速選機型卡片 */}
           <div className="animate-fade-up [animation-delay:150ms]">
-            <div className="rounded-3xl border border-white/15 bg-white/95 p-6 shadow-[0_28px_70px_rgba(2,17,48,0.45)] backdrop-blur-xl sm:p-7">
+            <div className="glow-card rounded-3xl border border-white/15 bg-white/95 p-6 shadow-[0_28px_70px_rgba(2,17,48,0.45)] backdrop-blur-xl sm:p-7">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-600">
                     Step 01
                   </p>
-                  <h2 className="mt-1.5 text-xl font-extrabold text-ink">你要維修邊部裝置？</h2>
-                  <p className="mt-1 text-sm text-ink-muted">揀選裝置類型，即刻睇到維修價目</p>
+                  <h2 className="mt-1.5 text-xl font-extrabold text-ink">你要維修邊部產品？</h2>
+                  <p className="mt-1 text-sm text-ink-muted">揀選產品類型，即刻睇到維修價目</p>
                 </div>
                 <span className="hidden rounded-xl bg-accent-50 px-3 py-2 text-center text-[0.7rem] font-bold leading-tight text-accent-700 sm:block">
                   平均
@@ -123,26 +127,61 @@ export function Hero() {
               <div className="mt-6 grid grid-cols-2 gap-3">
                 {deviceGroups.map((group) => {
                   const Icon = iconMap[group.icon as keyof typeof iconMap] ?? Smartphone;
+                  const selected = selectedCategory === group.id;
                   return (
-                    <Link
+                    <button
                       key={group.id}
-                      href={`/repair?category=${group.id}`}
-                      className="group flex cursor-pointer flex-col gap-2.5 rounded-2xl border border-slate-200 bg-white p-4 text-left transition-all duration-300 ease-smooth hover:-translate-y-1 hover:border-brand-400 hover:shadow-lift"
+                      type="button"
+                      onClick={() => setSelectedCategory(group.id)}
+                      aria-pressed={selected}
+                      className={[
+                        'glow-card group relative flex cursor-pointer flex-col gap-2.5 overflow-hidden rounded-2xl border p-4 text-left transition-all duration-300 ease-smooth hover:-translate-y-1 hover:shadow-lift',
+                        selected
+                          ? 'border-brand-500 bg-brand-50/60 shadow-lift ring-2 ring-brand-500/30'
+                          : 'border-slate-200 bg-white',
+                      ].join(' ')}
                     >
-                      <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-50 text-brand-600 transition-colors duration-300 group-hover:bg-brand-gradient group-hover:text-white">
+                      {selected ? (
+                        <span className="absolute right-3 top-3 z-20 flex h-5 w-5 items-center justify-center rounded-full bg-brand-gradient text-white shadow-brand">
+                          <CheckCircle2 className="h-3.5 w-3.5" strokeWidth={3} />
+                        </span>
+                      ) : null}
+                      {group.coverImage ? (
+                        <img
+                          src={group.coverImage}
+                          alt={group.name}
+                          width={56}
+                          height={56}
+                          loading="lazy"
+                          className="pointer-events-none absolute right-3 top-1/2 z-0 h-[56px] w-[56px] -translate-y-1/2 object-contain opacity-95 transition-transform duration-500 ease-smooth group-hover:scale-110"
+                        />
+                      ) : null}
+                      <span
+                        className={[
+                          'relative z-10 flex h-11 w-11 items-center justify-center rounded-xl transition-colors duration-300',
+                          selected
+                            ? 'bg-brand-gradient text-white shadow-brand'
+                            : 'bg-brand-50 text-brand-600 group-hover:bg-brand-gradient group-hover:text-white',
+                        ].join(' ')}
+                      >
                         <Icon className="h-5 w-5" strokeWidth={2} />
                       </span>
-                      <span className="text-[0.95rem] font-bold text-ink">{group.name}</span>
-                      <span className="text-[0.7rem] leading-snug text-ink-faint">
+                      <span className="relative z-10 pr-10 text-[0.95rem] font-bold text-ink">
+                        {group.name}
+                      </span>
+                      <span className="relative z-10 pr-10 text-[0.7rem] leading-snug text-ink-faint">
                         {group.popular}
                       </span>
-                    </Link>
+                    </button>
                   );
                 })}
               </div>
 
-              <Link href="/repair" className="mt-5 block">
-                <Button variant="primary" size="lg" block>
+              <Link
+                href={selectedCategory ? `/repair?category=${selectedCategory}` : '/repair'}
+                className="mt-5 block"
+              >
+                <Button variant="cta" size="lg" block>
                   開始四步落單
                   <ArrowRight className="h-4 w-4" />
                 </Button>

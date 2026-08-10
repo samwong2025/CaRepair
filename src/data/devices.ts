@@ -1,6 +1,6 @@
-﻿import type { DeviceBrandGroup, DeviceModel } from '../types';
+import type { DeviceBrandGroup, DeviceModel } from '../types';
 
-/** 裝置分類 —— 覆蓋 Apple 全產品線 */
+/** 產品分類 —— 覆蓋 Apple 全產品線 */
 export const deviceGroups: DeviceBrandGroup[] = [
   {
     id: 'iphone',
@@ -9,6 +9,7 @@ export const deviceGroups: DeviceBrandGroup[] = [
     description: '爆芒、換電、入水、鏡頭、尾插，最快 30 分鐘即場完成',
     icon: 'Smartphone',
     popular: 'iPhone 17 Pro Max・iPhone 16・iPhone 15',
+    coverImage: '/device-covers/device-iphone.png',
   },
   {
     id: 'ipad',
@@ -17,6 +18,7 @@ export const deviceGroups: DeviceBrandGroup[] = [
     description: '觸控失靈、爆芒、電池膨脹、尾插鬆脫，原廠級面板供應',
     icon: 'Tablet',
     popular: 'iPad Pro M4・iPad Air M3・iPad mini 7',
+    coverImage: '/device-covers/device-ipad.png',
   },
   {
     id: 'watch',
@@ -25,6 +27,7 @@ export const deviceGroups: DeviceBrandGroup[] = [
     description: '錶面爆裂、電池發脹、入水、錶冠失靈，專用防水膠重貼',
     icon: 'Watch',
     popular: 'Series 10・Ultra 2・SE 2',
+    coverImage: '/device-covers/device-watch.png',
   },
   {
     id: 'macbook',
@@ -33,6 +36,7 @@ export const deviceGroups: DeviceBrandGroup[] = [
     description: '入水救板、鍵盤更換、電池老化、SSD 升級、散熱翻新',
     icon: 'Laptop',
     popular: 'MacBook Pro M4・MacBook Air M4・MacBook Air M2',
+    coverImage: '/device-covers/device-macbook.png',
   },
 ];
 
@@ -87,36 +91,36 @@ export const deviceModels: DeviceModel[] = [
   { id: 'ipad-9', category: 'ipad', name: 'iPad（第 9 代）', series: 'iPad', year: 2021, tier: 'legacy' },
 
   /* ── Apple Watch ──────────────────────────── */
-  { id: 'watch-ultra-2', category: 'watch', name: 'Apple Watch Ultra 2', series: 'Ultra', year: 2023, tier: 'flagship', hot: true, image: '/watch-models/watch-ultra.png', },
+  { id: 'watch-ultra-2', category: 'watch', name: 'Apple Watch Ultra 2', series: 'Ultra', year: 2023, tier: 'flagship', hot: true, image: '/watch-models/watch-ultra-2.png', },
   { id: 'watch-ultra', category: 'watch', name: 'Apple Watch Ultra', series: 'Ultra', year: 2022, tier: 'flagship', image: '/watch-models/watch-ultra.png', },
-  { id: 'watch-s10-46', category: 'watch', name: 'Apple Watch Series 10（46mm）', series: 'Series 10', year: 2024, tier: 'premium', hot: true, image: '/watch-models/watch-series.png', },
-  { id: 'watch-s10-42', category: 'watch', name: 'Apple Watch Series 10（42mm）', series: 'Series 10', year: 2024, tier: 'premium', image: '/watch-models/watch-series.png', },
-  { id: 'watch-s9-45', category: 'watch', name: 'Apple Watch Series 9（45mm）', series: 'Series 9', year: 2023, tier: 'standard', hot: true, image: '/watch-models/watch-series.png', },
-  { id: 'watch-s9-41', category: 'watch', name: 'Apple Watch Series 9（41mm）', series: 'Series 9', year: 2023, tier: 'standard', image: '/watch-models/watch-series.png', },
-  { id: 'watch-s8-45', category: 'watch', name: 'Apple Watch Series 8（45mm）', series: 'Series 8', year: 2022, tier: 'standard', image: '/watch-models/watch-series.png', },
-  { id: 'watch-s8-41', category: 'watch', name: 'Apple Watch Series 8（41mm）', series: 'Series 8', year: 2022, tier: 'standard', image: '/watch-models/watch-series.png', },
-  { id: 'watch-se-2', category: 'watch', name: 'Apple Watch SE（第 2 代）', series: 'SE', year: 2022, tier: 'legacy', image: '/watch-models/watch-se.png', },
-  { id: 'watch-s7', category: 'watch', name: 'Apple Watch Series 7', series: 'Series 7', year: 2021, tier: 'legacy', image: '/watch-models/watch-series.png', },
-  { id: 'watch-s6', category: 'watch', name: 'Apple Watch Series 6', series: 'Series 6', year: 2020, tier: 'legacy', image: '/watch-models/watch-series.png', },
+  { id: 'watch-s10-46', category: 'watch', name: 'Apple Watch Series 10（46mm）', series: 'Series 10', year: 2024, tier: 'premium', hot: true, image: '/watch-models/watch-series-10.webp', },
+  { id: 'watch-s10-42', category: 'watch', name: 'Apple Watch Series 10（42mm）', series: 'Series 10', year: 2024, tier: 'premium', image: '/watch-models/watch-series-10.webp', },
+  { id: 'watch-s9-45', category: 'watch', name: 'Apple Watch Series 9（45mm）', series: 'Series 9', year: 2023, tier: 'standard', hot: true, image: '/watch-models/watch-series-9.png', },
+  { id: 'watch-s9-41', category: 'watch', name: 'Apple Watch Series 9（41mm）', series: 'Series 9', year: 2023, tier: 'standard', image: '/watch-models/watch-series-9.png', },
+  { id: 'watch-s8-45', category: 'watch', name: 'Apple Watch Series 8（45mm）', series: 'Series 8', year: 2022, tier: 'standard', image: '/watch-models/watch-series-8.png', },
+  { id: 'watch-s8-41', category: 'watch', name: 'Apple Watch Series 8（41mm）', series: 'Series 8', year: 2022, tier: 'standard', image: '/watch-models/watch-series-8.png', },
+  { id: 'watch-se-2', category: 'watch', name: 'Apple Watch SE（第 2 代）', series: 'SE', year: 2022, tier: 'legacy', image: '/watch-models/watch-se-2022.png', },
+  { id: 'watch-s7', category: 'watch', name: 'Apple Watch Series 7', series: 'Series 7', year: 2021, tier: 'legacy', image: '/watch-models/watch-series-7.png', },
+  { id: 'watch-s6', category: 'watch', name: 'Apple Watch Series 6', series: 'Series 6', year: 2020, tier: 'legacy', image: '/watch-models/watch-series-6.png', },
 
   /* 以下型號依 iwatchrepair.co.uk 列出的完整機型譜補齊（Series 1–5 / 11、SE 初代與 2025、Ultra 3） */
-  { id: 'watch-s1-38', category: 'watch', name: 'Apple Watch Series 1（38mm）', series: 'Series 1', year: 2015, tier: 'legacy', image: '/watch-models/watch-classic.png', },
-  { id: 'watch-s1-42', category: 'watch', name: 'Apple Watch Series 1（42mm）', series: 'Series 1', year: 2015, tier: 'legacy', image: '/watch-models/watch-classic.png', },
-  { id: 'watch-s2-38', category: 'watch', name: 'Apple Watch Series 2（38mm）', series: 'Series 2', year: 2016, tier: 'legacy', image: '/watch-models/watch-classic.png', },
-  { id: 'watch-s2-42', category: 'watch', name: 'Apple Watch Series 2（42mm）', series: 'Series 2', year: 2016, tier: 'legacy', image: '/watch-models/watch-classic.png', },
-  { id: 'watch-s3-38', category: 'watch', name: 'Apple Watch Series 3（38mm）', series: 'Series 3', year: 2017, tier: 'legacy', image: '/watch-models/watch-classic.png', },
-  { id: 'watch-s3-42', category: 'watch', name: 'Apple Watch Series 3（42mm）', series: 'Series 3', year: 2017, tier: 'legacy', image: '/watch-models/watch-classic.png', },
-  { id: 'watch-s4-40', category: 'watch', name: 'Apple Watch Series 4（40mm）', series: 'Series 4', year: 2018, tier: 'legacy', image: '/watch-models/watch-classic.png', },
-  { id: 'watch-s4-44', category: 'watch', name: 'Apple Watch Series 4（44mm）', series: 'Series 4', year: 2018, tier: 'legacy', image: '/watch-models/watch-classic.png', },
-  { id: 'watch-s5-40', category: 'watch', name: 'Apple Watch Series 5（40mm）', series: 'Series 5', year: 2019, tier: 'legacy', image: '/watch-models/watch-classic.png', },
-  { id: 'watch-s5-44', category: 'watch', name: 'Apple Watch Series 5（44mm）', series: 'Series 5', year: 2019, tier: 'legacy', image: '/watch-models/watch-classic.png', },
+  { id: 'watch-s1-38', category: 'watch', name: 'Apple Watch Series 1（38mm）', series: 'Series 1', year: 2015, tier: 'legacy', image: '/watch-models/watch-series-1.png', },
+  { id: 'watch-s1-42', category: 'watch', name: 'Apple Watch Series 1（42mm）', series: 'Series 1', year: 2015, tier: 'legacy', image: '/watch-models/watch-series-1.png', },
+  { id: 'watch-s2-38', category: 'watch', name: 'Apple Watch Series 2（38mm）', series: 'Series 2', year: 2016, tier: 'legacy', image: '/watch-models/watch-series-2.png', },
+  { id: 'watch-s2-42', category: 'watch', name: 'Apple Watch Series 2（42mm）', series: 'Series 2', year: 2016, tier: 'legacy', image: '/watch-models/watch-series-2.png', },
+  { id: 'watch-s3-38', category: 'watch', name: 'Apple Watch Series 3（38mm）', series: 'Series 3', year: 2017, tier: 'legacy', image: '/watch-models/watch-series-3.png', },
+  { id: 'watch-s3-42', category: 'watch', name: 'Apple Watch Series 3（42mm）', series: 'Series 3', year: 2017, tier: 'legacy', image: '/watch-models/watch-series-3.png', },
+  { id: 'watch-s4-40', category: 'watch', name: 'Apple Watch Series 4（40mm）', series: 'Series 4', year: 2018, tier: 'legacy', image: '/watch-models/watch-series-4.png', },
+  { id: 'watch-s4-44', category: 'watch', name: 'Apple Watch Series 4（44mm）', series: 'Series 4', year: 2018, tier: 'legacy', image: '/watch-models/watch-series-4.png', },
+  { id: 'watch-s5-40', category: 'watch', name: 'Apple Watch Series 5（40mm）', series: 'Series 5', year: 2019, tier: 'legacy', image: '/watch-models/watch-series-5.png', },
+  { id: 'watch-s5-44', category: 'watch', name: 'Apple Watch Series 5（44mm）', series: 'Series 5', year: 2019, tier: 'legacy', image: '/watch-models/watch-series-5.png', },
   { id: 'watch-se-1-40', category: 'watch', name: 'Apple Watch SE（第 1 代・40mm）', series: 'SE', year: 2020, tier: 'legacy', image: '/watch-models/watch-se.png', },
   { id: 'watch-se-1-44', category: 'watch', name: 'Apple Watch SE（第 1 代・44mm）', series: 'SE', year: 2020, tier: 'legacy', image: '/watch-models/watch-se.png', },
-  { id: 'watch-s11-42', category: 'watch', name: 'Apple Watch Series 11（42mm）', series: 'Series 11', year: 2025, tier: 'premium', hot: true, image: '/watch-models/watch-series.png', },
-  { id: 'watch-s11-46', category: 'watch', name: 'Apple Watch Series 11（46mm）', series: 'Series 11', year: 2025, tier: 'premium', hot: true, image: '/watch-models/watch-series.png', },
-  { id: 'watch-se-3-40', category: 'watch', name: 'Apple Watch SE（第 3 代・40mm）', series: 'SE', year: 2025, tier: 'standard', hot: true, image: '/watch-models/watch-se.png', },
-  { id: 'watch-se-3-44', category: 'watch', name: 'Apple Watch SE（第 3 代・44mm）', series: 'SE', year: 2025, tier: 'standard', hot: true, image: '/watch-models/watch-se.png', },
-  { id: 'watch-ultra-3', category: 'watch', name: 'Apple Watch Ultra 3（49mm）', series: 'Ultra', year: 2025, tier: 'flagship', hot: true, image: '/watch-models/watch-ultra.png', },
+  { id: 'watch-s11-42', category: 'watch', name: 'Apple Watch Series 11（42mm）', series: 'Series 11', year: 2025, tier: 'premium', hot: true, image: '/watch-models/watch-series-11.webp', },
+  { id: 'watch-s11-46', category: 'watch', name: 'Apple Watch Series 11（46mm）', series: 'Series 11', year: 2025, tier: 'premium', hot: true, image: '/watch-models/watch-series-11.webp', },
+  { id: 'watch-se-3-40', category: 'watch', name: 'Apple Watch SE（第 3 代・40mm）', series: 'SE', year: 2025, tier: 'standard', hot: true, image: '/watch-models/watch-se-2025.png', },
+  { id: 'watch-se-3-44', category: 'watch', name: 'Apple Watch SE（第 3 代・44mm）', series: 'SE', year: 2025, tier: 'standard', hot: true, image: '/watch-models/watch-se-2025.png', },
+  { id: 'watch-ultra-3', category: 'watch', name: 'Apple Watch Ultra 3（49mm）', series: 'Ultra', year: 2025, tier: 'flagship', hot: true, image: '/watch-models/watch-ultra-3.png', },
 
   /* ── MacBook ──────────────────────────────── */
   { id: 'mbp-16-m4-max', category: 'macbook', name: 'MacBook Pro 16 吋（M4 Max）', series: 'MacBook Pro', year: 2024, tier: 'flagship', hot: true },
@@ -155,4 +159,48 @@ export function getModelById(id: string): DeviceModel | undefined {
 
 export function getModelsByCategory(category: DeviceModel['category']): DeviceModel[] {
   return deviceModels.filter((m) => m.category === category);
+}
+
+/** 根據型號自動對應展示圖：iPhone / iPad / MacBook 按外觀去重複用，Apple Watch 沿用自帶 image */
+export function getModelImage(model: DeviceModel): string | undefined {
+  if (model.image) return model.image;
+  const base = '/device-models/';
+  const n = model.name;
+  if (model.category === 'iphone') {
+    if (/Pro/.test(n)) {
+      if (/17/.test(n)) return base + 'iphone-17-pro.png';
+      if (/16/.test(n)) return base + 'iphone-16-pro.png';
+      if (/15/.test(n)) return base + 'iphone-15-pro.png';
+      if (/14/.test(n)) return base + 'iphone-14-pro.png';
+      if (/13/.test(n)) return base + 'iphone-13-pro.png';
+      return base + 'iphone-12.png';
+    }
+    if (/17/.test(n)) return base + 'iphone-17.png';
+    if (/16e/.test(n)) return base + 'iphone-16e.png';
+    if (/16/.test(n)) return base + 'iphone-16.png';
+    if (/15/.test(n)) return base + 'iphone-15.png';
+    if (/14/.test(n)) return base + 'iphone-14.png';
+    if (/13/.test(n)) return base + 'iphone-13.png';
+    if (/12|11/.test(n)) return base + 'iphone-12.png';
+    if (/SE/.test(n)) return base + 'iphone-se.png';
+    if (/X/.test(n)) return base + 'iphone-12.png';
+    return base + 'iphone-16.png';
+  }
+  if (model.category === 'ipad') {
+    if (/Pro/.test(n)) return /M4/.test(n) ? base + 'ipad-pro-m4.png' : base + 'ipad-pro-m2.png';
+    if (/Air/.test(n)) return /M3/.test(n) ? base + 'ipad-air-m3.png' : base + 'ipad-air-m2.png';
+    if (/mini/.test(n)) return base + 'ipad-mini.png';
+    return base + 'ipad-10.png';
+  }
+  if (model.category === 'macbook') {
+    if (/Pro/.test(n)) {
+      if (/16/.test(n)) return /M4/.test(n) ? base + 'mbp-16-m4.png' : base + 'mbp-16-m2.png';
+      if (/14/.test(n)) return base + 'mbp-14-m4.png';
+      if (/13/.test(n)) return base + 'mbp-13-m1.png';
+      if (/15/.test(n)) return base + 'mbp-15-intel.png';
+    }
+    if (/15/.test(n)) return base + 'mba-15-m4.png';
+    return base + 'mba-13-m4.png';
+  }
+  return undefined;
 }

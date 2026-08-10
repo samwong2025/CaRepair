@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Check, Home, Store, Truck } from 'lucide-react';
+import { Check, Home, Store } from 'lucide-react';
 import { FieldError, Input, Label, Textarea } from '../ui/input';
 import { siteConfig } from '../../config/site';
 import { cn } from '../../lib/utils';
@@ -37,17 +37,11 @@ const serviceModes: {
     tag: '最快',
   },
   {
-    id: 'pickup',
-    name: '上門收送',
-    description: '順豐同城上門取件，修好後送返你手上，全港來回運費全免。',
-    icon: Truck,
-    tag: '免運費',
-  },
-  {
     id: 'mail_in',
     name: '自行寄件',
-    description: '自行寄到荔枝角門市，收件後即時通知，可於網站實時追蹤進度。',
+    description: '自行寄到荔枝角門市，收件後即時通知，可於網站即時追蹤進度。',
     icon: Home,
+    tag: '免運費',
   },
 ];
 
@@ -186,40 +180,25 @@ export function StepBooking({
           <FieldError>{errors.shopName}</FieldError>
         </div>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-[10rem_1fr]">
-          <div>
-            <Label htmlFor="district" required>
-              地區
-            </Label>
-            <Input
-              id="district"
-              value={form.district}
-              onChange={(event) => onChange('district', event.target.value)}
-              placeholder="例如：荃灣"
-              invalid={Boolean(errors.district)}
-            />
-            <FieldError>{errors.district}</FieldError>
-          </div>
-          <div>
-            <Label htmlFor="address" required>
-              {form.serviceMode === 'pickup' ? '上門收件地址' : '回郵地址'}
-            </Label>
-            <Input
-              id="address"
-              value={form.address}
-              onChange={(event) => onChange('address', event.target.value)}
-              placeholder="請填寫完整地址，包括大廈、樓層及單位"
-              invalid={Boolean(errors.address)}
-            />
-            <FieldError>{errors.address}</FieldError>
-          </div>
+        <div>
+          <Label htmlFor="address" required>
+            回郵地址
+          </Label>
+          <Input
+            id="address"
+            value={form.address}
+            onChange={(event) => onChange('address', event.target.value)}
+            placeholder="請填寫完整地址，包括地區、大廈、樓層及單位"
+            invalid={Boolean(errors.address)}
+          />
+          <FieldError>{errors.address}</FieldError>
         </div>
       )}
 
       {/* 預約日期時段 */}
       <div>
         <Label className="mb-3 block" required>
-          {form.serviceMode === 'walk_in' ? '到店日期' : '上門／收件日期'}
+          {form.serviceMode === 'walk_in' ? '到店日期' : '收件日期'}
         </Label>
         <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-2">
           {dateOptions.map((option) => {
@@ -309,7 +288,9 @@ export function StepBooking({
             <FieldError>{errors.customerPhone}</FieldError>
           </div>
           <div className="sm:col-span-2">
-            <Label htmlFor="customerEmail">電郵（選填，用於接收電子收據）</Label>
+            <Label htmlFor="customerEmail" required>
+              電郵（用於接收電子收據）
+            </Label>
             <Input
               id="customerEmail"
               type="email"

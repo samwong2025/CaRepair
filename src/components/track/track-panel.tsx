@@ -19,7 +19,7 @@ const tabs = [
 
 type TabId = (typeof tabs)[number]['id'];
 
-/** 訂單追蹤主面板：查詢 + 實時進度 + 售後服務 */
+/** 訂單追蹤主面板：查詢 + 即時進度 + 售後服務 */
 export function TrackPanel({ initialKeyword = '' }: { initialKeyword?: string }) {
   const [tab, setTab] = React.useState<TabId>('orders');
   const [mode, setMode] = React.useState<TrackMode>(initialKeyword ? 'orderNo' : 'phone');
@@ -160,7 +160,7 @@ export function TrackPanel({ initialKeyword = '' }: { initialKeyword?: string })
                         <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
                       </span>
                       <RadioTower className="h-4 w-4 text-emerald-600" />
-                      {channel === 'realtime' ? '已連線實時推播' : '每 20 秒自動更新'}
+                      {channel === 'realtime' ? '已連線即時推播' : '每 20 秒自動更新'}
                       {lastSyncedAt ? (
                         <span className="text-ink-faint">・最後同步 {formatDateTime(lastSyncedAt)}</span>
                       ) : null}

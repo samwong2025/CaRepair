@@ -3,7 +3,7 @@ import { AdminSidebar } from '../../components/admin/sidebar';
 import { getRepository } from '../../lib/repositories';
 
 export const metadata: Metadata = {
-  title: '後台管理｜CathyRepair 凱西維修',
+  title: '後台管理｜CathyRepair',
   robots: { index: false, follow: false },
 };
 

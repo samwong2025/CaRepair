@@ -65,7 +65,7 @@ export const mockRepository: DataRepository = {
   async createRepairOrder(input: RepairOrderInput): Promise<CreateOrderResult> {
     const store = getStore();
     const model = getModelById(input.deviceModelId);
-    if (!model) throw new Error('找不到對應的裝置型號');
+    if (!model) throw new Error('找不到對應的產品型號');
 
     const quote = calculateQuote(input.deviceModelId, input.symptomIds);
     if (quote.items.length === 0) throw new Error('未能為所選故障產生報價');

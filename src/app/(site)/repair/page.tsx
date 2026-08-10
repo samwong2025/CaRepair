@@ -1,20 +1,19 @@
 import type { Metadata } from 'next';
-import { Clock3, ShieldCheck, Sparkles, Wallet } from 'lucide-react';
+import { Clock3, ShieldCheck, Sparkles } from 'lucide-react';
 import { RepairWizard } from '../../../components/repair/wizard';
 import { deviceGroups } from '../../../data/devices';
 import type { DeviceCategory } from '../../../types';
 
 export const metadata: Metadata = {
-  title: '網上維修報價落單｜CathyRepair 凱西維修',
+  title: '網上維修報價落單｜CathyRepair',
   description:
-    '四步驟完成 iPhone、iPad、Apple Watch、MacBook 維修落單：揀機型、揀故障、即時睇報價明細（配件費 + 人工費），再約時間到店或安排順豐上門收送。',
+    '四步驟完成 iPhone、iPad、Apple Watch、MacBook 維修落單：揀機型、揀故障、即時睇報價明細（配件費 + 人工費），再約時間到店或安排順豐寄修。',
   alternates: { canonical: '/repair' },
 };
 
 const highlights = [
-  { icon: Wallet, title: '報價即最終收費', description: '配件費、人工費逐項列明，冇隱藏收費。' },
   { icon: Clock3, title: '最快 30 分鐘取機', description: '常見故障門市即場快修，等埋都得。' },
-  { icon: ShieldCheck, title: '最長 365 日保養', description: '維修全程錄影，質保期內同類故障免費再修。' },
+  { icon: ShieldCheck, title: '最長 365 日保養', description: '質保期內同類故障免費再修，安心無憂。' },
   { icon: Sparkles, title: '網上落單即減 HK$50', description: '同時修兩項或以上，另有套餐折扣。' },
 ];
 
@@ -48,7 +47,7 @@ export default function RepairPage({
           </h1>
           <p className="mx-auto mt-4 max-w-2xl text-[0.95rem] leading-relaxed text-white/70 sm:text-base">
             揀機型 → 揀故障 → 睇報價 → 約時間，四步搞掂。提交後自動為你開立會員檔案，
-            全程可於網站實時追蹤維修進度。
+            全程可於網站即時追蹤維修進度。
           </p>
 
           <ul className="mx-auto mt-9 grid max-w-4xl gap-3 sm:grid-cols-2 lg:grid-cols-4">

@@ -4,13 +4,15 @@ import { cn } from '../../lib/utils';
 export function Card({
   className,
   hover = false,
+  glow = true,
   ...props
-}: React.HTMLAttributes<HTMLDivElement> & { hover?: boolean }) {
+}: React.HTMLAttributes<HTMLDivElement> & { hover?: boolean; glow?: boolean }) {
   return (
     <div
       className={cn(
         'rounded-2xl border border-slate-200/80 bg-white shadow-card',
-        hover && 'transition-all duration-300 ease-smooth hover:-translate-y-1 hover:border-brand-200 hover:shadow-lift',
+        hover && 'transition-all duration-300 ease-smooth hover:-translate-y-1 hover:border-[3px] hover:border-brand-300 hover:shadow-lift',
+        hover && glow && 'glow-card',
         className,
       )}
       {...props}

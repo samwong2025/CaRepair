@@ -11,7 +11,7 @@ import { TrustBadges } from '../../components/home/trust-badges';
 import { siteConfig } from '../../config/site';
 
 export const metadata: Metadata = {
-  title: `${siteConfig.name} 凱西維修｜${siteConfig.slogan}`,
+  title: `${siteConfig.name}｜${siteConfig.slogan}`,
   description: siteConfig.description,
   alternates: { canonical: '/' },
 };

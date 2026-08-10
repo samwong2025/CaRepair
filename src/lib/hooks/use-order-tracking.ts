@@ -25,7 +25,7 @@ function buildQuery(mode: TrackMode, keyword: string) {
 }
 
 /**
- * 訂單查詢與狀態實時追蹤。
+ * 訂單查詢與狀態即時追蹤。
  * 已連線 Supabase 時透過 Realtime 訂閱 repair_orders 變更即時刷新；
  * 未連線（Mock 模式）時自動回退為 20 秒輪詢，確保功能一致可用。
  */

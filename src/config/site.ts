@@ -2,11 +2,10 @@
 
 export const siteConfig = {
   name: 'CathyRepair',
-  nameZh: '凱西維修',
-  tagline: '香港蘋果裝置專業維修中心',
+  tagline: '香港蘋果產品專業維修中心',
   slogan: '30 分鐘極速維修・原廠級品質・180 日保養',
   description:
-    'CathyRepair 凱西維修專注 iPhone、iPad、Apple Watch、MacBook 維修，提供即時報價、上門收送與門市快修服務，全程錄影、持牌技師施工、180 日保養承諾。',
+    'CathyRepair 專注 iPhone、iPad、Apple Watch、MacBook 維修，提供即時報價、門市快修與順豐寄修服務，專業師傅施工、180 日保養承諾。',
   hotline: '3188 6688',
   whatsapp: '9123 4567',
   serviceHours: '每日 10:00 – 21:00（公眾假期照常）',
@@ -21,7 +20,7 @@ export const siteConfig = {
     },
   ],
   company: {
-    legalName: '凱西維修科技（香港）有限公司',
+    legalName: 'CathyRepair Technology (Hong Kong) Limited',
     brNo: '商業登記證號碼 7118 9264-000-08-26-A',
     since: 2016,
   },
@@ -93,11 +92,10 @@ export const footerNav = [
   },
 ] as const;
 
-/** 信任徽章：對標「全程錄影・持證上崗・嚴苛質檢・超長質保」 */
+/** 信任徽章：對標「持證上崗・嚴苛質檢・超長質保」 */
 export const trustBadges = [
   { icon: 'ShieldCheck', label: '180 日保養', detail: '維修後保養期內免費復修' },
-  { icon: 'Video', label: '全程錄影', detail: '維修過程可回看，杜絕換料' },
-  { icon: 'BadgeCheck', label: '持牌技師', detail: '平均 8 年蘋果維修經驗' },
+  { icon: 'BadgeCheck', label: '專業師傅', detail: '平均 8 年蘋果維修經驗' },
   { icon: 'Timer', label: '30 分鐘快修', detail: '常見故障即日取機' },
   { icon: 'Banknote', label: '透明報價', detail: '配件費、人工費逐項列明' },
   { icon: 'Lock', label: '私隱保密', detail: '不查看、不備份任何個人資料' },

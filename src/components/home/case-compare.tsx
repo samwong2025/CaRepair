@@ -65,7 +65,7 @@ export function CaseCompare() {
           </Reveal>
 
           <Reveal delay={120}>
-            <div className="flex h-full flex-col rounded-2xl border border-slate-200/80 bg-white p-6 shadow-card sm:p-7">
+            <div className="glow-card flex h-full flex-col rounded-2xl border border-slate-200/80 bg-white p-6 shadow-card sm:p-7">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge variant="accent" size="sm">
                   {active.symptomSummary}

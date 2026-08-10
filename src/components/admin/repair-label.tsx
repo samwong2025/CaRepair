@@ -14,9 +14,12 @@ export function RepairLabel({ order }: { order: RepairOrder }) {
   return (
     <div className="print-sheet mx-auto w-[70mm] border border-slate-900 bg-white p-3 text-slate-900">
       <div className="flex items-center justify-between border-b border-slate-900 pb-2">
-        <div>
-          <p className="text-[0.72rem] font-extrabold leading-none">CathyRepair 凱西維修</p>
-          <p className="mt-1 text-[0.58rem] leading-none text-slate-600">維修識別標籤 REPAIR TAG</p>
+        <div className="flex items-center gap-1.5">
+          <img src="/logo-mark.png" alt="CathyRepair" className="h-7 w-7" />
+          <div>
+            <p className="text-[0.72rem] font-extrabold leading-none">CathyRepair</p>
+            <p className="mt-1 text-[0.58rem] leading-none text-slate-600">維修識別標籤 REPAIR TAG</p>
+          </div>
         </div>
         <span className="rounded border border-slate-900 px-1.5 py-0.5 text-[0.58rem] font-bold">
           {meta.label}

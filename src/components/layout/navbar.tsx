@@ -51,7 +51,7 @@ export function Navbar() {
           <div className="flex items-center gap-6 text-white/70">
             <span className="flex items-center gap-1.5">
               <ShieldCheck className="h-3.5 w-3.5 text-brand-300" />
-              持牌技師駐店・荔枝角門市即場快修
+              專業師傅駐店・荔枝角門市即場快修
             </span>
             <span className="flex items-center gap-1.5">
               <Clock3 className="h-3.5 w-3.5 text-brand-300" />
@@ -87,21 +87,25 @@ export function Navbar() {
             : 'border-b border-transparent bg-white/70 backdrop-blur-md',
         )}
       >
-        <nav className="section-shell flex h-16 items-center justify-between gap-4 lg:h-[4.5rem]">
-          <Link href="/" className="group flex shrink-0 items-center gap-2.5">
-            <span className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-brand-gradient shadow-brand transition-transform duration-300 group-hover:scale-105">
-              <Wrench className="h-5 w-5 text-white" strokeWidth={2.4} />
-              <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-accent-500 ring-2 ring-white" />
-            </span>
-            <span className="flex flex-col leading-none">
-              <span className="text-lg font-extrabold tracking-tight text-ink">
-                Cathy<span className="text-brand-600">Repair</span>
-              </span>
-              <span className="mt-1 text-[0.68rem] font-medium tracking-[0.18em] text-ink-faint">
-                蘋果裝置專業維修
-              </span>
-            </span>
-          </Link>
+        <nav className="section-shell flex h-16 items-center justify-between gap-4 lg:h-24">
+                <Link href="/" className="group flex shrink-0 items-center gap-3.5">
+                  {/* 品牌標誌：直接採用設計稿 PNG（蘋果外輪廓 + 內部女技師剪影） */}
+                  <img
+                    src="/logo-mark.png"
+                    alt="CathyRepair"
+                    width={96}
+                    height={96}
+                    className="h-20 w-20 sm:h-24 sm:w-24"
+                  />
+                  <span className="flex flex-col leading-none">
+                    <span className="text-[1.85rem] font-extrabold tracking-tight text-ink sm:text-[2.05rem]">
+                      Cathy<span className="text-brand-600">Repair</span>
+                    </span>
+                    <span className="mt-1.5 text-[0.72rem] font-medium uppercase tracking-[0.18em] text-ink-faint sm:text-[0.78rem]">
+                      Apple Product Specialist
+                    </span>
+                  </span>
+                </Link>
 
           <div className="hidden items-center gap-1 lg:flex">
             {mainNav.map((item) => (
@@ -150,7 +154,7 @@ export function Navbar() {
         </nav>
       </div>
 
-      {/* 流動裝置抽屜選單 */}
+      {/* 流動產品抽屜選單 */}
       <div
         className={cn(
           'fixed inset-x-0 top-16 z-40 origin-top overflow-hidden border-b border-slate-200 bg-white shadow-card transition-all duration-300 ease-smooth lg:hidden',

@@ -4,10 +4,10 @@ import { Check } from 'lucide-react';
 import { cn } from '../../lib/utils';
 
 export const WIZARD_STEPS = [
-  { step: 1, title: '選機型', titleEn: 'Device' },
-  { step: 2, title: '揀故障', titleEn: 'Symptoms' },
+  { step: 1, title: '揀機型', titleEn: 'Device' },
+  { step: 2, title: '揀故障', titleEn: 'Issue' },
   { step: 3, title: '睇報價', titleEn: 'Quote' },
-  { step: 4, title: '約時間', titleEn: 'Booking' },
+  { step: 4, title: '約時間', titleEn: 'Book' },
 ] as const;
 
 /** 四步驟進度條，已完成的步驟可點擊回頭修改 */

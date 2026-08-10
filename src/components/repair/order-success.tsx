@@ -19,7 +19,7 @@ import type { CreateOrderResult } from '../../types';
 
 const serviceModeLabel: Record<string, string> = {
   walk_in: '到店維修',
-  pickup: '順豐上門收送',
+  pickup: '順豐寄修',
   mail_in: '自行寄件',
 };
 
@@ -107,7 +107,7 @@ export function OrderSuccess({ result, onRestart }: { result: CreateOrderResult;
             <div className="rounded-xl border border-slate-200 px-4 py-3.5">
               <dt className="flex items-center gap-1.5 text-xs text-ink-faint">
                 <Smartphone className="h-3.5 w-3.5" />
-                維修裝置
+                維修產品
               </dt>
               <dd className="mt-1 text-[0.95rem] font-bold text-ink">{order.deviceModelName}</dd>
               <dd className="mt-0.5 text-xs text-ink-muted">
@@ -155,8 +155,8 @@ export function OrderSuccess({ result, onRestart }: { result: CreateOrderResult;
           <ol className="space-y-3 rounded-2xl bg-surface-soft px-5 py-5">
             {[
               '客服 WhatsApp 確認機型、故障與時段，並提醒你事前備份資料。',
-              '按約定時間到店或等順豐上門收件，收件後即時開立維修工單。',
-              '維修全程錄影，完成後通過品檢，你可即場驗機再付款。',
+              '按約定時間到店或寄出後等順豐收件，收件後即時開立維修工單。',
+              '完成後通過品檢，你可即場驗機再付款。',
             ].map((text, index) => (
               <li key={text} className="flex items-start gap-3 text-sm leading-relaxed text-ink-muted">
                 <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-gradient text-xs font-extrabold text-white">

@@ -6,7 +6,7 @@ import type { RepairOrder } from '../../types';
 
 const serviceModeLabel: Record<string, string> = {
   walk_in: '到店維修',
-  pickup: '順豐上門收送',
+  pickup: '順豐寄修',
   mail_in: '自行寄件',
 };
 
@@ -23,14 +23,17 @@ export function Receipt({ order }: { order: RepairOrder }) {
   return (
     <div className="print-sheet mx-auto w-full max-w-[190mm] bg-white p-8 text-slate-900">
       <header className="flex items-start justify-between border-b-2 border-slate-900 pb-4">
-        <div>
-          <p className="text-xl font-extrabold leading-none">CathyRepair 凱西維修</p>
-          <p className="mt-1.5 text-xs text-slate-600">{siteConfig.slogan}</p>
-          <p className="mt-2 text-[0.7rem] leading-relaxed text-slate-600">
-            {shop.name}｜{shop.address}
-            <br />
-            電話 {siteConfig.hotline}｜WhatsApp {siteConfig.whatsapp}｜{siteConfig.email}
-          </p>
+        <div className="flex items-start gap-2.5">
+          <img src="/logo-mark.png" alt="CathyRepair" className="h-10 w-10" />
+          <div>
+            <p className="text-xl font-extrabold leading-none">CathyRepair</p>
+            <p className="mt-1.5 text-xs text-slate-600">{siteConfig.slogan}</p>
+            <p className="mt-2 text-[0.7rem] leading-relaxed text-slate-600">
+              {shop.name}｜{shop.address}
+              <br />
+              電話 {siteConfig.hotline}｜WhatsApp {siteConfig.whatsapp}｜{siteConfig.email}
+            </p>
+          </div>
         </div>
         <div className="text-right">
           <p className="text-base font-extrabold">維修服務收據</p>
@@ -132,7 +135,7 @@ export function Receipt({ order }: { order: RepairOrder }) {
           <li>本收據為保養憑證，請妥善保存；保養期內同類故障免工費及配件費重新處理。</li>
           <li>人為損壞（跌撞、入水、自行拆機）、電池自然損耗及軟件問題不在保養範圍。</li>
           <li>取機時請即場檢查機身外觀及各項功能，離店後恕不受理外觀爭議。</li>
-          <li>維修過程全程錄影，如有爭議可於 30 日內申請調閱。</li>
+          <li>如有任何爭議，可於 30 日內致電門市查詢及跟進。</li>
         </ol>
       </section>
 

@@ -1,6 +1,6 @@
 /** CathyRepair 領域模型定義 —— 所有跨檔案使用的型別都必須 export */
 
-/* ─── 裝置與機型 ─────────────────────────────────── */
+/* ─── 產品與機型 ─────────────────────────────────── */
 
 export type DeviceCategory = 'iphone' | 'ipad' | 'watch' | 'macbook';
 
@@ -14,6 +14,8 @@ export interface DeviceBrandGroup {
   description: string;
   icon: string;
   popular: string;
+  /** 頂部右側展示的產品大圖（透明 PNG，路徑相對於 /public） */
+  coverImage?: string;
 }
 
 export interface DeviceModel {
@@ -37,7 +39,7 @@ export interface Symptom {
   shortName: string;
   icon: string;
   description: string;
-  /** 適用的裝置分類，未列出者不顯示 */
+  /** 適用的產品分類，未列出者不顯示 */
   categories: DeviceCategory[];
   /** 常見程度，用於排序（數值越大越常見） */
   frequency: number;

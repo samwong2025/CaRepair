@@ -13,7 +13,7 @@ import { resolveIcon } from '../../lib/icons';
 import { getStartingPrice } from '../../lib/quote-engine';
 import { cn } from '../../lib/utils';
 
-/** 熱門維修價目：按裝置分類切換，顯示「HK$X 起」引流價 */
+/** 熱門維修價目：按產品分類切換，顯示「HK$X 起」引流價 */
 export function PricePreview() {
   const [category, setCategory] = React.useState(deviceGroups[0].id);
 
@@ -47,12 +47,22 @@ export function PricePreview() {
                   onClick={() => setCategory(group.id)}
                   aria-pressed={selected}
                   className={cn(
-                    'flex cursor-pointer items-start gap-3 rounded-2xl border p-4 text-left transition-all duration-300 ease-smooth',
+                    'glow-card relative flex cursor-pointer items-start gap-3 overflow-hidden rounded-2xl border p-4 text-left transition-all duration-300 ease-smooth',
                     selected
                       ? 'border-brand-500 bg-white shadow-lift'
-                      : 'border-slate-200/80 bg-white/70 hover:-translate-y-1 hover:border-brand-200 hover:bg-white hover:shadow-card',
+                      : 'border-slate-200/80 bg-white/70 hover:-translate-y-1 hover:bg-white hover:shadow-card',
                   )}
                 >
+                  {group.coverImage ? (
+                    <img
+                      src={group.coverImage}
+                      alt={group.name}
+                      width={112}
+                      height={112}
+                      loading="lazy"
+                      className="pointer-events-none absolute -right-4 -top-3 h-[72px] w-[72px] object-contain opacity-95"
+                    />
+                  ) : null}
                   <span
                     className={cn(
                       'flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-colors duration-300',

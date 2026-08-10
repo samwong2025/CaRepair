@@ -21,10 +21,10 @@ export function ServicePillars() {
             const Icon = resolveIcon(pillar.icon, BadgeCheck);
             return (
               <Reveal key={pillar.id} delay={index * 120}>
-                <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white p-7 shadow-card transition-all duration-300 ease-smooth hover:-translate-y-1.5 hover:border-brand-200 hover:shadow-lift">
+                <article className="glow-card group relative flex h-full flex-col rounded-2xl border border-slate-200/80 bg-white p-7 shadow-card transition-all duration-300 ease-smooth hover:-translate-y-1.5 hover:shadow-lift">
                   <span
                     aria-hidden
-                    className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-brand-50/80 transition-transform duration-500 ease-smooth group-hover:scale-125"
+                    className="absolute -right-10 -top-10 h-32 w-32 overflow-hidden rounded-full bg-brand-50/80 transition-transform duration-500 ease-smooth group-hover:scale-125"
                   />
 
                   <span className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-gradient text-white shadow-brand">

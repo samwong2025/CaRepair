@@ -28,13 +28,13 @@ export function CtaBanner() {
           eyebrow="荔枝角門市"
           title="就近攞機，即修即走"
           titleEn="Visit Our Store"
-          description="門市設獨立無塵維修室，亦可揀順豐上門收送，全港（含離島）來回運費全免。"
+          description="門市設獨立無塵維修室，亦可揀順豐寄修，全港（含離島）來回運費全免。"
         />
 
         <div className="mt-12 grid gap-5 lg:grid-cols-1 lg:max-w-xl lg:mx-auto">
           {siteConfig.shops.map((shop, index) => (
             <Reveal key={shop.name} delay={index * 110}>
-              <article className="flex h-full flex-col rounded-2xl border border-white/10 bg-white/[0.06] p-6 backdrop-blur-sm transition-all duration-300 ease-smooth hover:-translate-y-1.5 hover:border-brand-400/40 hover:bg-white/[0.1]">
+              <article className="glow-card flex h-full flex-col rounded-2xl border border-white/10 bg-white/[0.06] p-6 backdrop-blur-sm transition-all duration-300 ease-smooth hover:-translate-y-1.5 hover:border-brand-400/40 hover:bg-white/[0.1]">
                 <div className="flex items-center gap-3">
                   <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand-gradient text-white shadow-brand">
                     <MapPin className="h-5 w-5" strokeWidth={2} />

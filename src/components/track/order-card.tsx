@@ -12,7 +12,7 @@ import type { RepairOrder } from '../../types';
 
 const serviceModeLabel: Record<string, string> = {
   walk_in: '到店維修',
-  pickup: '順豐上門收送',
+  pickup: '順豐寄修',
   mail_in: '自行寄件',
 };
 
@@ -22,8 +22,8 @@ export function OrderCard({ order, defaultOpen = false }: { order: RepairOrder; 
   const meta = statusMeta[order.status];
 
   return (
-    <article className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-card">
-      <header className="flex flex-col gap-4 border-b border-slate-100 bg-surface-soft px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+    <article className="glow-card rounded-2xl border border-slate-200 bg-white shadow-card">
+      <header className="flex flex-col gap-4 rounded-t-2xl border-b border-slate-100 bg-surface-soft px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
             <p className="text-lg font-extrabold tracking-wide text-ink">{order.orderNo}</p>

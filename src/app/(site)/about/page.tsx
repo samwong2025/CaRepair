@@ -20,9 +20,9 @@ import { SmartImage } from '../../../components/ui/smart-image';
 import { resolveIcon } from '../../../lib/icons';
 
 export const metadata: Metadata = {
-  title: '關於我們｜CathyRepair 凱西維修',
+  title: '關於我們｜CathyRepair',
   description:
-    'CathyRepair 凱西維修成立於 2016 年，是香港專營 iPhone、iPad、Apple Watch、MacBook 維修的專業中心。持牌技師、全程錄影、27 項出機檢測與 180 日保養，守護全港超過 12 萬客戶的蘋果裝置。',
+    'CathyRepair 成立於 2016 年，是香港專營 iPhone、iPad、Apple Watch、MacBook 維修的專業中心。專業師傅、27 項出機檢測與 180 日保養，守護全港超過 12 萬客戶的蘋果產品。',
 };
 
 export default function AboutPage() {
@@ -35,8 +35,7 @@ export default function AboutPage() {
           Since {siteConfig.company.since}
         </p>
         <h1 className="mt-3 text-4xl font-extrabold leading-tight sm:text-5xl">
-          {siteConfig.nameZh}
-          <span className="ml-2 align-middle text-2xl font-bold text-white/80">{siteConfig.name}</span>
+          {siteConfig.name}
         </h1>
         <p className="mt-4 max-w-2xl text-base text-white/85 sm:text-lg">
           {siteConfig.tagline}，自 {siteConfig.company.since} 年起立足香港，累計服務超過 12 萬名客戶。
@@ -78,7 +77,7 @@ export default function AboutPage() {
             </p>
             <p>
               今日，我哋喺荔枝角設有門市、駐店技師平均擁有 8 年蘋果維修經驗，
-              維修過程全程錄影、配件費與人工費逐項列明。由一粒螺絲到一塊主機板，
+              維修過程由專業師傅按標準工序處理、配件費與人工費逐項列明。由一粒螺絲到一塊主機板，
               我哋守護嘅唔單止係部機，更加係你嘅資料、私隱同信任。
             </p>
           </div>
@@ -99,7 +98,7 @@ export default function AboutPage() {
         <div className="relative overflow-hidden rounded-3xl shadow-lift">
           <SmartImage
             src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=80"
-            alt="CathyRepair 技師維修蘋果裝置"
+            alt="CathyRepair 技師維修蘋果產品"
             wrapperClassName="aspect-[4/3]"
             fallbackText="CathyRepair 維修實況"
           />
@@ -120,7 +119,7 @@ export default function AboutPage() {
             return (
               <article
                 key={pillar.id}
-                className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card transition-all duration-200 hover:-translate-y-1 hover:shadow-lift"
+                className="glow-card rounded-2xl border border-slate-200 bg-white p-6 shadow-card transition-all duration-200 hover:-translate-y-1 hover:shadow-lift"
               >
                 <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
                   <Icon className="h-6 w-6" />
@@ -149,7 +148,7 @@ export default function AboutPage() {
             return (
               <div
                 key={badge.label}
-                className="flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-card"
+                className="glow-card flex items-start gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-card"
               >
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
                   <Icon className="h-5 w-5" />
@@ -170,7 +169,7 @@ export default function AboutPage() {
         <p className="mt-2 text-sm text-ink-muted">門市鄰近港鐵站，即場維修無需預約。</p>
         <div className="mt-6 grid gap-5 md:grid-cols-1 md:max-w-xl">
           {siteConfig.shops.map((shop) => (
-            <article key={shop.name} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
+            <article key={shop.name} className="glow-card rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
               <div className="flex items-center gap-2">
                 <MapPin className="h-5 w-5 text-brand-600" />
                 <h3 className="text-lg font-extrabold text-ink">{shop.name}</h3>
@@ -230,7 +229,7 @@ export default function AboutPage() {
         <div className="overflow-hidden rounded-3xl bg-cta-gradient px-6 py-10 text-white sm:px-10">
           <h2 className="text-2xl font-extrabold sm:text-3xl">加入我們・做一個被信任嘅技師</h2>
           <p className="mt-3 max-w-2xl text-sm text-white/85">
-            如果你熟悉蘋果裝置維修、認同透明誠實嘅服務哲學，歡迎投遞履歷。我哋提供有競爭力嘅薪酬、
+            如果你熟悉蘋果產品維修、認同透明誠實嘅服務哲學，歡迎投遞履歷。我哋提供有競爭力嘅薪酬、
             持續技術培訓，同埋一個唔使「斬客」都能夠做好嘅工作環境。
           </p>
           <a
@@ -264,7 +263,7 @@ export default function AboutPage() {
               <a
                 key={item.label}
                 href={item.href}
-                className="rounded-2xl border border-slate-200 bg-white p-4 shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lift"
+                className="glow-card rounded-2xl border border-slate-200 bg-white p-4 shadow-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lift"
               >
                 {content}
               </a>

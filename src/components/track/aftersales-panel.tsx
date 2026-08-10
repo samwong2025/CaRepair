@@ -172,7 +172,7 @@ export function AfterSalesPanel() {
           {records.map((record) => {
             const meta = statusMeta[record.status];
             return (
-              <article key={record.id} className="rounded-xl border border-slate-200 px-4 py-3.5">
+              <article key={record.id} className="glow-card rounded-xl border border-slate-200 px-4 py-3.5">
                 <div className="flex flex-wrap items-center gap-2">
                   <p className="text-sm font-extrabold text-ink">{record.caseNo}</p>
                   <Badge variant={meta.tone} size="sm">
