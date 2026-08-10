@@ -90,7 +90,15 @@ export function Footer() {
             © {siteConfig.company.since}-{year} {siteConfig.company.legalName}・
             {siteConfig.company.brNo}
           </p>
-          <p>本網站所列價格均以港幣（HK$）計算，實際維修價格以檢測後報價單為準。</p>
+          <div className="flex items-center gap-4">
+            <p>本網站所列價格均以港幣（HK$）計算，實際維修價格以檢測後報價單為準。</p>
+            <Link
+              href="/admin"
+              className="rounded-md px-2 py-1 text-white/50 transition-colors hover:bg-white/10 hover:text-white"
+            >
+              後台管理
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
