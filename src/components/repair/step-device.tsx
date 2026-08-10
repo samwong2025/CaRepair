@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { Check, Flame, Search, Smartphone } from 'lucide-react';
+import { Check, Flame, Laptop, Search, Smartphone, Tablet, Watch } from 'lucide-react';
 import { Input } from '../ui/input';
 import { deviceGroups, deviceModels, tierLabel } from '../../data/devices';
 import { resolveIcon } from '../../lib/icons';
@@ -21,6 +21,13 @@ export function StepDevice({
   onSelectModel: (modelId: string) => void;
 }) {
   const [keyword, setKeyword] = React.useState('');
+
+  const thumbIcon = (category: DeviceCategory) => {
+    if (category === 'watch') return Watch;
+    if (category === 'ipad') return Tablet;
+    if (category === 'macbook') return Laptop;
+    return Smartphone;
+  };
 
   const models = React.useMemo(() => {
     if (!category) return [];
@@ -126,6 +133,7 @@ export function StepDevice({
                 <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
                   {list.map((model) => {
                     const selected = model.id === modelId;
+                    const Thumb = thumbIcon(model.category);
                     return (
                       <button
                         key={model.id}
@@ -133,13 +141,25 @@ export function StepDevice({
                         onClick={() => onSelectModel(model.id)}
                         aria-pressed={selected}
                         className={cn(
-                          'flex cursor-pointer items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left transition-all duration-200 ease-smooth',
+                          'flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-left transition-all duration-200 ease-smooth',
                           selected
                             ? 'border-brand-500 bg-brand-50/70 shadow-card'
                             : 'border-slate-200 bg-white hover:border-brand-300 hover:bg-surface-soft',
                         )}
                       >
-                        <span className="min-w-0">
+                        <span
+                          className={cn(
+                            'flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl',
+                            model.image ? 'bg-slate-100' : 'bg-brand-50 text-brand-600',
+                          )}
+                        >
+                          {model.image ? (
+                            <img src={model.image} alt={model.name} className="h-11 w-11 object-cover" />
+                          ) : (
+                            <Thumb className="h-5 w-5" strokeWidth={2} />
+                          )}
+                        </span>
+                        <span className="min-w-0 flex-1">
                           <span className="flex items-center gap-1.5">
                             <span className="truncate text-[0.92rem] font-bold text-ink">
                               {model.name}

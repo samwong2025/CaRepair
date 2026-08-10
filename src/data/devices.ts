@@ -99,6 +99,25 @@ export const deviceModels: DeviceModel[] = [
   { id: 'watch-s7', category: 'watch', name: 'Apple Watch Series 7', series: 'Series 7', year: 2021, tier: 'legacy' },
   { id: 'watch-s6', category: 'watch', name: 'Apple Watch Series 6', series: 'Series 6', year: 2020, tier: 'legacy' },
 
+  /* 以下型號依 iwatchrepair.co.uk 列出的完整機型譜補齊（Series 1–5 / 11、SE 初代與 2025、Ultra 3） */
+  { id: 'watch-s1-38', category: 'watch', name: 'Apple Watch Series 1（38mm）', series: 'Series 1', year: 2015, tier: 'legacy' },
+  { id: 'watch-s1-42', category: 'watch', name: 'Apple Watch Series 1（42mm）', series: 'Series 1', year: 2015, tier: 'legacy' },
+  { id: 'watch-s2-38', category: 'watch', name: 'Apple Watch Series 2（38mm）', series: 'Series 2', year: 2016, tier: 'legacy' },
+  { id: 'watch-s2-42', category: 'watch', name: 'Apple Watch Series 2（42mm）', series: 'Series 2', year: 2016, tier: 'legacy' },
+  { id: 'watch-s3-38', category: 'watch', name: 'Apple Watch Series 3（38mm）', series: 'Series 3', year: 2017, tier: 'legacy' },
+  { id: 'watch-s3-42', category: 'watch', name: 'Apple Watch Series 3（42mm）', series: 'Series 3', year: 2017, tier: 'legacy' },
+  { id: 'watch-s4-40', category: 'watch', name: 'Apple Watch Series 4（40mm）', series: 'Series 4', year: 2018, tier: 'legacy' },
+  { id: 'watch-s4-44', category: 'watch', name: 'Apple Watch Series 4（44mm）', series: 'Series 4', year: 2018, tier: 'legacy' },
+  { id: 'watch-s5-40', category: 'watch', name: 'Apple Watch Series 5（40mm）', series: 'Series 5', year: 2019, tier: 'legacy' },
+  { id: 'watch-s5-44', category: 'watch', name: 'Apple Watch Series 5（44mm）', series: 'Series 5', year: 2019, tier: 'legacy' },
+  { id: 'watch-se-1-40', category: 'watch', name: 'Apple Watch SE（第 1 代・40mm）', series: 'SE', year: 2020, tier: 'legacy' },
+  { id: 'watch-se-1-44', category: 'watch', name: 'Apple Watch SE（第 1 代・44mm）', series: 'SE', year: 2020, tier: 'legacy' },
+  { id: 'watch-s11-42', category: 'watch', name: 'Apple Watch Series 11（42mm）', series: 'Series 11', year: 2025, tier: 'premium', hot: true },
+  { id: 'watch-s11-46', category: 'watch', name: 'Apple Watch Series 11（46mm）', series: 'Series 11', year: 2025, tier: 'premium', hot: true },
+  { id: 'watch-se-3-40', category: 'watch', name: 'Apple Watch SE（第 3 代・40mm）', series: 'SE', year: 2025, tier: 'standard', hot: true },
+  { id: 'watch-se-3-44', category: 'watch', name: 'Apple Watch SE（第 3 代・44mm）', series: 'SE', year: 2025, tier: 'standard', hot: true },
+  { id: 'watch-ultra-3', category: 'watch', name: 'Apple Watch Ultra 3（49mm）', series: 'Ultra', year: 2025, tier: 'flagship', hot: true },
+
   /* ── MacBook ──────────────────────────────── */
   { id: 'mbp-16-m4-max', category: 'macbook', name: 'MacBook Pro 16 吋（M4 Max）', series: 'MacBook Pro', year: 2024, tier: 'flagship', hot: true },
   { id: 'mbp-16-m4-pro', category: 'macbook', name: 'MacBook Pro 16 吋（M4 Pro）', series: 'MacBook Pro', year: 2024, tier: 'flagship' },

@@ -25,6 +25,8 @@ export interface DeviceModel {
   tier: PriceTier;
   /** 是否為熱門機型，於選單置頂顯示 */
   hot?: boolean;
+  /** 機型產品圖（可選；缺省時前端以類別圖標代替） */
+  image?: string;
 }
 
 /* ─── 故障症狀 ───────────────────────────────────── */
