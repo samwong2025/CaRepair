@@ -25,13 +25,13 @@ export function CtaBanner() {
       <div className="section-shell relative">
         <SectionHeading
           invert
-          eyebrow="全港三間門市"
+          eyebrow="荔枝角門市"
           title="就近攞機，即修即走"
-          titleEn="Visit Our Stores"
-          description="港九三間門市均設獨立無塵維修室，亦可揀順豐上門收送，全港（含離島）來回運費全免。"
+          titleEn="Visit Our Store"
+          description="門市設獨立無塵維修室，亦可揀順豐上門收送，全港（含離島）來回運費全免。"
         />
 
-        <div className="mt-12 grid gap-5 lg:grid-cols-3">
+        <div className="mt-12 grid gap-5 lg:grid-cols-1 lg:max-w-xl lg:mx-auto">
           {siteConfig.shops.map((shop, index) => (
             <Reveal key={shop.name} delay={index * 110}>
               <article className="flex h-full flex-col rounded-2xl border border-white/10 bg-white/[0.06] p-6 backdrop-blur-sm transition-all duration-300 ease-smooth hover:-translate-y-1.5 hover:border-brand-400/40 hover:bg-white/[0.1]">

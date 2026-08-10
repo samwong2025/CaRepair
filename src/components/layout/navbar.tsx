@@ -51,7 +51,7 @@ export function Navbar() {
           <div className="flex items-center gap-6 text-white/70">
             <span className="flex items-center gap-1.5">
               <ShieldCheck className="h-3.5 w-3.5 text-brand-300" />
-              全港 3 間門市・持牌技師駐店
+              持牌技師駐店・荔枝角門市即場快修
             </span>
             <span className="flex items-center gap-1.5">
               <Clock3 className="h-3.5 w-3.5 text-brand-300" />

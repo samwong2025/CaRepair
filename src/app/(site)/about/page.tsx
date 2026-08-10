@@ -77,7 +77,7 @@ export default function AboutPage() {
               第一張工作枱上寫住一句話：「唔會做喺客唔知嘅嘢。」
             </p>
             <p>
-              今日，我哋喺港九新界設有三間門市、駐店技師平均擁有 8 年蘋果維修經驗，
+              今日，我哋喺荔枝角設有門市、駐店技師平均擁有 8 年蘋果維修經驗，
               維修過程全程錄影、配件費與人工費逐項列明。由一粒螺絲到一塊主機板，
               我哋守護嘅唔單止係部機，更加係你嘅資料、私隱同信任。
             </p>
@@ -86,7 +86,7 @@ export default function AboutPage() {
           <div className="mt-6 grid grid-cols-3 gap-3">
             {[
               { value: `${new Date().getFullYear() - siteConfig.company.since}+`, label: '年專業經驗' },
-              { value: '3', label: '港九門市' },
+              { value: '1', label: '荔枝角門市' },
               { value: '2,300+', label: '配件現貨' },
             ].map((item) => (
               <div key={item.label} className="rounded-2xl bg-surface-soft p-3 text-center">
@@ -167,8 +167,8 @@ export default function AboutPage() {
       {/* 門市 */}
       <section id="shops" className="mt-16 scroll-mt-24">
         <h2 className="text-3xl font-extrabold text-ink">門市地址</h2>
-        <p className="mt-2 text-sm text-ink-muted">三間門市遍佈港九，鄰近港鐵站，即場維修無需預約。</p>
-        <div className="mt-6 grid gap-5 md:grid-cols-3">
+        <p className="mt-2 text-sm text-ink-muted">門市鄰近港鐵站，即場維修無需預約。</p>
+        <div className="mt-6 grid gap-5 md:grid-cols-1 md:max-w-xl">
           {siteConfig.shops.map((shop) => (
             <article key={shop.name} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
               <div className="flex items-center gap-2">

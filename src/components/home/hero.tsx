@@ -49,7 +49,7 @@ export function Hero() {
           <div className="animate-fade-up">
             <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-semibold text-white backdrop-blur-sm">
               <Sparkles className="h-3.5 w-3.5 text-accent-300" />
-              全港 3 間門市・自 {siteConfig.company.since} 年服務逾 12 萬名客戶
+              自 {siteConfig.company.since} 年服務逾 12 萬名客戶
             </span>
 
             <h1 className="mt-6 text-display-lg text-white">

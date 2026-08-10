@@ -13,25 +13,11 @@ export const siteConfig = {
   email: 'service@cathyrepair.hk',
   shops: [
     {
-      name: '旺角旗艦店',
-      address: '九龍旺角彌敦道 618 號好望角大廈 12 樓 1203 室',
-      district: '旺角',
-      hours: '10:00 – 21:30',
-      mtr: '港鐵旺角站 E1 出口步行 2 分鐘',
-    },
-    {
-      name: '銅鑼灣分店',
-      address: '香港銅鑼灣軒尼詩道 489 號銅鑼灣廣場一期 9 樓 906 室',
-      district: '銅鑼灣',
-      hours: '11:00 – 21:00',
-      mtr: '港鐵銅鑼灣站 D2 出口步行 3 分鐘',
-    },
-    {
-      name: '觀塘服務中心',
-      address: '九龍觀塘開源道 71 號王子大廈 8 樓 803 室',
-      district: '觀塘',
-      hours: '10:00 – 20:00',
-      mtr: '港鐵觀塘站 B1 出口步行 5 分鐘',
+      name: '荔枝角門市',
+      address: '九龍荔枝角青山道 588 號永盛工業大廈 1 樓 18 室',
+      district: '荔枝角',
+      hours: '10:00 – 21:00',
+      mtr: '港鐵荔枝角站 B1 出口步行 3 分鐘',
     },
   ],
   company: {
