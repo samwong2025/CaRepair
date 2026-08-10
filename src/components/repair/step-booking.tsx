@@ -46,7 +46,7 @@ const serviceModes: {
   {
     id: 'mail_in',
     name: '自行寄件',
-    description: '自行寄到旺角總店，收件後即時通知，可於網站實時追蹤進度。',
+    description: '自行寄到荔枝角門市，收件後即時通知，可於網站實時追蹤進度。',
     icon: Home,
   },
 ];

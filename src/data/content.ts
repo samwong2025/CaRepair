@@ -212,7 +212,7 @@ export const reviews: Review[] = [
     tags: ['#即日取機', '#原廠級屏幕', '#免費貼膜'],
     deviceModelName: 'iPhone 16 Pro',
     symptomSummary: '螢幕爆裂',
-    shopName: '旺角旗艦店',
+    shopName: '荔枝角門市',
   },
   {
     id: 'rv-02',
@@ -225,7 +225,7 @@ export const reviews: Review[] = [
     deviceModelName: 'MacBook Pro 14 吋（M3）',
     symptomSummary: '入水受潮',
     repeatCustomer: true,
-    shopName: '觀塘服務中心',
+    shopName: '荔枝角門市',
   },
   {
     id: 'rv-03',
@@ -237,7 +237,7 @@ export const reviews: Review[] = [
     tags: ['#全程錄影', '#換電池', '#放心'],
     deviceModelName: 'iPhone 14 Pro Max',
     symptomSummary: '電池老化',
-    shopName: '銅鑼灣分店',
+    shopName: '荔枝角門市',
   },
   {
     id: 'rv-04',
@@ -249,7 +249,7 @@ export const reviews: Review[] = [
     tags: ['#上門收送', '#進度通知', '#夠快'],
     deviceModelName: 'iPad Air 11 吋（M3）',
     symptomSummary: '充電口損壞',
-    shopName: '旺角旗艦店',
+    shopName: '荔枝角門市',
   },
   {
     id: 'rv-05',
@@ -261,7 +261,7 @@ export const reviews: Review[] = [
     tags: ['#價錢公道', '#專業判斷', '#防水處理'],
     deviceModelName: 'Apple Watch Series 10（46mm）',
     symptomSummary: '錶冠失靈',
-    shopName: '銅鑼灣分店',
+    shopName: '荔枝角門市',
   },
   {
     id: 'rv-06',
@@ -274,7 +274,7 @@ export const reviews: Review[] = [
     deviceModelName: 'iPhone 15',
     symptomSummary: '螢幕爆裂',
     repeatCustomer: true,
-    shopName: '旺角旗艦店',
+    shopName: '荔枝角門市',
   },
   {
     id: 'rv-07',
@@ -286,7 +286,7 @@ export const reviews: Review[] = [
     tags: ['#手工細緻', '#電池更換', '#無痕維修'],
     deviceModelName: 'iPad Pro 12.9 吋（M2）',
     symptomSummary: '電池老化',
-    shopName: '觀塘服務中心',
+    shopName: '荔枝角門市',
   },
   {
     id: 'rv-08',
@@ -299,7 +299,7 @@ export const reviews: Review[] = [
     deviceModelName: 'MacBook Air 13 吋（M2）',
     symptomSummary: '電池老化',
     repeatCustomer: true,
-    shopName: '觀塘服務中心',
+    shopName: '荔枝角門市',
   },
   {
     id: 'rv-09',
@@ -312,7 +312,7 @@ export const reviews: Review[] = [
     deviceModelName: 'iPhone 13 Pro',
     symptomSummary: '螢幕故障',
     repeatCustomer: true,
-    shopName: '銅鑼灣分店',
+    shopName: '荔枝角門市',
   },
   {
     id: 'rv-10',
@@ -324,7 +324,7 @@ export const reviews: Review[] = [
     tags: ['#報價準確', '#落單方便', '#冇隱藏收費'],
     deviceModelName: 'iPhone 16',
     symptomSummary: '充電口損壞',
-    shopName: '旺角旗艦店',
+    shopName: '荔枝角門市',
   },
   {
     id: 'rv-11',
@@ -336,7 +336,7 @@ export const reviews: Review[] = [
     tags: ['#二手機', '#驗機安心', '#有保養'],
     deviceModelName: 'iPhone 14 Pro',
     symptomSummary: '二手機購買',
-    shopName: '旺角旗艦店',
+    shopName: '荔枝角門市',
   },
   {
     id: 'rv-12',
@@ -348,7 +348,7 @@ export const reviews: Review[] = [
     tags: ['#坦白', '#資料救援', '#收費實在'],
     deviceModelName: 'iPhone 12',
     symptomSummary: '入水受潮',
-    shopName: '觀塘服務中心',
+    shopName: '荔枝角門市',
   },
 ];
 
@@ -372,7 +372,7 @@ export const faqs = [
   },
   {
     q: '有冇上門或寄修服務？',
-    a: '有。全港（包括離島）均可安排順豐到付收送，來回運費由本店承擔，落單時揀選「上門收送」即可；亦可自行寄修至旺角旗艦店。企業客戶可預約專車批量收機。',
+    a: '有。全港（包括離島）均可安排順豐到付收送，來回運費由本店承擔，落單時揀選「上門收送」即可；亦可自行寄修至荔枝角門市。企業客戶可預約專車批量收機。',
   },
   {
     q: '用嘅配件係咪原廠？',

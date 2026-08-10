@@ -73,7 +73,7 @@ export default function AboutPage() {
           <div className="mt-5 space-y-4 text-sm leading-relaxed text-ink-muted">
             <p>
               2016 年，創辦人阿 Cathy 的 iPhone 換芒後發現被偷換了非原廠零件，從此立志開一間
-              「敢把工序攤開喺你面前」嘅維修店。CathyRepair 就喺旺角一間百呎舖位誕生，
+              「敢把工序攤開喺你面前」嘅維修店。CathyRepair 就喺荔枝角一間百呎舖位誕生，
               第一張工作枱上寫住一句話：「唔會做喺客唔知嘅嘢。」
             </p>
             <p>

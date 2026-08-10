@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     '換電池',
     '換螢幕',
     '香港手機維修',
-    '旺角手機維修',
+    '荔枝角手機維修',
   ],
   openGraph: {
     title: `${siteConfig.name} 凱西維修`,
