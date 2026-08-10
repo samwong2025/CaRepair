@@ -1,7 +1,8 @@
 import { getModelById } from '../../data/devices';
 import { getSymptomById } from '../../data/symptoms';
 import { statusMeta } from '../../data/seed';
-import { loadModels, findModel, loadPricing } from '../catalog-store';
+import { loadModels, findModel } from '../catalog-store';
+import { loadPricing } from '../pricing-store';
 import { calculateQuote } from '../quote-engine';
 import { generateMemberNo, generateOrderNo } from '../format';
 import { getStore } from './mock-store';
@@ -13,12 +14,15 @@ import type {
   Customer,
   MemberLevel,
   OrderStatus,
+  OrderTimelineEntry,
   Product,
   RepairOrder,
+  RepairOrderEditPatch,
   RepairOrderInput,
   RepairTicket,
   ShopOrder,
   ShopOrderInput,
+  SymptomPricing,
 } from '../../types';
 
 const clone = <T,>(v: T): T => JSON.parse(JSON.stringify(v)) as T;
@@ -198,6 +202,84 @@ export const mockRepository: DataRepository = {
     return clone(order);
   },
 
+  async updateRepairOrder(id, patch: RepairOrderEditPatch) {
+    const store = getStore();
+    const order = store.orders.find((o) => o.id === id);
+    if (!order) return null;
+
+    const now = new Date().toISOString();
+    const operator = patch.operator || '後台管理員';
+    const timelineAdditions: OrderTimelineEntry[] = [];
+
+    /* 型號 / 故障變更 → 重算報價（同步工單） */
+    let quoteChanged = false;
+    if (patch.deviceModelId && patch.deviceModelId !== order.deviceModelId) {
+      const models = await loadModels();
+      const model = findModel(models, patch.deviceModelId) ?? getModelById(patch.deviceModelId);
+      if (!model) throw new Error('找不到對應的產品型號');
+      order.deviceModelId = model.id;
+      order.deviceCategory = model.category;
+      order.deviceModelName = model.name;
+      quoteChanged = true;
+      timelineAdditions.push({ status: order.status, at: now, note: `型號改為 ${model.name}`, operator });
+    }
+    if (patch.symptomIds && !arraysEqual(patch.symptomIds, order.symptomIds)) {
+      order.symptomIds = [...patch.symptomIds];
+      quoteChanged = true;
+      const names = order.symptomIds.map((sid) => getSymptomById(sid)?.shortName ?? sid).join('、');
+      timelineAdditions.push({ status: order.status, at: now, note: `故障改為 ${names}`, operator });
+    }
+    if (quoteChanged) {
+      const models = await loadModels();
+      const pricing = await loadPricing();
+      const model = findModel(models, order.deviceModelId) ?? getModelById(order.deviceModelId);
+      if (!model) throw new Error('重算報價時找不到對應型號');
+      const newQuote = calculateQuote(order.deviceModelId, order.symptomIds, pricing, model);
+      if (newQuote.items.length === 0) throw new Error('所選故障組合無法產生報價');
+      order.quote = newQuote;
+      const ticket = store.tickets.find((t) => t.orderId === order.id);
+      if (ticket) {
+        ticket.deviceModelName = order.deviceModelName;
+        ticket.symptomSummary = order.symptomIds.map((sid) => getSymptomById(sid)?.shortName ?? sid).join('、');
+        ticket.totalCost = newQuote.total;
+        ticket.laborCost = newQuote.laborTotal;
+        ticket.partsUsed = newQuote.items.map((i) => ({ name: i.partName, qty: 1, cost: i.partFee }));
+      }
+    }
+
+    if (patch.technician !== undefined && patch.technician !== order.technician) {
+      const prev = order.technician ?? '待分派';
+      order.technician = patch.technician;
+      timelineAdditions.push({ status: order.status, at: now, note: `師傅 ${prev} → ${patch.technician}`, operator });
+      const ticket = store.tickets.find((t) => t.orderId === order.id);
+      if (ticket) ticket.technician = patch.technician ?? '待分派';
+    }
+
+    if (patch.customerName !== undefined && patch.customerName !== order.customerName) {
+      order.customerName = patch.customerName;
+      timelineAdditions.push({ status: order.status, at: now, note: `客戶姓名更正`, operator });
+    }
+    if (patch.customerPhone !== undefined && patch.customerPhone !== order.customerPhone) {
+      order.customerPhone = patch.customerPhone;
+      timelineAdditions.push({ status: order.status, at: now, note: `客戶電話更正`, operator });
+    }
+    if (patch.shopName !== undefined) order.shopName = patch.shopName ?? undefined;
+    if (patch.appointmentAt !== undefined && patch.appointmentAt !== order.appointmentAt) {
+      order.appointmentAt = patch.appointmentAt;
+      timelineAdditions.push({ status: order.status, at: now, note: `預約時間更正`, operator });
+    }
+    if (patch.remark !== undefined) order.remark = patch.remark ?? undefined;
+
+    if (patch.note) {
+      timelineAdditions.push({ status: order.status, at: now, note: patch.note, operator });
+    }
+
+    order.updatedAt = now;
+    if (timelineAdditions.length) order.timeline.push(...timelineAdditions);
+
+    return clone(order);
+  },
+
   /* ── 維修工單 ─────────────────────────────── */
   async listTickets() {
     return clone(
@@ -341,6 +423,17 @@ export const mockRepository: DataRepository = {
   async listShopOrders() {
     return clone(getStore().shopOrders);
   },
+
+  async listPricing() {
+    const { loadPricing: load } = await import('../pricing-store');
+    return load();
+  },
+
+  async upsertPricing(rule: SymptomPricing) {
+    const { savePricing } = await import('../pricing-store');
+    const result = await savePricing(rule);
+    return result.ok ? rule : null;
+  },
 };
 
 function buildTicketFromOrder(order: RepairOrder): RepairTicket {
@@ -365,6 +458,13 @@ function buildTicketFromOrder(order: RepairOrder): RepairTicket {
     warrantyUntil: warrantyUntil.toISOString(),
     createdAt: order.createdAt,
   };
+}
+
+/** 陣列順序無關的相等比對（症狀比較用） */
+function arraysEqual(a: readonly string[], b: readonly string[]): boolean {
+  if (a.length !== b.length) return false;
+  const set = new Set(a);
+  return b.every((x) => set.has(x));
 }
 
 export type { Product, ShopOrder, Customer };

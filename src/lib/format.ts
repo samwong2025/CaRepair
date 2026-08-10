@@ -82,3 +82,14 @@ export function generateOrderNo(prefix = 'CR'): string {
 export function generateMemberNo(): string {
   return `M-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
 }
+
+/** 把本地手機格式化成 `9876 5432`（已含 852 國碼者顯示為 `9876 5432`）；無法識別時原樣回傳 */
+export function formatPhone(value: string | undefined | null): string {
+  if (!value) return '—';
+  const digits = value.replace(/\D/g, '');
+  if (digits.length === 11 && digits.startsWith('852')) {
+    return `${digits.slice(3, 7)} ${digits.slice(7)}`;
+  }
+  if (digits.length === 8) return `${digits.slice(0, 4)} ${digits.slice(4)}`;
+  return value;
+}

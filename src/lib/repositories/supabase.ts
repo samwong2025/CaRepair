@@ -4,7 +4,8 @@ import { statusMeta } from '../../data/seed';
 import { calculateQuote } from '../quote-engine';
 import { generateMemberNo, generateOrderNo } from '../format';
 import { getServerSupabase } from '../supabase/server';
-import { loadModels, findModel, loadPricing } from '../catalog-store';
+import { loadModels, findModel } from '../catalog-store';
+import { loadPricing, savePricing } from '../pricing-store';
 import type { DataRepository } from './types';
 import type {
   AfterSalesInput,
@@ -15,10 +16,12 @@ import type {
   OrderStatus,
   Product,
   RepairOrder,
+  RepairOrderEditPatch,
   RepairOrderInput,
   RepairTicket,
   ShopOrder,
   ShopOrderInput,
+  SymptomPricing,
 } from '../../types';
 
 const normalizePhone = (phone: string) => phone.replace(/\D/g, '');
@@ -440,6 +443,113 @@ export const supabaseRepository: DataRepository = {
     return data ? rowToOrder(data) : null;
   },
 
+  async updateRepairOrder(id, patch: RepairOrderEditPatch) {
+    const supabase = client();
+    const { data: current, error: readError } = await supabase
+      .from('repair_orders')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+    if (readError || !current) {
+      console.error('[supabase] updateRepairOrder read', readError?.message);
+      return null;
+    }
+
+    const order = rowToOrder(current);
+    const now = new Date().toISOString();
+    const operator = patch.operator || '後台管理員';
+    const timelineAdditions: { status: OrderStatus; at: string; note: string; operator: string }[] = [];
+
+    /* 型號 / 故障變更 → 重算報價 */
+    let quoteChanged = false;
+    if (patch.deviceModelId && patch.deviceModelId !== order.deviceModelId) {
+      const models = await loadModels();
+      const model = findModel(models, patch.deviceModelId) ?? getModelById(patch.deviceModelId);
+      if (!model) throw new Error('找不到對應的產品型號');
+      order.deviceModelId = model.id;
+      order.deviceCategory = model.category;
+      order.deviceModelName = model.name;
+      quoteChanged = true;
+      timelineAdditions.push({ status: order.status, at: now, note: `型號改為 ${model.name}`, operator });
+    }
+    if (patch.symptomIds && !arraysEqual(patch.symptomIds, order.symptomIds)) {
+      order.symptomIds = [...patch.symptomIds];
+      quoteChanged = true;
+      const names = order.symptomIds.map((sid) => getSymptomById(sid)?.shortName ?? sid).join('、');
+      timelineAdditions.push({ status: order.status, at: now, note: `故障改為 ${names}`, operator });
+    }
+    if (quoteChanged) {
+      const models = await loadModels();
+      const pricing = await loadPricing();
+      const model = findModel(models, order.deviceModelId) ?? getModelById(order.deviceModelId);
+      if (!model) throw new Error('重算報價時找不到對應型號');
+      const newQuote = calculateQuote(order.deviceModelId, order.symptomIds, pricing, model);
+      if (newQuote.items.length === 0) throw new Error('所選故障組合無法產生報價');
+      order.quote = newQuote;
+    }
+
+    if (patch.technician !== undefined && patch.technician !== order.technician) {
+      const prev = order.technician ?? '待分派';
+      order.technician = patch.technician;
+      timelineAdditions.push({ status: order.status, at: now, note: `師傅 ${prev} → ${patch.technician}`, operator });
+    }
+    if (patch.customerName !== undefined) order.customerName = patch.customerName;
+    if (patch.customerPhone !== undefined) order.customerPhone = patch.customerPhone;
+    if (patch.shopName !== undefined) order.shopName = patch.shopName ?? undefined;
+    if (patch.appointmentAt !== undefined) order.appointmentAt = patch.appointmentAt;
+    if (patch.remark !== undefined) order.remark = patch.remark ?? undefined;
+
+    if (patch.note) {
+      timelineAdditions.push({ status: order.status, at: now, note: patch.note, operator });
+    }
+
+    const payload: Record<string, unknown> = {
+      device_model_id: order.deviceModelId,
+      device_category: order.deviceCategory,
+      device_model_name: order.deviceModelName,
+      symptom_ids: order.symptomIds,
+      quote: order.quote,
+      technician: order.technician,
+      customer_name: order.customerName,
+      customer_phone: order.customerPhone,
+      shop_name: order.shopName,
+      appointment_at: order.appointmentAt,
+      remark: order.remark,
+      timeline: [...order.timeline, ...timelineAdditions],
+      updated_at: now,
+    };
+
+    const { data, error } = await supabase
+      .from('repair_orders')
+      .update(payload)
+      .eq('id', id)
+      .select('*')
+      .maybeSingle();
+    if (error) {
+      console.error('[supabase] updateRepairOrder', error.message);
+      return null;
+    }
+
+    /* 同步工單 */
+    const ticketPatch: Record<string, unknown> = {
+      device_model_name: order.deviceModelName,
+      customer_name: order.customerName,
+      customer_phone: order.customerPhone,
+      technician: order.technician ?? '待分派',
+    };
+    if (quoteChanged) {
+      ticketPatch.symptom_summary = order.symptomIds
+        .map((sid) => getSymptomById(sid)?.shortName ?? sid)
+        .join('、');
+      ticketPatch.total_cost = order.quote.total;
+      ticketPatch.labor_cost = order.quote.laborTotal;
+      ticketPatch.parts_used = order.quote.items.map((i) => ({ name: i.partName, qty: 1, cost: i.partFee }));
+    }
+    await supabase.from('repair_tickets').update(ticketPatch).eq('order_id', id);
+
+    return data ? rowToOrder(data) : null;
+  },
+
   async listTickets() {
     const { data, error } = await client()
       .from('repair_tickets')
@@ -615,4 +725,19 @@ export const supabaseRepository: DataRepository = {
     }
     return (data ?? []).map(rowToShopOrder);
   },
+
+  async listPricing(): Promise<SymptomPricing[]> {
+    return loadPricing();
+  },
+
+  async upsertPricing(rule: SymptomPricing): Promise<SymptomPricing | null> {
+    const result = await savePricing(rule);
+    return result.ok ? rule : null;
+  },
 };
+
+function arraysEqual(a: readonly string[], b: readonly string[]): boolean {
+  if (a.length !== b.length) return false;
+  const set = new Set(a);
+  return b.every((x) => set.has(x));
+}

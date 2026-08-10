@@ -36,6 +36,11 @@ export interface DataRepository {
     note?: string,
     operator?: string,
   ): Promise<RepairOrder | null>;
+  /** 後台編輯訂單欄位（型號 / 故障變更會自動重算報價並同步工單） */
+  updateRepairOrder(
+    id: string,
+    patch: import('../../types').RepairOrderEditPatch,
+  ): Promise<RepairOrder | null>;
 
   /* 維修工單 */
   listTickets(): Promise<RepairTicket[]>;

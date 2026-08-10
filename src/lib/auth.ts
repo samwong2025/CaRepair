@@ -92,9 +92,13 @@ export async function serverSignIn(
         getAll() {
           return cookies().getAll();
         },
-        setAll(cookiesToSet) {
+        setAll(
+          cookiesToSet: { name: string; value: string; options?: Record<string, unknown> }[],
+        ) {
           const store = cookies();
-          cookiesToSet.forEach(({ name, value, options }) => store.set(name, value, options));
+          cookiesToSet.forEach(({ name, value, options }) =>
+            store.set(name, value, options),
+          );
         },
       },
     },
@@ -119,9 +123,13 @@ export async function serverSignOut(): Promise<void> {
         getAll() {
           return cookies().getAll();
         },
-        setAll(cookiesToSet) {
+        setAll(
+          cookiesToSet: { name: string; value: string; options?: Record<string, unknown> }[],
+        ) {
           const store = cookies();
-          cookiesToSet.forEach(({ name, value, options }) => store.set(name, value, options));
+          cookiesToSet.forEach(({ name, value, options }) =>
+            store.set(name, value, options),
+          );
         },
       },
     },

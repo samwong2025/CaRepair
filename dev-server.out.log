@@ -7,3 +7,39 @@
   - Environments: .env.local
 
  ✓ Starting...
+ ✓ Ready in 128s
+ ✓ Compiled /src/middleware in 438ms
+ ✓ Compiled (127 modules)
+ ○ Compiling /admin/login ...
+ POST /api/admin/login 200 in 871ms
+ POST /api/admin/login 401 in 8ms
+ POST /api/admin/login 200 in 7ms
+ GET /admin 200 in 1015ms
+ POST /api/admin/login 200 in 14ms
+ GET /admin 200 in 30ms
+ GET /admin/orders 200 in 585ms
+ GET /admin/models 200 in 904ms
+ GET /admin/symptoms 200 in 291ms
+ GET /admin/pricing 200 in 304ms
+ GET /admin/customers 200 in 303ms
+ ✓ Compiled / in 807ms (854 modules)
+ GET / 200 in 1046ms
+ GET / 200 in 64ms
+ GET / 200 in 59ms
+ GET /admin/login 200 in 373ms
+ GET /admin/login 200 in 38ms
+ ○ Compiling /admin/login ...
+ GET /repair?category=iphone 200 in 743ms
+ GET /repair?category=iphone 200 in 44ms
+ GET /repair?category=iphone 200 in 69ms
+ GET / 200 in 279ms
+ GET / 200 in 49ms
+ GET / 200 in 46ms
+ GET / 200 in 46ms
+ ✓ Compiled / in 305ms (982 modules)
+ ✓ Compiled in 167ms (483 modules)
+ ✓ Compiled in 162ms (483 modules)
+ ✓ Compiled in 262ms (610 modules)
+ ✓ Compiled in 190ms (611 modules)
+ ✓ Compiled in 284ms (483 modules)
+ ✓ Compiled in 221ms (483 modules)

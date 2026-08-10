@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowUpRight, ClipboardList, Coins, Headphones, Users } from 'lucide-react';
+import { ArrowUpRight, ChevronRight, ClipboardList, Coins, Headphones, Users } from 'lucide-react';
 import { AdminPageHeader } from '../../components/admin/page-header';
 import { Badge } from '../../components/ui/badge';
 import { statusFlow, statusMeta } from '../../data/seed';
@@ -21,18 +21,27 @@ export default async function AdminDashboardPage() {
   const activeOrders = orders.filter(
     (order) => order.status !== 'completed' && order.status !== 'cancelled',
   );
-  const revenue = orders
-    .filter((order) => order.status === 'completed')
-    .reduce((sum, order) => sum + order.quote.total, 0);
+  const completedOrders = orders.filter((order) => order.status === 'completed');
+  const revenue = completedOrders.reduce((sum, order) => sum + order.quote.total, 0);
   const pendingAfterSales = afterSales.filter((item) => item.status !== 'resolved');
 
-  const stats = [
+  const stats: Array<{
+    label: string;
+    value: string;
+    suffix: string;
+    hint: string;
+    icon: typeof ClipboardList;
+    href: string | null;
+    accent: string;
+  }> = [
     {
       label: '進行中工單',
       value: formatNumber(activeOrders.length),
       suffix: '張',
       hint: `累計 ${orders.length} 張維修訂單`,
       icon: ClipboardList,
+      href: '/admin/orders?status=active',
+      accent: 'from-brand-500/15 to-brand-500/0',
     },
     {
       label: '會員總數',
@@ -44,13 +53,17 @@ export default async function AdminDashboardPage() {
         ),
       )}`,
       icon: Users,
+      href: '/admin/customers',
+      accent: 'from-sky-500/15 to-sky-500/0',
     },
     {
       label: '已完成營業額',
       value: formatHKD(revenue),
       suffix: '',
-      hint: `完成 ${orders.filter((order) => order.status === 'completed').length} 張工單`,
+      hint: `完成 ${completedOrders.length} 張工單`,
       icon: Coins,
+      href: '/admin/orders?status=completed',
+      accent: 'from-emerald-500/15 to-emerald-500/0',
     },
     {
       label: '待處理售後',
@@ -58,6 +71,8 @@ export default async function AdminDashboardPage() {
       suffix: '宗',
       hint: `累計 ${afterSales.length} 宗個案`,
       icon: Headphones,
+      href: null,
+      accent: 'from-amber-500/15 to-amber-500/0',
     },
   ];
 
@@ -85,20 +100,47 @@ export default async function AdminDashboardPage() {
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((item) => {
           const Icon = item.icon;
-          return (
-            <div key={item.label} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
-              <div className="flex items-center justify-between">
+          const cardBody = (
+            <div
+              className={`relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-card transition-all duration-200 ${
+                item.href ? 'hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-lift' : ''
+              }`}
+            >
+              <div
+                className={`pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b ${item.accent}`}
+                aria-hidden
+              />
+              <div className="relative flex items-center justify-between">
                 <p className="text-xs font-semibold text-ink-muted">{item.label}</p>
                 <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
                   <Icon className="h-4 w-4" strokeWidth={2.2} />
                 </span>
               </div>
-              <p className="tabular mt-3 text-2xl font-extrabold leading-none text-ink">
+              <p className="tabular relative mt-3 text-2xl font-extrabold leading-none text-ink">
                 {item.value}
                 <span className="ml-1 text-sm font-bold text-ink-muted">{item.suffix}</span>
               </p>
-              <p className="mt-2 text-[0.7rem] text-ink-faint">{item.hint}</p>
+              <p className="relative mt-2 text-[0.7rem] text-ink-faint">{item.hint}</p>
+              {item.href ? (
+                <span className="relative mt-3 inline-flex items-center gap-0.5 text-[0.65rem] font-bold text-brand-700">
+                  點擊查看
+                  <ChevronRight className="h-3 w-3" />
+                </span>
+              ) : null}
             </div>
+          );
+
+          return item.href ? (
+            <Link
+              key={item.label}
+              href={item.href}
+              className="block rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-brand-400"
+              aria-label={`${item.label}：查看詳情`}
+            >
+              {cardBody}
+            </Link>
+          ) : (
+            <div key={item.label}>{cardBody}</div>
           );
         })}
       </div>
@@ -172,20 +214,26 @@ export default async function AdminDashboardPage() {
           {orders.slice(0, 6).map((order) => {
             const meta = statusMeta[order.status];
             return (
-              <li key={order.id} className="flex flex-wrap items-center gap-3 px-5 py-3.5">
-                <span className="font-mono text-sm font-bold text-ink">{order.orderNo}</span>
-                <Badge variant={meta.tone} size="sm">
-                  {meta.label}
-                </Badge>
-                <span className="text-sm text-ink-muted">
-                  {order.deviceModelName}・{order.customerName}
-                </span>
-                <span className="ml-auto flex items-center gap-4">
-                  <span className="text-xs text-ink-faint">{formatDateTime(order.createdAt)}</span>
-                  <span className="tabular text-sm font-extrabold text-brand-600">
-                    {formatHKD(order.quote.total)}
+              <li key={order.id}>
+                <Link
+                  href={`/admin/orders/${encodeURIComponent(order.orderNo)}`}
+                  className="flex flex-wrap items-center gap-3 px-5 py-3.5 transition-colors hover:bg-slate-50/70"
+                  aria-label={`編輯工單 ${order.orderNo}`}
+                >
+                  <span className="font-mono text-sm font-bold text-ink">{order.orderNo}</span>
+                  <Badge variant={meta.tone} size="sm">
+                    {meta.label}
+                  </Badge>
+                  <span className="text-sm text-ink-muted">
+                    {order.deviceModelName}・{order.customerName}
                   </span>
-                </span>
+                  <span className="ml-auto flex items-center gap-4">
+                    <span className="text-xs text-ink-faint">{formatDateTime(order.createdAt)}</span>
+                    <span className="tabular text-sm font-extrabold text-brand-600">
+                      {formatHKD(order.quote.total)}
+                    </span>
+                  </span>
+                </Link>
               </li>
             );
           })}

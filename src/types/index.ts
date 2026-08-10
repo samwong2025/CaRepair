@@ -156,6 +156,22 @@ export interface RepairOrder {
   updatedAt: string;
 }
 
+/** 後台可編輯欄位（PATCH /api/orders/[id] 接受）；型號 / 故障變更會自動重算報價 */
+export interface RepairOrderEditPatch {
+  deviceModelId?: string;
+  symptomIds?: string[];
+  technician?: string;
+  remark?: string | null;
+  customerName?: string;
+  customerPhone?: string;
+  shopName?: string | null;
+  appointmentAt?: string;
+  /** 誰做的修改（寫入 timeline） */
+  operator?: string;
+  /** 額外備註寫入 timeline（如「客戶改機型」） */
+  note?: string;
+}
+
 /* ─── 維修工單（後台） ───────────────────────────── */
 
 export interface RepairTicket {

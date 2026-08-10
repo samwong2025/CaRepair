@@ -2,7 +2,16 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronRight, Loader2, Printer, ReceiptText, Search, Tag } from 'lucide-react';
+import Link from 'next/link';
+import {
+  ChevronRight,
+  Loader2,
+  MessageCircle,
+  Printer,
+  ReceiptText,
+  Search,
+  Tag,
+} from 'lucide-react';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Input, Select } from '../ui/input';
@@ -10,8 +19,8 @@ import { PrintDialog } from './print-dialog';
 import { RepairLabel } from './repair-label';
 import { Receipt } from './receipt';
 import { statusFlow, statusMeta } from '../../data/seed';
-import { formatDateTime, formatHKD } from '../../lib/format';
-import { cn } from '../../lib/utils';
+import { formatDateTime, formatHKD, formatPhone } from '../../lib/format';
+import { cn, buildWhatsappUrl } from '../../lib/utils';
 import type { CurrentUser } from '../../lib/auth';
 import type { OrderStatus, RepairOrder } from '../../types';
 
@@ -32,13 +41,17 @@ const ROLE_LABEL: Record<string, string> = {
 export function OrdersManager({
   orders,
   currentUser,
+  initialStatus = 'all',
+  statusPreset = null,
 }: {
   orders: RepairOrder[];
   currentUser: CurrentUser | null;
+  initialStatus?: OrderStatus | 'all';
+  statusPreset?: 'active' | 'completed' | null;
 }) {
   const router = useRouter();
   const [keyword, setKeyword] = React.useState('');
-  const [statusFilter, setStatusFilter] = React.useState<OrderStatus | 'all'>('all');
+  const [statusFilter, setStatusFilter] = React.useState<OrderStatus | 'all'>(initialStatus);
   const [pendingId, setPendingId] = React.useState('');
   const [printTarget, setPrintTarget] = React.useState<PrintTarget>(null);
 
@@ -48,6 +61,17 @@ export function OrdersManager({
     if (!isTechnician || !currentUser?.technicianName) return orders;
     return orders.filter((o) => o.technician === currentUser.technicianName);
   }, [orders, isTechnician, currentUser]);
+
+  // 仪表板快捷入口预设：在 UI 層再做一次篩選，避免父層需要解析 active/completed 語意
+  const applyPreset = React.useCallback(
+    (order: RepairOrder) => {
+      if (!statusPreset) return true;
+      if (statusPreset === 'completed') return order.status === 'completed';
+      // active: 非完成、非取消
+      return order.status !== 'completed' && order.status !== 'cancelled';
+    },
+    [statusPreset],
+  );
 
   const filtered = React.useMemo(() => {
     const kw = keyword.trim().toLowerCase();
@@ -59,9 +83,9 @@ export function OrdersManager({
         order.customerName.toLowerCase().includes(kw) ||
         order.customerPhone.includes(kw) ||
         order.deviceModelName.toLowerCase().includes(kw);
-      return matchStatus && matchKeyword;
+      return matchStatus && matchKeyword && applyPreset(order);
     });
-  }, [scopedOrders, keyword, statusFilter]);
+  }, [scopedOrders, keyword, statusFilter, applyPreset]);
 
   const operatorName =
     currentUser?.name ?? (isTechnician ? currentUser?.technicianName ?? '師傅' : '後台管理員');
@@ -136,109 +160,148 @@ export function OrdersManager({
         {filtered.map((order) => {
           const meta = statusMeta[order.status];
           const next = nextStatus(order.status);
+          const whatsappUrl = buildWhatsappUrl(
+            order.customerPhone,
+            `你好，我是 CathyRepair 凱西維修的${currentUser?.name ?? '客服'}，想跟進你 ${order.orderNo} 的維修進度 🙏`,
+          );
+          const editHref = `/admin/orders/${encodeURIComponent(order.orderNo)}`;
 
           return (
             <article
               key={order.id}
-              className="rounded-2xl border border-slate-200 bg-white p-4 shadow-card transition-shadow duration-200 hover:shadow-lift sm:p-5"
+              className="rounded-2xl border border-slate-200 bg-white shadow-card transition-shadow duration-200 hover:shadow-lift"
             >
-              <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <p className="font-mono text-sm font-extrabold tracking-wide text-ink">
-                      {order.orderNo}
-                    </p>
-                    <Badge variant={meta.tone} size="sm">
-                      {meta.label}
-                    </Badge>
-                    {order.quote.requiresLab ? (
-                      <Badge variant="warning" size="sm">
-                        需送實驗室
+              {/* 點擊上半部進入編輯（互動元素按鈕在外部，避免錨點嵌套） */}
+              <Link
+                href={editHref}
+                className="block rounded-t-2xl p-4 outline-none transition-colors hover:bg-slate-50/70 focus-visible:bg-slate-50 sm:p-5"
+                aria-label={`編輯工單 ${order.orderNo}`}
+              >
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-mono text-sm font-extrabold tracking-wide text-ink">
+                        {order.orderNo}
+                      </p>
+                      <Badge variant={meta.tone} size="sm">
+                        {meta.label}
                       </Badge>
-                    ) : null}
+                      {order.quote.requiresLab ? (
+                        <Badge variant="warning" size="sm">
+                          需送實驗室
+                        </Badge>
+                      ) : null}
+                      <span className="hidden text-[0.65rem] text-ink-faint sm:inline">（點擊卡片編輯）</span>
+                    </div>
+
+                    <div className="mt-2 grid gap-x-6 gap-y-1 text-xs text-ink-muted sm:grid-cols-2 lg:grid-cols-4">
+                      <p>
+                        <span className="text-ink-faint">客戶：</span>
+                        <span className="font-semibold text-ink">{order.customerName}</span>
+                      </p>
+                      <p>
+                        <span className="text-ink-faint">機型：</span>
+                        <span className="font-semibold text-ink">{order.deviceModelName}</span>
+                      </p>
+                      <p className="truncate">
+                        <span className="text-ink-faint">項目：</span>
+                        {order.quote.items.map((item) => item.name).join('、')}
+                      </p>
+                      <p>
+                        <span className="text-ink-faint">技師：</span>
+                        {order.technician ?? '待分派'}
+                      </p>
+                      <p>
+                        <span className="text-ink-faint">預約：</span>
+                        {formatDateTime(order.appointmentAt)}
+                      </p>
+                      <p>
+                        <span className="text-ink-faint">落單：</span>
+                        {formatDateTime(order.createdAt)}
+                      </p>
+                    </div>
                   </div>
 
-                  <div className="mt-2 grid gap-x-6 gap-y-1 text-xs text-ink-muted sm:grid-cols-2 lg:grid-cols-4">
-                    <p>
-                      <span className="text-ink-faint">客戶：</span>
-                      <span className="font-semibold text-ink">
-                        {order.customerName}
-                        {!isTechnician ? `・${order.customerPhone}` : ''}
-                      </span>
+                  <div className="flex shrink-0 flex-col gap-2 lg:items-end">
+                    <p className="text-xl font-extrabold leading-none text-brand-600">
+                      {formatHKD(order.quote.total)}
                     </p>
-                    <p>
-                      <span className="text-ink-faint">機型：</span>
-                      <span className="font-semibold text-ink">{order.deviceModelName}</span>
-                    </p>
-                    <p className="truncate">
-                      <span className="text-ink-faint">項目：</span>
-                      {order.quote.items.map((item) => item.name).join('、')}
-                    </p>
-                    <p>
-                      <span className="text-ink-faint">技師：</span>
-                      {order.technician ?? '待分派'}
-                    </p>
-                    <p>
-                      <span className="text-ink-faint">預約：</span>
-                      {formatDateTime(order.appointmentAt)}
-                    </p>
-                    <p>
-                      <span className="text-ink-faint">落單：</span>
-                      {formatDateTime(order.createdAt)}
+                    <p className="text-[0.7rem] text-ink-faint">
+                      {order.serviceMode === 'walk_in'
+                        ? `到店・${order.shopName ?? ''}`
+                        : '郵寄送修'}
                     </p>
                   </div>
                 </div>
+              </Link>
 
-                <div className="flex shrink-0 flex-col gap-3 lg:items-end">
-                  <p className="text-xl font-extrabold leading-none text-brand-600">
-                    {formatHKD(order.quote.total)}
-                  </p>
+              {/* 電話 + WhatsApp（按鈕獨立於 Link 之外，符合 HTML5 規範） */}
+              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-4 py-2.5 sm:px-5">
+                <div className="flex items-center gap-2">
+                  <span className="text-[0.65rem] uppercase tracking-wide text-ink-faint">電話</span>
+                  <span className="font-mono text-sm font-semibold text-ink">
+                    {formatPhone(order.customerPhone)}
+                  </span>
+                  <a
+                    href={whatsappUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`WhatsApp 聯絡 ${order.customerName}`}
+                    title="WhatsApp 聯絡客戶"
+                    className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[#25D366] text-white shadow-sm transition-transform hover:scale-105 active:scale-95"
+                  >
+                    <MessageCircle className="h-3.5 w-3.5" />
+                  </a>
+                </div>
+                <span className="text-[0.65rem] text-ink-faint">
+                  客戶電話已顯示 ・ 點卡片上方進入編輯
+                </span>
+              </div>
 
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      variant="soft"
-                      size="sm"
-                      onClick={() => setPrintTarget({ type: 'label', order })}
-                    >
-                      <Tag className="h-3.5 w-3.5" />
-                      維修標籤
-                    </Button>
-                    <Button
-                      variant="soft"
-                      size="sm"
-                      onClick={() => setPrintTarget({ type: 'receipt', order })}
-                    >
-                      <ReceiptText className="h-3.5 w-3.5" />
-                      售後收據
-                    </Button>
-                    {next ? (
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        disabled={pendingId === order.id}
-                        onClick={() => advance(order)}
-                      >
-                        {pendingId === order.id ? (
-                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                        ) : (
-                          <ChevronRight className="h-3.5 w-3.5" />
-                        )}
-                        推進至「{statusMeta[next].label}」
-                      </Button>
+              {/* 列印 / 推進等互動按鈕（獨立於 Link 之外） */}
+              <div className="flex flex-wrap items-center justify-end gap-2 rounded-b-2xl border-t border-slate-100 bg-slate-50/50 px-4 py-3 sm:px-5">
+                <Button
+                  variant="soft"
+                  size="sm"
+                  onClick={() => setPrintTarget({ type: 'label', order })}
+                >
+                  <Tag className="h-3.5 w-3.5" />
+                  維修標籤
+                </Button>
+                <Button
+                  variant="soft"
+                  size="sm"
+                  onClick={() => setPrintTarget({ type: 'receipt', order })}
+                >
+                  <ReceiptText className="h-3.5 w-3.5" />
+                  售後收據
+                </Button>
+                {next ? (
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    disabled={pendingId === order.id}
+                    onClick={() => advance(order)}
+                  >
+                    {pendingId === order.id ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
                     ) : (
-                      <span
-                        className={cn(
-                          'inline-flex items-center rounded-lg px-3 py-1.5 text-xs font-bold',
-                          order.status === 'cancelled'
-                            ? 'bg-red-50 text-red-600'
-                            : 'bg-emerald-50 text-emerald-700',
-                        )}
-                      >
-                        {order.status === 'cancelled' ? '已取消' : '流程已完成'}
-                      </span>
+                      <ChevronRight className="h-3.5 w-3.5" />
                     )}
-                  </div>
-                </div>
+                    推進至「{statusMeta[next].label}」
+                  </Button>
+                ) : (
+                  <span
+                    className={cn(
+                      'inline-flex items-center rounded-lg px-3 py-1.5 text-xs font-bold',
+                      order.status === 'cancelled'
+                        ? 'bg-red-50 text-red-600'
+                        : 'bg-emerald-50 text-emerald-700',
+                    )}
+                  >
+                    {order.status === 'cancelled' ? '已取消' : '流程已完成'}
+                  </span>
+                )}
               </div>
             </article>
           );
