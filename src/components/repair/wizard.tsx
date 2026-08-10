@@ -15,6 +15,7 @@ import { getSymptomById } from '../../data/symptoms';
 import { siteConfig } from '../../config/site';
 import { formatHKD } from '../../lib/format';
 import { EMPTY_QUOTE, calculateQuote } from '../../lib/quote-engine';
+import { loadPricing } from '../../lib/pricing-store';
 import type { CreateOrderResult, DeviceCategory, RepairOrderInput } from '../../types';
 
 const HK_PHONE = /^[2-9]\d{7}$/;
@@ -47,11 +48,18 @@ export function RepairWizard({ initialCategory }: { initialCategory?: DeviceCate
 
   const topRef = React.useRef<HTMLDivElement>(null);
   const model = modelId ? getModelById(modelId) : undefined;
+  const [pricing, setPricing] = React.useState<import('../../types').SymptomPricing[] | undefined>(
+    undefined,
+  );
+
+  React.useEffect(() => {
+    loadPricing().then(setPricing);
+  }, []);
 
   const quote = React.useMemo(() => {
     if (!modelId || symptomIds.length === 0) return EMPTY_QUOTE;
-    return calculateQuote(modelId, symptomIds);
-  }, [modelId, symptomIds]);
+    return calculateQuote(modelId, symptomIds, pricing);
+  }, [modelId, symptomIds, pricing]);
 
   const symptomNames = React.useMemo(
     () => symptomIds.map((id) => getSymptomById(id)?.shortName ?? id),

@@ -53,4 +53,8 @@ export interface DataRepository {
   getProduct(id: string): Promise<Product | null>;
   createShopOrder(input: ShopOrderInput): Promise<ShopOrder>;
   listShopOrders(): Promise<ShopOrder[]>;
+
+  /* 維修價格（後台可編輯，取代寫死的 pricing.ts） */
+  listPricing(): Promise<import('../../types').SymptomPricing[]>;
+  upsertPricing(rule: import('../../types').SymptomPricing): Promise<import('../../types').SymptomPricing | null>;
 }

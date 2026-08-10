@@ -1,7 +1,7 @@
 import { getModelById, tierMultiplier } from '../data/devices';
 import { MAX_BUNDLE_DISCOUNT, bundleDiscountRates, findPricingRule } from '../data/pricing';
 import { getSymptomById } from '../data/symptoms';
-import type { Quote, QuoteLineItem } from '../types';
+import type { DeviceCategory, Quote, QuoteLineItem, SymptomPricing } from '../types';
 
 /** 金額取整至 10 港元，令報價更貼近實際門市標價 */
 function roundToTen(value: number): number {
@@ -20,12 +20,26 @@ export const EMPTY_QUOTE: Quote = {
   requiresLab: false,
 };
 
+function resolveRule(
+  category: DeviceCategory,
+  symptomId: string,
+  rules?: SymptomPricing[],
+): SymptomPricing | undefined {
+  if (rules) return rules.find((r) => r.category === category && r.symptomId === symptomId);
+  return findPricingRule(category, symptomId);
+}
+
 /**
  * 報價引擎（純函數）
  * 依「機型級距係數 × 故障基準價」逐項計算配件費與人工費，
  * 再套用多項同修減免，輸出完整報價明細。
+ * rules 可選：傳入則使用後台自訂價格表，否則回退至預設 pricing.ts。
  */
-export function calculateQuote(modelId: string, symptomIds: string[]): Quote {
+export function calculateQuote(
+  modelId: string,
+  symptomIds: string[],
+  rules?: SymptomPricing[],
+): Quote {
   const model = getModelById(modelId);
   if (!model || symptomIds.length === 0) return EMPTY_QUOTE;
 
@@ -34,7 +48,7 @@ export function calculateQuote(modelId: string, symptomIds: string[]): Quote {
   const items: QuoteLineItem[] = [];
 
   symptomIds.forEach((symptomId) => {
-    const rule = findPricingRule(model.category, symptomId);
+    const rule = resolveRule(model.category, symptomId, rules);
     const symptom = getSymptomById(symptomId);
     if (!rule || !symptom) return;
 

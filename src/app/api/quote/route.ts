@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getModelById } from '../../../data/devices';
 import { getSymptomById } from '../../../data/symptoms';
 import { calculateQuote } from '../../../lib/quote-engine';
+import { loadPricing } from '../../../lib/pricing-store';
 
 interface QuoteRequest {
   deviceModelId?: string;
@@ -39,7 +40,8 @@ export async function POST(request: Request) {
     );
   }
 
-  const quote = calculateQuote(model.id, body.symptomIds);
+  const pricing = await loadPricing();
+  const quote = calculateQuote(model.id, body.symptomIds, pricing);
 
   return NextResponse.json({
     deviceModelId: model.id,
