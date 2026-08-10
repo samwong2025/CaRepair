@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
+import { getMockUserById } from './lib/mock-users';
 
 const ADMIN_PREFIX = '/admin';
 const LOGIN_PATH = '/admin/login';
@@ -45,9 +46,9 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
-  // ── Mock 模式：檢查密碼 cookie ──
+  // ── Mock 模式：檢查 cookie 中的使用者 id ──
   const session = request.cookies.get(MOCK_COOKIE)?.value;
-  if (session === 'ok') return NextResponse.next();
+  if (session && getMockUserById(session)) return NextResponse.next();
 
   const url = request.nextUrl.clone();
   url.pathname = LOGIN_PATH;

@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import { createServerClient } from '@supabase/ssr';
 import { isSupabaseConfigured } from './supabase/client';
+import { findMockUser, getMockUserById } from './mock-users';
 
 export type AppRole = 'admin' | 'technician';
 
@@ -23,8 +24,16 @@ const MOCK_COOKIE = 'cathy_admin_session';
 export async function getCurrentUser(): Promise<CurrentUser | null> {
   if (!isSupabaseConfigured()) {
     const store = await cookies();
-    if (store.get(MOCK_COOKIE)?.value !== 'ok') return null;
-    return { id: 'local-admin', email: 'admin@local', name: '本機管理員', role: 'admin' };
+    const id = store.get(MOCK_COOKIE)?.value;
+    const user = id ? getMockUserById(id) : null;
+    if (!user) return null;
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      technicianName: user.technicianName,
+    };
   }
 
   const supabase = createServerClient(
@@ -66,16 +75,13 @@ export async function serverSignIn(
   password: string,
 ): Promise<{ ok: boolean; error?: string; role?: AppRole }> {
   if (!isSupabaseConfigured()) {
-    const adminPassword = process.env.ADMIN_PASSWORD;
-    if (!adminPassword) {
-      return { ok: false, error: '尚未設定 ADMIN_PASSWORD 環境變數' };
-    }
-    if (password !== adminPassword) {
-      return { ok: false, error: '密碼錯誤' };
+    const user = findMockUser(email, password);
+    if (!user) {
+      return { ok: false, error: '帳號或密碼錯誤' };
     }
     const store = await cookies();
-    store.set(MOCK_COOKIE, 'ok', { httpOnly: true, sameSite: 'lax', path: '/' });
-    return { ok: true, role: 'admin' };
+    store.set(MOCK_COOKIE, user.id, { httpOnly: true, sameSite: 'lax', path: '/' });
+    return { ok: true, role: user.role };
   }
 
   const supabase = createServerClient(

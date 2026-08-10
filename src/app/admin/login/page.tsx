@@ -87,6 +87,13 @@ export default function AdminLoginPage() {
           </Button>
         </form>
 
+        <div className="mt-4 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2.5 text-[0.7rem] leading-relaxed text-ink-muted">
+          <p className="mb-1 font-semibold text-ink-faint">演示帳號</p>
+          <p>管理員：admin@cathyrepair.com（密碼見 .env.local 的 ADMIN_PASSWORD）</p>
+          <p>維修師傅 陳強：qiang@cathyrepair.com ／ qiang123</p>
+          <p>維修師傅 林家明：jiaming@cathyrepair.com ／ jiaming123</p>
+        </div>
+
         <p className="mt-5 text-center text-[0.7rem] text-ink-faint">
           凱西維修 · 僅限授權人員使用
         </p>
