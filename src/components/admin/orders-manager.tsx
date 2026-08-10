@@ -12,6 +12,7 @@ import { Receipt } from './receipt';
 import { statusFlow, statusMeta } from '../../data/seed';
 import { formatDateTime, formatHKD } from '../../lib/format';
 import { cn } from '../../lib/utils';
+import type { CurrentUser } from '../../lib/auth';
 import type { OrderStatus, RepairOrder } from '../../types';
 
 type PrintTarget = { type: 'label' | 'receipt'; order: RepairOrder } | null;
@@ -22,17 +23,35 @@ function nextStatus(status: OrderStatus): OrderStatus | null {
   return statusFlow[index + 1];
 }
 
+const ROLE_LABEL: Record<string, string> = {
+  admin: '管理員',
+  technician: '維修師傅',
+};
+
 /** 後台維修工單管理：狀態流轉 + 列印維修識別標籤 / 售後收據 */
-export function OrdersManager({ orders }: { orders: RepairOrder[] }) {
+export function OrdersManager({
+  orders,
+  currentUser,
+}: {
+  orders: RepairOrder[];
+  currentUser: CurrentUser | null;
+}) {
   const router = useRouter();
   const [keyword, setKeyword] = React.useState('');
   const [statusFilter, setStatusFilter] = React.useState<OrderStatus | 'all'>('all');
   const [pendingId, setPendingId] = React.useState('');
   const [printTarget, setPrintTarget] = React.useState<PrintTarget>(null);
 
+  // 師傅視圖：只看分派給自己的工單
+  const isTechnician = currentUser?.role === 'technician';
+  const scopedOrders = React.useMemo(() => {
+    if (!isTechnician || !currentUser?.technicianName) return orders;
+    return orders.filter((o) => o.technician === currentUser.technicianName);
+  }, [orders, isTechnician, currentUser]);
+
   const filtered = React.useMemo(() => {
     const kw = keyword.trim().toLowerCase();
-    return orders.filter((order) => {
+    return scopedOrders.filter((order) => {
       const matchStatus = statusFilter === 'all' || order.status === statusFilter;
       const matchKeyword =
         !kw ||
@@ -42,7 +61,10 @@ export function OrdersManager({ orders }: { orders: RepairOrder[] }) {
         order.deviceModelName.toLowerCase().includes(kw);
       return matchStatus && matchKeyword;
     });
-  }, [orders, keyword, statusFilter]);
+  }, [scopedOrders, keyword, statusFilter]);
+
+  const operatorName =
+    currentUser?.name ?? (isTechnician ? currentUser?.technicianName ?? '師傅' : '後台管理員');
 
   const advance = async (order: RepairOrder) => {
     const next = nextStatus(order.status);
@@ -52,7 +74,7 @@ export function OrdersManager({ orders }: { orders: RepairOrder[] }) {
     const response = await fetch(`/api/orders/${order.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: next, operator: '後台管理員' }),
+      body: JSON.stringify({ status: next, operator: operatorName }),
     }).catch((error: unknown) => {
       console.error('推進訂單狀態失敗', error);
       return null;
@@ -94,6 +116,21 @@ export function OrdersManager({ orders }: { orders: RepairOrder[] }) {
         </p>
       </div>
 
+      {/* 視圖標記 */}
+      {currentUser ? (
+        <div className="no-print mt-4 flex items-center gap-2 rounded-xl border border-brand-200 bg-brand-50 px-4 py-2.5 text-sm text-brand-700">
+          <Badge variant={isTechnician ? 'warning' : 'brand'} size="sm">
+            {ROLE_LABEL[currentUser.role] ?? currentUser.role}
+          </Badge>
+          <span>
+            歡迎，<span className="font-bold">{currentUser.name}</span>
+            {isTechnician && currentUser.technicianName
+              ? `（僅顯示分派給「${currentUser.technicianName}」的工單）`
+              : '（可檢視全部工單）'}
+          </span>
+        </div>
+      ) : null}
+
       {/* 工單列表 */}
       <div className="no-print mt-4 space-y-3">
         {filtered.map((order) => {
@@ -125,7 +162,8 @@ export function OrdersManager({ orders }: { orders: RepairOrder[] }) {
                     <p>
                       <span className="text-ink-faint">客戶：</span>
                       <span className="font-semibold text-ink">
-                        {order.customerName}・{order.customerPhone}
+                        {order.customerName}
+                        {!isTechnician ? `・${order.customerPhone}` : ''}
                       </span>
                     </p>
                     <p>
