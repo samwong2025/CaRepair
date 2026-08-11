@@ -74,7 +74,7 @@ export function ModelPicker({
             <p className="mb-2.5 text-xs font-bold uppercase tracking-[0.18em] text-ink-faint">
               {series}
             </p>
-            <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
               {list.map((model) => {
                 const selected = model.id === modelId;
                 const Thumb = thumbIcon(model.category);
@@ -86,7 +86,7 @@ export function ModelPicker({
                     onClick={() => onSelectModel(model.id)}
                     aria-pressed={selected}
                     className={cn(
-                      'product-card flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-left box-border transition-all duration-200 ease-smooth',
+                      'product-card relative flex cursor-pointer items-center gap-4 overflow-hidden rounded-2xl border px-4 py-4 pr-5 text-left box-border transition-all duration-200 ease-smooth',
                       selected
                         ? 'border-brand-500 bg-brand-50/70 shadow-card'
                         : 'border-slate-200 bg-white hover:bg-surface-soft',
@@ -94,36 +94,36 @@ export function ModelPicker({
                   >
                     <span
                       className={cn(
-                        'flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl',
+                        'flex h-[68px] w-[68px] shrink-0 items-center justify-center overflow-hidden rounded-xl',
                         img ? 'bg-white' : 'bg-brand-50 text-brand-600',
                       )}
                     >
                       {img ? (
-                        <img src={img} alt={model.name} className="h-11 w-11 object-cover" />
+                        <img src={img} alt={model.name} className="h-[68px] w-[68px] object-contain" />
                       ) : (
-                        <Thumb className="h-5 w-5" strokeWidth={2} />
+                        <Thumb className="h-7 w-7" strokeWidth={2} />
                       )}
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="flex items-center gap-1.5">
-                        <span className="truncate text-[0.92rem] font-bold text-ink">
+                        <span className="truncate text-[0.95rem] font-bold text-ink">
                           {model.name}
                         </span>
                         {model.hot ? (
                           <Flame className="h-3.5 w-3.5 shrink-0 text-accent-500" />
                         ) : null}
                       </span>
-                      <span className="mt-0.5 block text-[0.7rem] text-ink-faint">
+                      <span className="mt-0.5 block text-[0.72rem] text-ink-faint">
                         {model.year} 年・{tierLabel[model.tier]}
                       </span>
                     </span>
                     <span
                       className={cn(
-                        'flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors duration-200',
+                        'flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-colors duration-200',
                         selected ? 'border-brand-500 bg-brand-500 text-white' : 'border-slate-300',
                       )}
                     >
-                      {selected ? <Check className="h-3 w-3" strokeWidth={3.5} /> : null}
+                      {selected ? <Check className="h-3.5 w-3.5" strokeWidth={3.5} /> : null}
                     </span>
                   </button>
                 );
@@ -280,7 +280,7 @@ export function StepDevice({
                 <p className="mb-2.5 text-xs font-bold uppercase tracking-[0.18em] text-ink-faint">
                   {series}
                 </p>
-                <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
                   {list.map((model) => {
                     const selected = model.id === modelId;
                     const Thumb = thumbIcon(model.category);
@@ -292,7 +292,7 @@ export function StepDevice({
                         onClick={() => onSelectModel(model.id)}
                         aria-pressed={selected}
                         className={cn(
-                          'product-card flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-left box-border transition-all duration-200 ease-smooth',
+                          'product-card relative flex cursor-pointer items-center gap-4 overflow-hidden rounded-2xl border px-4 py-4 pr-5 text-left box-border transition-all duration-200 ease-smooth',
                           selected
                             ? 'border-brand-500 bg-brand-50/70 shadow-card'
                             : 'border-slate-200 bg-white hover:bg-surface-soft',
@@ -300,36 +300,36 @@ export function StepDevice({
                       >
                         <span
                           className={cn(
-                            'flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl',
+                            'flex h-[68px] w-[68px] shrink-0 items-center justify-center overflow-hidden rounded-xl',
                             img ? 'bg-white' : 'bg-brand-50 text-brand-600',
                           )}
                         >
                           {img ? (
-                            <img src={img} alt={model.name} className="h-11 w-11 object-cover" />
+                            <img src={img} alt={model.name} className="h-[68px] w-[68px] object-contain" />
                           ) : (
-                            <Thumb className="h-5 w-5" strokeWidth={2} />
+                            <Thumb className="h-7 w-7" strokeWidth={2} />
                           )}
                         </span>
                         <span className="min-w-0 flex-1">
                           <span className="flex items-center gap-1.5">
-                            <span className="truncate text-[0.92rem] font-bold text-ink">
+                            <span className="truncate text-[0.95rem] font-bold text-ink">
                               {model.name}
                             </span>
                             {model.hot ? (
                               <Flame className="h-3.5 w-3.5 shrink-0 text-accent-500" />
                             ) : null}
                           </span>
-                          <span className="mt-0.5 block text-[0.7rem] text-ink-faint">
+                          <span className="mt-0.5 block text-[0.72rem] text-ink-faint">
                             {model.year} 年・{tierLabel[model.tier]}
                           </span>
                         </span>
                         <span
                           className={cn(
-                            'flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 transition-colors duration-200',
+                            'flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-colors duration-200',
                             selected ? 'border-brand-500 bg-brand-500 text-white' : 'border-slate-300',
                           )}
                         >
-                          {selected ? <Check className="h-3 w-3" strokeWidth={3.5} /> : null}
+                          {selected ? <Check className="h-3.5 w-3.5" strokeWidth={3.5} /> : null}
                         </span>
                       </button>
                     );
