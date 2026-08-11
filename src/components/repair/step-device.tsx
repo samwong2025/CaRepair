@@ -138,7 +138,7 @@ export function StepDevice({
           先揀產品類別，系統會自動載入對應機型與配件庫存。
         </p>
 
-        <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-5 grid auto-rows-fr gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {deviceGroups.map((group) => {
             const Icon = resolveIcon(group.icon, Smartphone);
             const selected = group.id === category;
@@ -152,7 +152,7 @@ export function StepDevice({
                 }}
                 aria-pressed={selected}
                 className={cn(
-                  'product-card group relative flex cursor-pointer flex-col items-start gap-3 overflow-hidden rounded-2xl border p-5 text-left box-border transition-all duration-300 ease-smooth',
+                  'product-card group relative flex h-full cursor-pointer flex-col items-start gap-3 overflow-hidden rounded-2xl border p-5 pr-24 text-left box-border transition-all duration-300 ease-smooth',
                   selected
                     ? 'border-brand-500 bg-brand-50/60 shadow-lift'
                     : 'border-slate-200 bg-white hover:-translate-y-1 hover:shadow-lift',
@@ -168,10 +168,10 @@ export function StepDevice({
                   <img
                     src={group.coverImage}
                     alt={group.name}
-                    width={120}
-                    height={120}
+                    width={72}
+                    height={72}
                     loading="lazy"
-                    className="pointer-events-none absolute right-3 top-5 z-0 h-[88px] w-[88px] object-contain opacity-95 transition-transform duration-500 ease-smooth group-hover:scale-110"
+                    className="pointer-events-none absolute right-4 top-5 z-0 h-[72px] w-[72px] object-contain opacity-95 transition-transform duration-500 ease-smooth group-hover:scale-110"
                   />
                 ) : null}
 
@@ -184,9 +184,11 @@ export function StepDevice({
                   <Icon className="h-5 w-5" strokeWidth={2} />
                 </span>
 
-                <span className="relative z-10">
-                  <span className="block text-base font-extrabold text-ink">{group.name}</span>
-                  <span className="mt-1 block max-w-[14ch] text-xs leading-relaxed text-ink-muted">
+                <span className="relative z-10 w-full">
+                  <span className="block break-words text-base font-extrabold text-ink">
+                    {group.name}
+                  </span>
+                  <span className="mt-1 block line-clamp-2 text-xs leading-relaxed text-ink-muted">
                     {group.description}
                   </span>
                 </span>

@@ -14,11 +14,12 @@ const thumbIcon = (cat: DeviceCategory) => {
 };
 
 /**
- * 杂志式竖排大卡：
- * ① 顶部 112px 高的图片展示位（缩略图比之前大 65%）
- * ② 名称全宽显示（不再 truncate），最长 "iPhone 17 Pro Max" 也完整呈现
- * ③ 底部状态条：左侧「已選取 / 點擊選型號」；右侧显眼 selected 圆圈
- * 整张卡片高度统一，方便客户快速扫视对比型号
+ * 杂志式竖排大卡（v2）：
+ * ① 图区改为 min-h-[180px] 弹性高度，让缩略图真正占满空间，不再留白
+ * ② 图片上限 160px / 88%，透明 PNG 在 brand-50 渐变底色上更融入
+ * ③ 「熱門」徽章缩到 9px 文案，整体不抢图视觉
+ * ④ 状态条文字加粗加色，更显眼
+ * 整张卡片在 4 列网格下高度约 280px，图文比例约 6:4，留白舒展
  */
 export function ModelCard({
   model,
@@ -38,31 +39,31 @@ export function ModelCard({
       onClick={() => onSelect(model.id)}
       aria-pressed={selected}
       className={cn(
-        'product-card group relative flex h-full w-full cursor-pointer flex-col items-stretch overflow-hidden rounded-2xl border p-3.5 text-left box-border transition-all duration-200 ease-smooth',
+        'product-card group relative flex h-full min-h-[260px] w-full cursor-pointer flex-col items-stretch overflow-hidden rounded-2xl border p-3 text-left box-border transition-all duration-200 ease-smooth',
         selected
           ? 'border-brand-500 bg-brand-50/70 shadow-card ring-1 ring-brand-300'
           : 'border-slate-200 bg-white hover:-translate-y-0.5 hover:border-brand-200 hover:bg-surface-soft hover:shadow-card',
       )}
     >
-      {/* 图片位 */}
+      {/* 图片位：渐变底色 + 弹性高度，让缩略图真正撑满 */}
       <span
         className={cn(
-          'relative flex h-[112px] w-full items-center justify-center overflow-hidden rounded-xl',
-          image ? 'bg-white' : 'bg-brand-50 text-brand-600',
+          'relative flex min-h-[180px] w-full flex-1 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br',
+          image ? 'from-brand-50/70 via-white to-surface-soft' : 'bg-brand-50 text-brand-600',
         )}
       >
         {image ? (
           <img
             src={image}
             alt={model.name}
-            className="max-h-[100px] w-auto max-w-[80%] object-contain transition-transform duration-300 ease-smooth group-hover:scale-105"
+            className="max-h-[160px] w-auto max-w-[88%] object-contain transition-transform duration-300 ease-smooth group-hover:scale-105"
           />
         ) : (
-          <Thumb className="h-10 w-10" strokeWidth={2} />
+          <Thumb className="h-12 w-12" strokeWidth={2} />
         )}
 
         {model.hot ? (
-          <span className="absolute right-2 top-2 flex items-center gap-0.5 rounded-full bg-white/95 px-1.5 py-0.5 text-[10px] font-bold text-accent-600 shadow-sm ring-1 ring-accent-200">
+          <span className="absolute right-2 top-2 flex items-center gap-0.5 rounded-full bg-white/95 px-1.5 py-0.5 text-[9px] font-bold text-accent-600 shadow-sm ring-1 ring-accent-200">
             <Flame className="h-2.5 w-2.5" />
             熱門
           </span>
@@ -70,11 +71,11 @@ export function ModelCard({
       </span>
 
       {/* 名称 + 描述 */}
-      <span className="mt-3 flex-1">
+      <span className="mt-2.5">
         <span className="block break-words text-[0.98rem] font-extrabold leading-snug text-ink">
           {model.name}
         </span>
-        <span className="mt-1 block text-[0.74rem] text-ink-faint">
+        <span className="mt-0.5 block text-[0.74rem] text-ink-faint">
           {model.year} 年・{tierLabel[model.tier]}
         </span>
       </span>
@@ -82,12 +83,12 @@ export function ModelCard({
       {/* 底部状态条：年份・级别 | 选中圆圈 */}
       <span
         className={cn(
-          'mt-3 flex items-center justify-between rounded-lg border px-2.5 py-1.5 transition-colors duration-200',
+          'mt-2.5 flex items-center justify-between rounded-lg border px-2.5 py-2 transition-colors duration-200',
           selected ? 'border-brand-200 bg-brand-100/50' : 'border-slate-100 bg-surface-soft',
         )}
       >
-        <span className="text-[11px] font-semibold text-ink-muted">
-          {selected ? '已選取' : '點擊選型號'}
+        <span className="text-[12px] font-bold text-ink">
+          {selected ? '✓ 已選取' : '點擊選型號'}
         </span>
         <span
           className={cn(
