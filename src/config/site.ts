@@ -17,6 +17,10 @@ export const siteConfig = {
       district: '荔枝角',
       hours: '10:00 – 21:00',
       mtr: '港鐵荔枝角站 B1 出口步行 3 分鐘',
+      // Google 地圖搜尋字串（直接複製門牌地址，省去再手動更新經緯度）
+      mapsQuery: '九龍荔枝角青山道 588 號永盛工業大廈 1 樓 18 室',
+      // 嵌入 Google 地圖的 <iframe src> 用 place query
+      embedQuery: 'CathyRepair+荔枝角+青山道+588',
     },
   ],
   company: {

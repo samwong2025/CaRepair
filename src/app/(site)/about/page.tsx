@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import {
+  ArrowUpRight,
   Award,
   Banknote,
   Clock,
@@ -165,27 +166,69 @@ export default function AboutPage() {
 
       {/* 門市 */}
       <section id="shops" className="mt-16 scroll-mt-24">
-        <h2 className="text-3xl font-extrabold text-ink">門市地址</h2>
-        <p className="mt-2 text-sm text-ink-muted">門市鄰近港鐵站，即場維修無需預約。</p>
-        <div className="mt-6 grid gap-5 md:grid-cols-1 md:max-w-xl">
-          {siteConfig.shops.map((shop) => (
-            <article key={shop.name} className="glow-card rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
-              <div className="flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-brand-600" />
-                <h3 className="text-lg font-extrabold text-ink">{shop.name}</h3>
-              </div>
-              <p className="mt-3 text-sm leading-relaxed text-ink-muted">{shop.address}</p>
-              <p className="mt-2 flex items-center gap-1.5 text-xs text-ink-faint">
-                <Clock className="h-3.5 w-3.5" />
-                營業時間 {shop.hours}
-              </p>
-              <p className="mt-1 flex items-center gap-1.5 text-xs text-ink-faint">
-                <Train className="h-3.5 w-3.5" />
-                {shop.mtr}
-              </p>
-            </article>
-          ))}
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <h2 className="text-3xl font-extrabold text-ink">門市地址</h2>
+            <p className="mt-2 text-sm text-ink-muted">門市鄰近港鐵站，即場維修無需預約。點擊門市卡片即開 Google 地圖導航。</p>
+          </div>
         </div>
+        <div className="mt-6 grid gap-5 md:grid-cols-1 md:max-w-xl">
+          {siteConfig.shops.map((shop) => {
+            const mapHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.mapsQuery ?? shop.address)}`;
+            return (
+              <a
+                key={shop.name}
+                href={mapHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`在 Google 地圖開啟 ${shop.name} 位置`}
+                className="group glow-card relative block cursor-pointer rounded-2xl border border-slate-200 bg-white p-5 shadow-card transition-all duration-200 ease-smooth hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-lift focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-500"
+              >
+                <span className="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-bold text-brand-700 opacity-90 transition-all duration-200 group-hover:bg-brand-100 group-hover:opacity-100">
+                  Google 地圖
+                  <ArrowUpRight className="h-3 w-3" />
+                </span>
+
+                <div className="flex items-center gap-2">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-50 text-brand-600 transition-colors group-hover:bg-brand-100">
+                    <MapPin className="h-5 w-5" />
+                  </span>
+                  <h3 className="text-lg font-extrabold text-ink">{shop.name}</h3>
+                </div>
+
+                <p className="mt-3 text-sm leading-relaxed text-ink-muted">{shop.address}</p>
+                <p className="mt-2 flex items-center gap-1.5 text-xs text-ink-faint">
+                  <Clock className="h-3.5 w-3.5" />
+                  營業時間 {shop.hours}
+                </p>
+                <p className="mt-1 flex items-center gap-1.5 text-xs text-ink-faint">
+                  <Train className="h-3.5 w-3.5" />
+                  {shop.mtr}
+                </p>
+
+                <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-brand-700 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+                  點擊即開地圖導航
+                  <ArrowUpRight className="h-3.5 w-3.5" />
+                </span>
+              </a>
+            );
+          })}
+        </div>
+
+        {/* 嵌入 Google 地圖 iframe，一鍵直觀看位置 */}
+        {siteConfig.shops.map((shop) => (
+          <div key={`map-${shop.name}`} className="mt-5 overflow-hidden rounded-2xl border border-slate-200 shadow-card md:max-w-xl">
+            <iframe
+              title={`${shop.name} Google 地圖位置`}
+              src={`https://www.google.com/maps?q=${encodeURIComponent(shop.embedQuery ?? shop.mapsQuery ?? shop.address)}&hl=zh-HK&z=17&output=embed`}
+              width="100%"
+              height="320"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              className="block w-full"
+            />
+          </div>
+        ))}
       </section>
 
       {/* 保養條款 */}
