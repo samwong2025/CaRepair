@@ -138,6 +138,14 @@ const config: Config = {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-50%)' },
         },
+        /* 鼠標懸停產品圖時的「跳動」特效：輕微上下彈跳 + 微旋 */
+        'bounce-soft': {
+          '0%, 100%': { transform: 'translateY(0) scale(1.05) rotate(0deg)' },
+          '20%': { transform: 'translateY(-9px) scale(1.05) rotate(-2.5deg)' },
+          '40%': { transform: 'translateY(0) scale(1.05) rotate(0deg)' },
+          '60%': { transform: 'translateY(-5px) scale(1.05) rotate(2.5deg)' },
+          '80%': { transform: 'translateY(0) scale(1.05) rotate(0deg)' },
+        },
       },
       animation: {
         'fade-up': 'fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both',
@@ -147,6 +155,7 @@ const config: Config = {
         shimmer: 'shimmer 2.2s linear infinite',
         'pulse-ring': 'pulse-ring 2.2s cubic-bezier(0.66, 0, 0, 1) infinite',
         marquee: 'marquee 32s linear infinite',
+        'bounce-soft': 'bounce-soft 0.85s ease-in-out infinite',
       },
       transitionTimingFunction: {
         smooth: 'cubic-bezier(0.22, 1, 0.36, 1)',

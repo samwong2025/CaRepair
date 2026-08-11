@@ -12,6 +12,7 @@ import { StepSymptoms } from './step-symptoms';
 import { WizardProgress } from './wizard-progress';
 import { OrderSuccess } from './order-success';
 import { getModelById } from '../../data/devices';
+import { OTHER_MODEL_ID } from './step-device';
 import { getSymptomById } from '../../data/symptoms';
 import { siteConfig } from '../../config/site';
 import { formatHKD } from '../../lib/format';
@@ -42,6 +43,7 @@ export function RepairWizard({ initialCategory }: { initialCategory?: DeviceCate
   const [maxReached, setMaxReached] = React.useState(1);
   const [category, setCategory] = React.useState<DeviceCategory | null>(initialCategory ?? null);
   const [modelId, setModelId] = React.useState<string | null>(null);
+  const [customModel, setCustomModel] = React.useState('');
   const [symptomIds, setSymptomIds] = React.useState<string[]>([]);
   const [form, setForm] = React.useState<BookingForm>(initialForm);
   const [errors, setErrors] = React.useState<BookingErrors>({});
@@ -114,6 +116,11 @@ export function RepairWizard({ initialCategory }: { initialCategory?: DeviceCate
   const handleSelectModel = (next: string) => {
     setModelId(next);
     setSymptomIds([]);
+    // 揀「（其他）」唔自動跳步——要等客戶填完型號名先好繼續
+    if (next === OTHER_MODEL_ID) {
+      window.setTimeout(scrollToTop, 40);
+      return;
+    }
     // STEP 1 揀完型號 → 自動跳到 STEP 2（揀故障）
     if (step === 1) {
       goStep(2);
@@ -162,9 +169,16 @@ export function RepairWizard({ initialCategory }: { initialCategory?: DeviceCate
     setSubmitting(true);
     setSubmitError('');
 
+    // 揀咗「（其他）」：用 sentinel id，型號名改為客戶自填文字
+    const isOther = modelId === OTHER_MODEL_ID;
+    const resolvedModelName = isOther
+      ? (customModel.trim() || '（客戶未填寫型號）')
+      : (findModel(allModels, modelId)?.name ?? getModelById(modelId)?.name ?? '');
+
     const payload: RepairOrderInput = {
       deviceCategory: category,
-      deviceModelId: modelId,
+      deviceModelId: isOther ? OTHER_MODEL_ID : modelId,
+      deviceModelName: resolvedModelName,
       symptomIds,
       serviceMode: form.serviceMode,
       shopName: form.serviceMode === 'walk_in' ? form.shopName : undefined,
@@ -234,7 +248,9 @@ export function RepairWizard({ initialCategory }: { initialCategory?: DeviceCate
   const renderSelectedChip = (onBack: () => void) => (
     <div className="mb-6 flex flex-wrap items-center gap-2 rounded-xl border border-slate-200 bg-surface-soft px-4 py-2.5 text-sm">
       <span className="text-ink-muted">已選產品</span>
-      <span className="font-bold text-ink">{model?.name ?? '—'}</span>
+      <span className="font-bold text-ink">
+        {modelId === OTHER_MODEL_ID ? (customModel.trim() || '（其他）') : (model?.name ?? '—')}
+      </span>
       <Button
         type="button"
         variant="ghost"
@@ -263,6 +279,8 @@ export function RepairWizard({ initialCategory }: { initialCategory?: DeviceCate
               onSelectCategory={handleSelectCategory}
               onSelectModel={handleSelectModel}
               allModels={allModels}
+              customModel={customModel}
+              onCustomModelChange={setCustomModel}
               mode="full"
             />
           ) : null}
@@ -283,6 +301,8 @@ export function RepairWizard({ initialCategory }: { initialCategory?: DeviceCate
                       modelId={modelId}
                       onSelectModel={handleSelectModel}
                       allModels={allModels}
+                      customModel={customModel}
+                      onCustomModelChange={setCustomModel}
                     />
                   </div>
                 </div>
@@ -290,7 +310,7 @@ export function RepairWizard({ initialCategory }: { initialCategory?: DeviceCate
                 <>
                   <StepSymptoms
                     category={category}
-                    modelName={model?.name ?? ''}
+                    modelName={modelId === OTHER_MODEL_ID ? customModel.trim() : (model?.name ?? '')}
                     selected={symptomIds}
                     onToggle={toggleSymptom}
                     allSymptoms={allSymptoms}
@@ -321,7 +341,7 @@ export function RepairWizard({ initialCategory }: { initialCategory?: DeviceCate
             <div className="space-y-6">
               {renderSelectedChip(handleChangeProduct)}
 
-              <StepQuote quote={quote} modelName={model?.name ?? ''} />
+              <StepQuote quote={quote} modelName={modelId === OTHER_MODEL_ID ? customModel.trim() : (model?.name ?? '')} />
 
               <div className="flex items-center gap-3 border-t border-slate-100 pt-6">
                 <Button variant="ghost" size="md" onClick={() => goStep(2)}>

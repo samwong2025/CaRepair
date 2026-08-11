@@ -56,7 +56,7 @@ export function ModelCard({
           <img
             src={image}
             alt={model.name}
-            className="max-h-[160px] w-auto max-w-[88%] object-contain transition-transform duration-300 ease-smooth group-hover:scale-105"
+            className="max-h-[160px] w-auto max-w-[88%] object-contain transition-transform duration-300 ease-smooth group-hover:animate-bounce-soft"
           />
         ) : (
           <Thumb className="h-12 w-12" strokeWidth={2} />
