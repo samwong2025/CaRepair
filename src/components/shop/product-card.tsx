@@ -7,13 +7,14 @@ import { Badge } from '../ui/badge';
 import { SmartImage } from '../ui/smart-image';
 import { formatHKD } from '../../lib/format';
 import { gradeLabel } from '../../data/products';
-import { categoryLabel } from '../../lib/labels';
+import { resolveProductCategoryLabel } from '../../lib/labels';
 import type { Product } from '../../types';
 
 /** 二手商店商品卡片 */
 export function ProductCard({ product }: { product: Product }) {
   const grade = gradeLabel[product.grade];
   const discount = Math.round((1 - product.price / product.originalPrice) * 100);
+  const categoryDisplay = resolveProductCategoryLabel(product);
 
   return (
     <Link
@@ -47,7 +48,7 @@ export function ProductCard({ product }: { product: Product }) {
 
       <div className="flex flex-1 flex-col p-4">
         <p className="text-[0.68rem] font-bold uppercase tracking-wide text-ink-faint">
-          {categoryLabel[product.category]}・{product.storage}・{product.color}
+          {categoryDisplay}・{product.storage}・{product.color}
         </p>
         <h3 className="mt-1 line-clamp-2 text-base font-extrabold leading-snug text-ink">
           {product.name}

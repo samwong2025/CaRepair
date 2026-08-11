@@ -307,7 +307,11 @@ export type FulfillmentMethod = 'delivery' | 'pickup';
 export interface Product {
   id: string;
   name: string;
-  category: DeviceCategory;
+  /**
+   * 二手商品分類，預設四類（iphone/ipad/watch/macbook），但允許 admin 後台自由新增。
+   * 這裡刻意放寬成 string，避免被 DeviceCategory enum 限制導致無法擴充新品類。
+   */
+  category: string;
   storage: string;
   color: string;
   grade: ProductGrade;

@@ -15,7 +15,7 @@ import { SmartImage } from '../../../../components/ui/smart-image';
 import { Badge } from '../../../../components/ui/badge';
 import { formatHKD } from '../../../../lib/format';
 import { gradeLabel } from '../../../../data/products';
-import { categoryLabel } from '../../../../lib/labels';
+import { resolveProductCategoryLabel } from '../../../../lib/labels';
 
 export const dynamic = 'force-dynamic';
 
@@ -127,7 +127,7 @@ export default async function ProductPage({ params }: { params: { id: string } }
         <div className="lg:sticky lg:top-28 lg:self-start">
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-lift">
             <p className="text-[0.7rem] font-bold uppercase tracking-wide text-ink-faint">
-              {categoryLabel[product.category]}・{product.storage}・{product.color}
+              {resolveProductCategoryLabel(product)}・{product.storage}・{product.color}
             </p>
             <h1 className="mt-1 text-2xl font-extrabold leading-snug text-ink">{product.name}</h1>
             <div className="mt-3 flex items-end gap-3">

@@ -14,8 +14,59 @@ import {
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { formatHKD } from '../../lib/format';
-import { genProductId, SHOP_CATEGORIES, SHOP_GRADES } from '../../lib/shop-store';
-import type { Product } from '../../types';
+import { genProductId } from '../../lib/shop-store';
+import type { Product, ProductGrade } from '../../types';
+import { categoryLabel } from '../../lib/labels';
+
+const CATEGORY_SUGGESTIONS = ['Apple Watch', 'iPhone', 'iPad', 'MacBook'] as const;
+const GRADE_OPTIONS: { value: ProductGrade; label: string }[] = [
+  { value: 'S', label: 'S 級 (近全新)' },
+  { value: 'A', label: 'A 級 (輕微使用痕)' },
+  { value: 'B', label: 'B 級 (明顯使用痕)' },
+];
+
+/** 分类 <datalist>：默认建议 4 类，同时允许 admin 输入全新名称立刻用 */
+function CategoryCombo({
+  value,
+  suggestions,
+  onChange,
+  placeholder,
+}: {
+  value: string;
+  /** 所有已上架商品的分类（含本次 list 外的历史分类，可由外面传入） */
+  suggestions: readonly string[];
+  onChange: (v: string) => void;
+  placeholder?: string;
+}) {
+  /** 用一个稳定 id 让外层 datalist 可被 list 属性引用 */
+  const listId = React.useId();
+  const merged = React.useMemo(() => {
+    const next = new Set<string>(CATEGORY_SUGGESTIONS);
+    suggestions.forEach((s) => next.add(s));
+    if (value) next.add(value);
+    return Array.from(next);
+  }, [suggestions, value]);
+
+  return (
+    <div className="space-y-1.5">
+      <input
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        list={listId}
+        className="form-input"
+        placeholder={placeholder ?? '例如：Apple Watch / Android / 配件'}
+      />
+      <datalist id={listId}>
+        {merged.map((c) => (
+          <option key={c} value={c} />
+        ))}
+      </datalist>
+      <p className="text-[11px] text-ink-faint">
+        直接輸入新名稱就可用，不用先去設定頁建分類；前台會自動歸類同新分類。
+      </p>
+    </div>
+  );
+}
 
 interface ProductsManagerProps {
   initialProducts: Product[];
@@ -24,7 +75,7 @@ interface ProductsManagerProps {
 const emptyProduct = (): Product => ({
   id: genProductId(),
   name: '',
-  category: 'watch',
+  category: 'Apple Watch',
   storage: '',
   color: '',
   grade: 'A',
@@ -40,6 +91,16 @@ const emptyProduct = (): Product => ({
   services: [],
   hot: false,
 });
+
+/** 從現有商品清單聚合已使用過的分類（admin 可見），給 CategoryCombo 當歷史建議 */
+function useAllCategories(products: Product[], currentEditing: string | undefined): readonly string[] {
+  return React.useMemo(() => {
+    const set = new Set<string>();
+    products.forEach((p) => p.category && set.add(p.category));
+    if (currentEditing) set.add(currentEditing);
+    return Array.from(set);
+  }, [products, currentEditing]);
+}
 
 export function ProductsManager({ initialProducts }: ProductsManagerProps) {
   const [products, setProducts] = React.useState<Product[]>(initialProducts);
@@ -195,6 +256,7 @@ export function ProductsManager({ initialProducts }: ProductsManagerProps) {
         <ProductEditor
           product={editing}
           savingId={savingId}
+          allProducts={products}
           onClose={() => setEditing(null)}
           onSave={persist}
         />
@@ -206,16 +268,19 @@ export function ProductsManager({ initialProducts }: ProductsManagerProps) {
 function ProductEditor({
   product,
   savingId,
+  allProducts,
   onClose,
   onSave,
 }: {
   product: Product;
   savingId: string | null;
+  allProducts: Product[];
   onClose: () => void;
   onSave: (p: Product) => void;
 }) {
   const [draft, setDraft] = React.useState<Product>(product);
   const patch = (p: Partial<Product>) => setDraft((prev) => ({ ...prev, ...p }));
+  const existingCategories = useAllCategories(allProducts, draft.category);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
@@ -240,28 +305,22 @@ function ProductEditor({
           </Field>
 
           <Field label="分類">
-            <select
+            <CategoryCombo
               value={draft.category}
-              onChange={(e) => patch({ category: e.target.value as Product['category'] })}
-              className="form-input"
-            >
-              {SHOP_CATEGORIES.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
+              suggestions={existingCategories}
+              onChange={(v) => patch({ category: v })}
+            />
           </Field>
 
           <Field label="成色評級">
             <select
               value={draft.grade}
-              onChange={(e) => patch({ grade: e.target.value as Product['grade'] })}
+              onChange={(e) => patch({ grade: e.target.value as ProductGrade })}
               className="form-input"
             >
-              {SHOP_GRADES.map((g) => (
-                <option key={g} value={g}>
-                  {g}
+              {GRADE_OPTIONS.map((g) => (
+                <option key={g.value} value={g.value}>
+                  {g.label}
                 </option>
               ))}
             </select>

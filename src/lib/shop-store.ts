@@ -73,5 +73,9 @@ export function genProductId(): string {
   return `P${Date.now().toString().slice(-8)}${Math.floor(Math.random() * 90 + 10)}`;
 }
 
-export const SHOP_CATEGORIES = ['Apple Watch', 'iPhone', 'Android', '配件'] as const;
-export const SHOP_GRADES = ['99新', '95新', '9成新', '8成新'] as const;
+/* 備註：
+ * SHOP_CATEGORIES 與 SHOP_GRADES 已停用，二手商品分類/評級改由 admin 後台自由新增。
+ * 保留空檔以提示後人維護：
+ * - 分類由 admin 在商品編輯頁 ComboBox 中輸入（label/labels.ts 提供中文映射兜底）
+ * - 評級為 ProductGrade 'S'/'A'/'B'，由 components/admin/products-manager.tsx 直接渲染
+ */
