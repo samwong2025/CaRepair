@@ -150,10 +150,10 @@ export function Hero() {
                         <img
                           src={group.coverImage}
                           alt={group.name}
-                          width={56}
-                          height={56}
+                          width={44}
+                          height={44}
                           loading="lazy"
-                          className="pointer-events-none absolute right-3 top-1/2 z-0 h-[56px] w-[56px] -translate-y-1/2 object-contain opacity-95 transition-transform duration-500 ease-smooth group-hover:scale-110"
+                          className="pointer-events-none absolute right-3 top-3 z-0 h-11 w-11 object-contain opacity-95 transition-transform duration-500 ease-smooth group-hover:scale-110"
                         />
                       ) : null}
                       <span
@@ -166,10 +166,10 @@ export function Hero() {
                       >
                         <Icon className="h-5 w-5" strokeWidth={2} />
                       </span>
-                      <span className="relative z-10 pr-10 text-[0.95rem] font-bold text-ink">
+                      <span className="relative z-10 pr-12 text-[0.95rem] font-bold text-ink">
                         {group.name}
                       </span>
-                      <span className="relative z-10 pr-10 text-[0.7rem] leading-snug text-ink-faint">
+                      <span className="relative z-10 pr-12 text-[0.7rem] leading-snug text-ink-faint">
                         {group.popular}
                       </span>
                     </button>
