@@ -227,13 +227,13 @@ export default function AboutPage() {
       {/* 加入我們 */}
       <section id="join" className="mt-16 scroll-mt-24">
         <div className="overflow-hidden rounded-3xl bg-cta-gradient px-6 py-10 text-white sm:px-10">
-          <h2 className="text-2xl font-extrabold sm:text-3xl">加入我們・做一個被信任嘅技師</h2>
+          <h2 className="text-2xl font-extrabold sm:text-3xl">加入我們・做一個被信任嘅師傅</h2>
           <p className="mt-3 max-w-2xl text-sm text-white/85">
             如果你熟悉蘋果產品維修、認同透明誠實嘅服務哲學，歡迎投遞履歷。我哋提供有競爭力嘅薪酬、
             持續技術培訓，同埋一個唔使「斬客」都能夠做好嘅工作環境。
           </p>
           <a
-            href={`mailto:${siteConfig.email}?subject=應徵技師`}
+            href={`mailto:${siteConfig.email}?subject=應徵師傅`}
             className="mt-6 inline-block rounded-xl bg-white px-5 py-3 text-sm font-extrabold text-brand-700 transition-transform duration-200 hover:-translate-y-0.5"
           >
             發送履歷至 {siteConfig.email}
