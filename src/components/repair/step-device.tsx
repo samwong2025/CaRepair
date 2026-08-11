@@ -197,6 +197,7 @@ export function StepDevice({
   mode?: 'full' | 'category-only';
 }) {
   const [keyword, setKeyword] = React.useState('');
+  const modelSectionRef = React.useRef<HTMLDivElement>(null);
 
   const models = React.useMemo(() => {
     if (!category) return [];
@@ -236,6 +237,10 @@ export function StepDevice({
                 onClick={() => {
                   onSelectCategory(group.id);
                   setKeyword('');
+                  // 揀完產品後自動跳去型號清單，避免客戶以為冇反應
+                  window.setTimeout(() => {
+                    modelSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }, 80);
                 }}
                 aria-pressed={selected}
                 className={cn(
@@ -300,7 +305,7 @@ export function StepDevice({
       </div>
 
       {category && mode === 'full' ? (
-        <div>
+        <div ref={modelSectionRef} className="scroll-mt-28">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h3 className="text-lg font-extrabold text-ink">揀你部機的具體型號</h3>
