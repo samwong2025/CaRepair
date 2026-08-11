@@ -100,27 +100,52 @@ export async function POST(request: Request) {
 
     // 逐件建單（共用同一份聯絡資料與交收方式）
     const created: { orderNo: string; productName: string }[] = [];
+    const failed: { productName: string; message: string }[] = [];
     for (const line of lines) {
-      const order = await repo.createShopOrder({
-        productId: line.productId,
-        qty: line.qty,
-        customerName: customerName.trim(),
-        customerPhone: phone,
-        fulfillment,
-        deliveryAddress: deliveryAddress?.trim() || undefined,
-        pickupShop: fulfillment === 'pickup' ? pickupShop?.trim() : undefined,
-        pickupAt: pickupAt?.trim() || undefined,
-        remark: remark?.trim() || undefined,
-      });
-      const name = productMap.get(line.productId)?.name ?? '';
-      created.push({ orderNo: order.orderNo, productName: name });
+      try {
+        const order = await repo.createShopOrder({
+          productId: line.productId,
+          qty: line.qty,
+          customerName: customerName.trim(),
+          customerPhone: phone,
+          fulfillment,
+          deliveryAddress: deliveryAddress?.trim() || undefined,
+          pickupShop: fulfillment === 'pickup' ? pickupShop?.trim() : undefined,
+          pickupAt: pickupAt?.trim() || undefined,
+          remark: remark?.trim() || undefined,
+        });
+        const name = productMap.get(line.productId)?.name ?? '';
+        created.push({ orderNo: order.orderNo, productName: name });
+      } catch (err) {
+        const name = productMap.get(line.productId)?.name ?? line.productId;
+        const msg = err instanceof Error ? err.message : String(err);
+        failed.push({ productName: name, message: msg });
+      }
+    }
+
+    if (created.length === 0) {
+      const first = failed[0];
+      return NextResponse.json(
+        {
+          ok: false,
+          message: first
+            ? `「${first.productName}」下單失敗：${first.message}`
+            : '下單失敗，請稍後再試。',
+          failed,
+        },
+        { status: 500 },
+      );
     }
 
     return NextResponse.json({
       ok: true,
       count: created.length,
       orderNos: created.map((c) => c.orderNo),
-      message: `成功落 ${created.length} 張訂單，門市會盡快致電確認。`,
+      failed,
+      message:
+        failed.length > 0
+          ? `成功落 ${created.length} 張訂單，另有 ${failed.length} 件下單失敗，請聯絡門市補單。`
+          : `成功落 ${created.length} 張訂單，門市會盡快致電確認。`,
     });
   } catch (error) {
     console.error('批量落二手單失敗', error);

@@ -752,7 +752,7 @@ export const supabaseRepository: DataRepository = {
     return data ? rowToProduct(data) : product;
   },
 
-  async createShopOrder(input: ShopOrderInput) {
+  async createShopOrder(input: ShopOrderInput): Promise<ShopOrder> {
     const supabase = client();
     // 透過 SECURITY DEFINER RPC 建單並扣庫存，使公開下單（anon）亦可寫入，
     // 不依賴 serverless 環境是否注入 SUPABASE_SERVICE_ROLE_KEY。
@@ -768,11 +768,12 @@ export const supabaseRepository: DataRepository = {
       p_remark: input.remark ?? null,
     });
     if (error) {
-      console.error('[supabase] createShopOrder', error.message);
-      return null;
+      throw new Error(`建立訂單失敗：${error.message}`);
     }
     const row = (data ?? null) as Record<string, unknown> | null;
-    if (!row) return null;
+    if (!row || !row.id) {
+      throw new Error('建立訂單失敗：RPC 未回傳訂單資料');
+    }
     return {
       id: String(row.id ?? ''),
       orderNo: String(row.orderNo ?? ''),
@@ -781,12 +782,12 @@ export const supabaseRepository: DataRepository = {
       price: Number(row.price ?? 0),
       qty: Number(row.qty ?? 0),
       fulfillment: (row.fulfillment as ShopOrder['fulfillment']) ?? 'pickup',
-      pickupShop: row.pickupShop ? String(row.pickupShop) : null,
-      pickupAt: row.pickupAt ? String(row.pickupAt) : null,
-      deliveryAddress: row.deliveryAddress ? String(row.deliveryAddress) : null,
+      pickupShop: row.pickupShop ? String(row.pickupShop) : undefined,
+      pickupAt: row.pickupAt ? String(row.pickupAt) : undefined,
+      deliveryAddress: row.deliveryAddress ? String(row.deliveryAddress) : undefined,
       customerName: String(row.customerName ?? ''),
       customerPhone: String(row.customerPhone ?? ''),
-      remark: row.remark ? String(row.remark) : null,
+      remark: row.remark ? String(row.remark) : undefined,
       status: (row.status as ShopOrder['status']) ?? 'pending',
       createdAt: String(row.createdAt ?? new Date().toISOString()),
     };
