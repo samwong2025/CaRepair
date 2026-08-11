@@ -217,6 +217,7 @@ export const supabaseRepository: DataRepository = {
   async updateCustomer(id, patch) {
     const payload: Record<string, unknown> = {};
     if (patch.name !== undefined) payload.name = patch.name;
+    if (patch.phone !== undefined) payload.phone = patch.phone;
     if (patch.email !== undefined) payload.email = patch.email;
     if (patch.district !== undefined) payload.district = patch.district;
     if (patch.address !== undefined) payload.address = patch.address;
