@@ -91,9 +91,8 @@ export function openReceiptWhatsapp(order: RepairOrder): void {
 export function openReceiptEmail(order: RepairOrder): void {
   const subject = buildReceiptSubject(order);
   const body = buildReceiptMessage(order);
-  const to = order.customerEmail ?? siteConfig.email;
   const params = new URLSearchParams({ subject, body });
-  window.location.href = `mailto:${to}?${params.toString()}`;
+  window.location.href = `mailto:${siteConfig.email}?${params.toString()}`;
 }
 
 /* -------------------------------------------------------------------------- */
