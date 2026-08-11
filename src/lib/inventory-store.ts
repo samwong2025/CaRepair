@@ -1,9 +1,129 @@
 import { inventorySeed } from '../data/inventory';
 import { isSupabaseConfigured } from './supabase/client';
 import { getServerSupabase } from './supabase/server';
-import type { InventoryAlert, Part, PartCategory } from '../types';
+import type { InventoryAlert, Part, PartCategory, StockMovement, StockMovementType } from '../types';
 
 const LS_KEY = 'cathayrepair_inventory_overrides';
+const LS_MOVEMENT_KEY = 'cathayrepair_inventory_movements';
+
+/* ── 庫存異動流水（進銷存） ───────────────────────── */
+function readLocalMovements(): StockMovement[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = window.localStorage.getItem(LS_MOVEMENT_KEY);
+    const list = raw ? (JSON.parse(raw) as StockMovement[]) : [];
+    return Array.isArray(list) ? list : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeLocalMovements(movements: StockMovement[]): void {
+  if (typeof window === 'undefined') return;
+  window.localStorage.setItem(LS_MOVEMENT_KEY, JSON.stringify(movements));
+}
+
+/** 讀取全部異動流水（新→舊） */
+export async function loadMovements(): Promise<StockMovement[]> {
+  if (isSupabaseConfigured()) {
+    const supabase = getServerSupabase();
+    if (supabase) {
+      const { data, error } = await supabase
+        .from('inventory_movements')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (!error && data) {
+        return (data as Record<string, unknown>[]).map((row) => ({
+          id: row.id as string,
+          partId: row.part_id as string,
+          partName: row.part_name as string,
+          type: row.type as StockMovementType,
+          qty: Number(row.qty ?? 0),
+          balance: Number(row.balance ?? 0),
+          unitCost: row.unit_cost != null ? Number(row.unit_cost) : undefined,
+          note: (row.note as string) ?? undefined,
+          refOrderNo: (row.ref_order_no as string) ?? undefined,
+          createdAt: row.created_at as string,
+        }));
+      }
+    }
+  }
+  return readLocalMovements();
+}
+
+/**
+ * 記錄一筆異動並同步更新配件庫存。
+ * - inbound：庫存 +qty
+ * - outbound：庫存 -qty（不低於 0）
+ * - adjust：直接以 qty 作為盤後結餘（差額 = qty - 當前庫存）
+ * 回傳更新後的 Part（以 localStorage 備援時同步寫入）。
+ */
+export async function recordMovement(input: {
+  part: Part;
+  type: StockMovementType;
+  qty: number;
+  unitCost?: number;
+  note?: string;
+  refOrderNo?: string;
+}): Promise<{ movement: StockMovement; part: Part }> {
+  const qty = Math.max(0, Math.round(input.qty));
+  const currentStock = input.part.stock;
+  let newStock: number;
+  if (input.type === 'adjust') {
+    newStock = Math.max(0, qty);
+  } else if (input.type === 'outbound') {
+    newStock = Math.max(0, currentStock - qty);
+  } else {
+    newStock = currentStock + qty;
+  }
+
+  const movement: StockMovement = {
+    id: `M${Date.now().toString().slice(-8)}${Math.floor(Math.random() * 90 + 10)}`,
+    partId: input.part.id,
+    partName: input.part.name,
+    type: input.type,
+    qty: input.type === 'adjust' ? Math.abs(newStock - currentStock) || qty : qty,
+    balance: newStock,
+    unitCost: input.unitCost,
+    note: input.note,
+    refOrderNo: input.refOrderNo,
+    createdAt: new Date().toISOString(),
+  };
+
+  const updatedPart: Part = { ...input.part, stock: newStock, updatedAt: movement.createdAt };
+
+  if (isSupabaseConfigured()) {
+    const supabase = getServerSupabase();
+    if (supabase) {
+      const { error: mErr } = await supabase.from('inventory_movements').insert({
+        id: movement.id,
+        part_id: movement.partId,
+        part_name: movement.partName,
+        type: movement.type,
+        qty: movement.qty,
+        balance: movement.balance,
+        unit_cost: movement.unitCost ?? null,
+        note: movement.note ?? null,
+        ref_order_no: movement.refOrderNo ?? null,
+        created_at: movement.createdAt,
+      });
+      if (mErr) console.error('[inventory] insert movement', mErr.message);
+      await saveInventory(updatedPart);
+    }
+  } else {
+    const movements = readLocalMovements();
+    movements.unshift(movement);
+    writeLocalMovements(movements);
+    // 同步 localStorage 中的配件覆寫
+    const overrides = readLocalOverrides();
+    const idx = overrides.findIndex((p) => p.id === updatedPart.id);
+    if (idx >= 0) overrides[idx] = updatedPart;
+    else overrides.push(updatedPart);
+    writeLocalOverrides(overrides);
+  }
+
+  return { movement, part: updatedPart };
+}
 
 function partName(p: Part): string {
   return p.name;

@@ -56,8 +56,10 @@ export interface DataRepository {
   /* 二手商店 */
   listProducts(): Promise<Product[]>;
   getProduct(id: string): Promise<Product | null>;
+  upsertProduct(product: Product): Promise<Product>;
   createShopOrder(input: ShopOrderInput): Promise<ShopOrder>;
   listShopOrders(): Promise<ShopOrder[]>;
+  updateShopOrderStatus(id: string, status: ShopOrder['status']): Promise<ShopOrder | null>;
 
   /* 維修價格（後台可編輯，取代寫死的 pricing.ts） */
   listPricing(): Promise<import('../../types').SymptomPricing[]>;
@@ -66,4 +68,13 @@ export interface DataRepository {
   /* 庫存配件 */
   listInventory(): Promise<import('../../types').Part[]>;
   upsertInventory(part: import('../../types').Part): Promise<import('../../types').Part | null>;
+  listStockMovements(): Promise<import('../../types').StockMovement[]>;
+  addStockMovement(input: {
+    part: import('../../types').Part;
+    type: import('../../types').StockMovementType;
+    qty: number;
+    unitCost?: number;
+    note?: string;
+    refOrderNo?: string;
+  }): Promise<{ movement: import('../../types').StockMovement; part: import('../../types').Part }>;
 }

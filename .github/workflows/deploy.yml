@@ -1,0 +1,58 @@
+name: Deploy to Vercel (Production)
+
+# 触发：推送到 main 分支，或手动触发
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# 同一时间只跑一个生产部署，避免冲突
+concurrency:
+  group: vercel-production-deploy
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # NEXT_PUBLIC_* 变量会在构建时内联进客户端 bundle，必须在此注入
+      - name: Build
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+      - name: Deploy to Vercel (Production)
+        id: vercel
+        uses: amondnet/vercel-action@v25
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+          working-directory: ./
+
+      # 部署成功后，自动把公网地址推送到微信（Server酱）
+      - name: Notify via WeChat (Server酱)
+        if: ${{ success() && secrets.WECHAT_PUSH_TOKEN != '' }}
+        run: |
+          DEPLOY_URL="${{ steps.vercel.outputs.preview-url }}"
+          echo "部署地址: $DEPLOY_URL"
+          curl -s -X POST "https://sctapi.ftqq.com/${{ secrets.WECHAT_PUSH_TOKEN }}.send" \
+            --data-urlencode "title=CaRepair 已部署公网 ✅" \
+            --data-urlencode "desp=公网地址：${DEPLOY_URL}%0A部署时间：$(date '+%Y-%m-%d %H:%M:%S')"

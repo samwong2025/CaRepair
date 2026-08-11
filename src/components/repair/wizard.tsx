@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useSearchParams } from 'next/navigation';
 import { ArrowLeft, ArrowRight, Loader2, ShieldCheck, Sparkles } from 'lucide-react';
 import { Button } from '../ui/button';
 import { QuoteSummary } from './quote-summary';
@@ -15,7 +16,7 @@ import { getSymptomById } from '../../data/symptoms';
 import { siteConfig } from '../../config/site';
 import { formatHKD } from '../../lib/format';
 import { EMPTY_QUOTE, calculateQuote } from '../../lib/quote-engine';
-import { loadPricing } from '../../lib/pricing-store';
+import { loadPricing, loadTierMultipliers, type TierMultipliers } from '../../lib/pricing-store';
 import { loadModels, loadSymptoms, findModel, findSymptom } from '../../lib/catalog-store';
 import type { CreateOrderResult, DeviceCategory, DeviceModel, RepairOrderInput, Symptom } from '../../types';
 
@@ -36,6 +37,7 @@ const initialForm: BookingForm = {
 };
 
 export function RepairWizard({ initialCategory }: { initialCategory?: DeviceCategory }) {
+  const searchParams = useSearchParams();
   const [step, setStep] = React.useState(1);
   const [maxReached, setMaxReached] = React.useState(1);
   const [category, setCategory] = React.useState<DeviceCategory | null>(initialCategory ?? null);
@@ -54,17 +56,37 @@ export function RepairWizard({ initialCategory }: { initialCategory?: DeviceCate
   const [pricing, setPricing] = React.useState<import('../../types').SymptomPricing[] | undefined>(
     undefined,
   );
+  const [tiers, setTiers] = React.useState<TierMultipliers>({
+    flagship: 1.4,
+    premium: 1.2,
+    standard: 1.0,
+    legacy: 0.8,
+  });
 
   React.useEffect(() => {
     loadPricing().then(setPricing);
+    loadTierMultipliers().then(setTiers);
     loadModels().then(setAllModels);
     loadSymptoms().then(setAllSymptoms);
-  }, []);
+
+    // 由價格管理頁深鏈跳轉：預選機型分類與故障
+    const qsCategory = searchParams.get('category');
+    const qsSymptom = searchParams.get('symptom');
+    const validCategories: DeviceCategory[] = ['iphone', 'ipad', 'watch', 'macbook'];
+    if (qsCategory && validCategories.includes(qsCategory as DeviceCategory)) {
+      setCategory(qsCategory as DeviceCategory);
+    } else if (initialCategory) {
+      setCategory(initialCategory);
+    }
+    if (qsSymptom) {
+      setSymptomIds([qsSymptom]);
+    }
+  }, [searchParams, initialCategory]);
 
   const quote = React.useMemo(() => {
     if (!modelId || symptomIds.length === 0) return EMPTY_QUOTE;
-    return calculateQuote(modelId, symptomIds, pricing, model);
-  }, [modelId, symptomIds, pricing, model]);
+    return calculateQuote(modelId, symptomIds, pricing, model, tiers);
+  }, [modelId, symptomIds, pricing, model, tiers]);
 
   const symptomNames = React.useMemo(
     () => symptomIds.map((id) => findSymptom(allSymptoms, id)?.shortName ?? getSymptomById(id)?.shortName ?? id),

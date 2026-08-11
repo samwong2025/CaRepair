@@ -1,4 +1,5 @@
-import { getModelById, tierMultiplier } from '../data/devices';
+import { getModelById } from '../data/devices';
+import { effectiveTierMultipliers, type TierMultipliers } from './pricing-store';
 import { MAX_BUNDLE_DISCOUNT, bundleDiscountRates, findPricingRule } from '../data/pricing';
 import { getSymptomById } from '../data/symptoms';
 import type { DeviceCategory, DeviceModel, Quote, QuoteLineItem, SymptomPricing } from '../types';
@@ -40,11 +41,12 @@ export function calculateQuote(
   symptomIds: string[],
   rules?: SymptomPricing[],
   modelOverride?: DeviceModel,
+  tierMultipliers: TierMultipliers = effectiveTierMultipliers(),
 ): Quote {
   const model = modelOverride ?? getModelById(modelId);
   if (!model || symptomIds.length === 0) return EMPTY_QUOTE;
 
-  const multiplier = tierMultiplier[model.tier];
+  const multiplier = tierMultipliers[model.tier];
 
   const items: QuoteLineItem[] = [];
 
@@ -123,5 +125,5 @@ export function formatDuration(minutes: number): string {
 export function getStartingPrice(category: string, symptomId: string): number {
   const rule = findPricingRule(category, symptomId);
   if (!rule) return 0;
-  return roundToTen((rule.basePartFee + rule.baseLaborFee) * tierMultiplier.legacy);
+  return roundToTen((rule.basePartFee + rule.baseLaborFee) * effectiveTierMultipliers().legacy);
 }

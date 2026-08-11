@@ -9,7 +9,7 @@ import { Input, Select, Textarea } from '../../../../components/ui/input';
 import { PartsPicker } from '../../../../components/admin/parts-picker';
 import { statusMeta } from '../../../../data/seed';
 import { formatDateTime, formatHKD } from '../../../../lib/format';
-import { cn } from '../../../../lib/utils';
+import { buildWhatsappUrl, cn } from '../../../../lib/utils';
 import type { CurrentUser } from '../../../../lib/auth';
 import type {
   DeviceCategory,
@@ -170,11 +170,29 @@ export function OrderEditForm({
             />
           </Field>
           <Field label="客戶電話">
-            <Input
-              value={customerPhone}
-              onChange={(e) => setCustomerPhone(e.target.value)}
-              required
-            />
+            <div className="flex items-stretch gap-2">
+              <Input
+                value={customerPhone}
+                onChange={(e) => setCustomerPhone(e.target.value)}
+                required
+                className="flex-1"
+              />
+              <a
+                href={buildWhatsappUrl(customerPhone, `你好 ${order.customerName}，這裡是 CathyRepair，關於您的維修訂單 ${order.orderNo} 🙏`)}
+                target="_blank"
+                rel="noopener noreferrer"
+                title="透過 WhatsApp 聯絡客戶"
+                aria-label="WhatsApp 聯絡客戶"
+                className="inline-flex shrink-0 items-center justify-center rounded-lg border border-[#25D366]/30 bg-[#25D366]/10 px-3 text-[#25D366] transition-colors hover:bg-[#25D366]/20 disabled:opacity-40"
+                onClick={(e) => {
+                  if (!customerPhone.trim()) {
+                    e.preventDefault();
+                  }
+                }}
+              >
+                <WhatsappIcon className="h-5 w-5" />
+              </a>
+            </div>
           </Field>
           <Field label="預約時間">
             <Input
@@ -411,5 +429,19 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
       <span className="mb-1 block text-xs font-semibold text-ink-faint">{label}</span>
       {children}
     </label>
+  );
+}
+
+function WhatsappIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 0 0 4.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2Zm0 1.8c2.16 0 4.19.84 5.71 2.37a8.03 8.03 0 0 1 2.37 5.71c0 4.46-3.63 8.09-8.09 8.09a8.2 8.2 0 0 1-4.13-1.13l-.3-.18-3.12.82.83-3.04-.2-.31a8.05 8.05 0 0 1-1.25-4.34c0-4.46 3.63-8.09 8.09-8.09Zm-4.65 4.6c-.25 0-.65.1-.99.48-.34.38-.99 1.06-.99 2.58s1.01 2.99 1.15 3.2c.14.21 1.97 3.01 4.78 4.22.67.29 1.19.46 1.6.59.67.21 1.29.18 1.77.11.54-.08 1.66-.68 1.9-1.34.23-.66.23-1.23.16-1.34-.07-.11-.25-.18-.53-.31-.28-.13-1.66-.82-1.92-.91-.26-.09-.45-.14-.64.14-.19.28-.73.91-.9 1.1-.16.19-.33.21-.61.07-.29-.14-1.21-.45-2.3-1.43-.85-.76-1.42-1.7-1.59-1.99-.16-.28-.02-.43.12-.57.14-.14.31-.36.47-.54.15-.18.2-.32.31-.53.1-.21.05-.4-.02-.53-.08-.14-.64-1.54-.88-2.11-.23-.55-.46-.48-.64-.49h-.55Z" />
+    </svg>
   );
 }

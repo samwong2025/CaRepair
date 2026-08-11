@@ -1,9 +1,11 @@
 'use client';
 
 import * as React from 'react';
+import { useRouter } from 'next/navigation';
 import {
   Check,
   Database,
+  ExternalLink,
   HardDriveDownload,
   Loader2,
   RotateCcw,
@@ -13,9 +15,18 @@ import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Input, Select } from '../ui/input';
 import { formatHKD } from '../../lib/format';
-import { loadPricing, savePricing, type SaveResult } from '../../lib/pricing-store';
+import {
+  loadPricing,
+  savePricing,
+  tierOrder,
+  loadTierMultipliers,
+  saveTierMultipliers,
+  type SaveResult,
+  type TierMultipliers,
+} from '../../lib/pricing-store';
 import { pricingRules as DEFAULT_RULES } from '../../data/pricing';
-import type { DeviceCategory, SymptomPricing } from '../../types';
+import { tierMultiplier as DEFAULT_TIER } from '../../data/devices';
+import type { DeviceCategory, PriceTier, SymptomPricing } from '../../types';
 
 const CATEGORIES: { value: DeviceCategory; label: string }[] = [
   { value: 'iphone', label: 'iPhone' },
@@ -32,6 +43,7 @@ const CATEGORY_LABEL: Record<DeviceCategory, string> = {
 };
 
 export function PricingManager() {
+  const router = useRouter();
   const [rules, setRules] = React.useState<SymptomPricing[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [savingKey, setSavingKey] = React.useState('');
@@ -40,16 +52,49 @@ export function PricingManager() {
   const [filter, setFilter] = React.useState<DeviceCategory | 'all'>('all');
   const [notice, setNotice] = React.useState('');
 
+  // 機型級距係數（旗艦 / 進階 / 標準 / 舊款）
+  const [tiers, setTiers] = React.useState<TierMultipliers>(DEFAULT_TIER);
+  const tiersMeta = tierOrder();
+
   React.useEffect(() => {
     loadPricing().then((data) => {
       setRules(data);
       setMode(data.length > 0 && data.some((r) => r.partName) ? 'supabase' : 'local');
       setLoading(false);
     });
+    loadTierMultipliers().then(setTiers);
   }, []);
 
   const update = (key: string, patch: Partial<SymptomPricing>) => {
     setRules((prev) => prev.map((r) => (keyOf(r) === key ? { ...r, ...patch } : r)));
+  };
+
+  const updateTier = (tier: PriceTier, value: number) => {
+    setTiers((prev) => ({ ...prev, [tier]: value }));
+  };
+
+  const saveTiers = async () => {
+    const res = await saveTierMultipliers(tiers);
+    if (res.ok) {
+      setNotice(
+        res.mode === 'supabase'
+          ? '機型級距係數已儲存至雲端，立即套用於線上報價與後台建單。'
+          : '機型級距係數已更新（本地模式），立即套用於線上報價與後台建單。',
+      );
+    } else {
+      setNotice(`機型級距係數儲存失敗：${res.error ?? '未知錯誤'}`);
+    }
+  };
+
+  const resetTiers = async () => {
+    setTiers(DEFAULT_TIER);
+    const res = await saveTierMultipliers(DEFAULT_TIER);
+    setNotice(res.ok ? '機型級距係數已還原為預設值。' : '還原失敗，請稍後再試。');
+  };
+
+  // 點擊價格列 -> 跳轉到對應故障的下單頁
+  const goToRepair = (rule: SymptomPricing) => {
+    router.push(`/repair?category=${rule.category}&symptom=${rule.symptomId}`);
   };
 
   const save = async (rule: SymptomPricing) => {
@@ -128,6 +173,46 @@ export function PricingManager() {
         </div>
       ) : null}
 
+      {/* 機型級距係數編輯 */}
+      <div className="no-print rounded-xl border border-slate-200 bg-white">
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 px-4 py-3">
+          <div>
+            <h3 className="text-sm font-semibold text-ink">機型級距係數</h3>
+            <p className="text-xs text-ink-faint">
+              報價會依機型等級浮動（旗艦 / 進階 / 標準 / 舊款）。修改即時生效於線上報價與後台建單。
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button size="sm" variant="ghost" onClick={resetTiers} title="還原預設">
+              <RotateCcw className="h-3.5 w-3.5" /> 還原
+            </Button>
+            <Button size="sm" variant="cta" onClick={saveTiers}>
+              <Save className="h-3.5 w-3.5" /> 儲存係數
+            </Button>
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-px bg-slate-100 sm:grid-cols-4">
+          {tiersMeta.map((t) => (
+            <div key={t.value} className="bg-white p-3">
+              <label className="flex items-center justify-between text-xs font-medium text-ink-muted">
+                {t.label}
+                <span className="rounded bg-slate-100 px-1.5 py-0.5 font-mono text-[11px] text-ink-faint">
+                  ×{tiers[t.value].toFixed(2)}
+                </span>
+              </label>
+              <Input
+                type="number"
+                min={0}
+                step={0.05}
+                value={tiers[t.value]}
+                onChange={(e) => updateTier(t.value, Math.max(0, Number(e.target.value) || 0))}
+                className="mt-2 w-full text-right"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
         <table className="w-full min-w-[760px] text-sm">
           <thead>
@@ -163,7 +248,9 @@ export function PricingManager() {
                       onChange={(e) =>
                         update(key, { basePartFee: Math.max(0, Number(e.target.value) || 0) })
                       }
-                      className="ml-auto w-28 text-right"
+                      className="ml-auto w-28 cursor-pointer text-right"
+                      onClick={() => goToRepair(rule)}
+                      title="點擊前往對應故障的下單頁"
                     />
                   </td>
                   <td className="px-3 py-3 text-right">
@@ -174,7 +261,9 @@ export function PricingManager() {
                       onChange={(e) =>
                         update(key, { baseLaborFee: Math.max(0, Number(e.target.value) || 0) })
                       }
-                      className="ml-auto w-28 text-right"
+                      className="ml-auto w-28 cursor-pointer text-right"
+                      onClick={() => goToRepair(rule)}
+                      title="點擊前往對應故障的下單頁"
                     />
                   </td>
                   <td className="px-3 py-3 text-right">
@@ -213,6 +302,14 @@ export function PricingManager() {
                     <div className="flex items-center justify-end gap-1.5">
                       <Button
                         size="sm"
+                        variant="outline"
+                        onClick={() => goToRepair(rule)}
+                        title="前往對應故障的下單頁"
+                      >
+                        <ExternalLink className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        size="sm"
                         variant="ghost"
                         onClick={() => resetRule(rule)}
                         title="還原預設"
@@ -244,7 +341,7 @@ export function PricingManager() {
       </div>
 
       <p className="no-print px-1 text-xs text-ink-faint">
-        * 報價時會再依機型級距係數（旗艦 1.4 / 進階 1.2 / 標準 1.0 / 舊款 0.8）浮動。修改即時生效於線上報價與後台建單。
+        * 點擊「配件費 / 人工費」欄位或「預覽下單」按鈕，可直接跳轉到對應故障的下單頁。報價時會再依機型級距係數浮動（可在上方編輯）。修改即時生效於線上報價與後台建單。
       </p>
     </div>
   );

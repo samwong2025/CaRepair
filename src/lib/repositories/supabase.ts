@@ -5,7 +5,7 @@ import { calculateQuote } from '../quote-engine';
 import { generateMemberNo, generateOrderNo } from '../format';
 import { getServerSupabase } from '../supabase/server';
 import { loadModels, findModel } from '../catalog-store';
-import { loadPricing, savePricing } from '../pricing-store';
+import { loadPricing, loadTierMultipliers, savePricing } from '../pricing-store';
 import { loadInventory, saveInventory } from '../inventory-store';
 import type { DataRepository } from './types';
 import type {
@@ -23,6 +23,8 @@ import type {
   RepairTicket,
   ShopOrder,
   ShopOrderInput,
+  StockMovement,
+  StockMovementType,
   SymptomPricing,
 } from '../../types';
 
@@ -242,7 +244,8 @@ export const supabaseRepository: DataRepository = {
     if (!model) throw new Error('找不到對應的產品型號');
 
     const pricing = await loadPricing();
-    const quote = calculateQuote(model.id, input.symptomIds, pricing, model);
+    const tiers = await loadTierMultipliers();
+    const quote = calculateQuote(model.id, input.symptomIds, pricing, model, tiers);
     if (quote.items.length === 0) throw new Error('未能為所選故障產生報價');
 
     const now = new Date().toISOString();
@@ -486,9 +489,10 @@ export const supabaseRepository: DataRepository = {
     if (quoteChanged) {
       const models = await loadModels();
       const pricing = await loadPricing();
+      const tiers = await loadTierMultipliers();
       const model = findModel(models, order.deviceModelId) ?? getModelById(order.deviceModelId);
       if (!model) throw new Error('重算報價時找不到對應型號');
-      const newQuote = calculateQuote(order.deviceModelId, order.symptomIds, pricing, model);
+      const newQuote = calculateQuote(order.deviceModelId, order.symptomIds, pricing, model, tiers);
       if (newQuote.items.length === 0) throw new Error('所選故障組合無法產生報價');
       order.quote = newQuote;
     }
@@ -715,6 +719,36 @@ export const supabaseRepository: DataRepository = {
     return data ? rowToProduct(data) : null;
   },
 
+  async upsertProduct(product: Product) {
+    const { data, error } = await client()
+      .from('products')
+      .upsert({
+        id: product.id,
+        name: product.name,
+        category: product.category,
+        storage: product.storage,
+        color: product.color,
+        grade: product.grade,
+        battery_health: product.batteryHealth,
+        price: product.price,
+        original_price: product.originalPrice,
+        stock: product.stock,
+        warranty_days: product.warrantyDays,
+        image: product.image,
+        highlights: product.highlights,
+        description: product.description,
+        accessories: product.accessories,
+        hot: product.hot,
+      })
+      .select('*')
+      .maybeSingle();
+    if (error) {
+      console.error('[supabase] upsertProduct', error.message);
+      throw new Error(`儲存商品失敗：${error.message}`);
+    }
+    return data ? rowToProduct(data) : product;
+  },
+
   async createShopOrder(input: ShopOrderInput) {
     const supabase = client();
     const { data: productRow, error: productError } = await supabase
@@ -769,6 +803,20 @@ export const supabaseRepository: DataRepository = {
     return (data ?? []).map(rowToShopOrder);
   },
 
+  async updateShopOrderStatus(id, status: ShopOrder['status']) {
+    const { data, error } = await client()
+      .from('shop_orders')
+      .update({ status })
+      .eq('id', id)
+      .select('*')
+      .maybeSingle();
+    if (error) {
+      console.error('[supabase] updateShopOrderStatus', error.message);
+      return null;
+    }
+    return data ? rowToShopOrder(data) : null;
+  },
+
   async listPricing(): Promise<SymptomPricing[]> {
     return loadPricing();
   },
@@ -785,6 +833,23 @@ export const supabaseRepository: DataRepository = {
   async upsertInventory(part: Part): Promise<Part | null> {
     const result = await saveInventory(part);
     return result.ok ? part : null;
+  },
+
+  async listStockMovements(): Promise<StockMovement[]> {
+    const { loadMovements } = await import('../inventory-store');
+    return loadMovements();
+  },
+
+  async addStockMovement(input: {
+    part: Part;
+    type: StockMovementType;
+    qty: number;
+    unitCost?: number;
+    note?: string;
+    refOrderNo?: string;
+  }) {
+    const { recordMovement } = await import('../inventory-store');
+    return recordMovement(input);
   },
 };
 

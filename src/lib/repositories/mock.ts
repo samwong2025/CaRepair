@@ -2,7 +2,7 @@ import { getModelById } from '../../data/devices';
 import { getSymptomById } from '../../data/symptoms';
 import { statusMeta } from '../../data/seed';
 import { loadModels, findModel } from '../catalog-store';
-import { loadPricing } from '../pricing-store';
+import { loadPricing, loadTierMultipliers } from '../pricing-store';
 import { calculateQuote } from '../quote-engine';
 import { generateMemberNo, generateOrderNo } from '../format';
 import { getStore } from './mock-store';
@@ -23,6 +23,8 @@ import type {
   RepairTicket,
   ShopOrder,
   ShopOrderInput,
+  StockMovement,
+  StockMovementType,
   SymptomPricing,
 } from '../../types';
 
@@ -75,7 +77,8 @@ export const mockRepository: DataRepository = {
     if (!model) throw new Error('找不到對應的產品型號');
 
     const pricing = await loadPricing();
-    const quote = calculateQuote(model.id, input.symptomIds, pricing, model);
+    const tiers = await loadTierMultipliers();
+    const quote = calculateQuote(model.id, input.symptomIds, pricing, model, tiers);
     if (quote.items.length === 0) throw new Error('未能為所選故障產生報價');
 
     const now = new Date().toISOString();
@@ -233,9 +236,10 @@ export const mockRepository: DataRepository = {
     if (quoteChanged) {
       const models = await loadModels();
       const pricing = await loadPricing();
+      const tiers = await loadTierMultipliers();
       const model = findModel(models, order.deviceModelId) ?? getModelById(order.deviceModelId);
       if (!model) throw new Error('重算報價時找不到對應型號');
-      const newQuote = calculateQuote(order.deviceModelId, order.symptomIds, pricing, model);
+      const newQuote = calculateQuote(order.deviceModelId, order.symptomIds, pricing, model, tiers);
       if (newQuote.items.length === 0) throw new Error('所選故障組合無法產生報價');
       order.quote = newQuote;
       const ticket = store.tickets.find((t) => t.orderId === order.id);
@@ -403,6 +407,17 @@ export const mockRepository: DataRepository = {
     return clone(getStore().products.find((p) => p.id === id) ?? null);
   },
 
+  async upsertProduct(product: Product) {
+    const store = getStore();
+    const idx = store.products.findIndex((p) => p.id === product.id);
+    if (idx >= 0) {
+      store.products[idx] = { ...store.products[idx], ...product };
+    } else {
+      store.products.push(product);
+    }
+    return clone(product);
+  },
+
   async createShopOrder(input: ShopOrderInput) {
     const store = getStore();
     const product = store.products.find((p) => p.id === input.productId);
@@ -464,6 +479,14 @@ export const mockRepository: DataRepository = {
     return clone(getStore().shopOrders);
   },
 
+  async updateShopOrderStatus(id, status: ShopOrder['status']) {
+    const store = getStore();
+    const order = store.shopOrders.find((o) => o.id === id);
+    if (!order) return null;
+    order.status = status;
+    return clone(order);
+  },
+
   async listPricing() {
     const { loadPricing: load } = await import('../pricing-store');
     return load();
@@ -484,6 +507,23 @@ export const mockRepository: DataRepository = {
     const { saveInventory } = await import('../inventory-store');
     const result = await saveInventory(part);
     return result.ok ? part : null;
+  },
+
+  async listStockMovements() {
+    const { loadMovements } = await import('../inventory-store');
+    return loadMovements();
+  },
+
+  async addStockMovement(input: {
+    part: Part;
+    type: StockMovementType;
+    qty: number;
+    unitCost?: number;
+    note?: string;
+    refOrderNo?: string;
+  }) {
+    const { recordMovement } = await import('../inventory-store');
+    return recordMovement(input);
   },
 };
 

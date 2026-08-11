@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import { Clock3, ShieldCheck, Sparkles } from 'lucide-react';
 import { RepairWizard } from '../../../components/repair/wizard';
 import { deviceGroups } from '../../../data/devices';
@@ -70,7 +71,9 @@ export default function RepairPage({
 
       <section className="bg-surface-muted py-10 sm:py-14">
         <div className="section-shell">
-          <RepairWizard initialCategory={initialCategory} />
+          <Suspense fallback={<div className="py-20 text-center text-ink-muted">載入下單表單…</div>}>
+            <RepairWizard initialCategory={initialCategory} />
+          </Suspense>
         </div>
       </section>
     </>

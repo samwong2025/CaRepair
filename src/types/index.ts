@@ -228,6 +228,33 @@ export interface InventoryAlert {
   message: string;
 }
 
+/* ─── 進銷存：庫存異動流水 ─────────────────────────── */
+export type StockMovementType = 'inbound' | 'outbound' | 'adjust';
+
+export interface StockMovement {
+  id: string;
+  partId: string;
+  partName: string;
+  type: StockMovementType; // inbound 入庫 / outbound 出庫 / adjust 盤點調整
+  /** 異動數量（永遠為正數；出庫會扣減庫存） */
+  qty: number;
+  /** 異動後庫存結餘 */
+  balance: number;
+  /** 單價（入庫成本 / 出庫成本），用於金額統計 */
+  unitCost?: number;
+  /** 備註：採購單號、關聯工單、盤點原因等 */
+  note?: string;
+  /** 關聯工單編號（出庫維修用料時帶入） */
+  refOrderNo?: string;
+  createdAt: string;
+}
+
+export const STOCK_MOVEMENT_LABELS: Record<StockMovementType, string> = {
+  inbound: '入庫',
+  outbound: '出庫',
+  adjust: '盤點調整',
+};
+
 /* ─── 維修工單（後台） ───────────────────────────── */
 
 export interface RepairTicket {
