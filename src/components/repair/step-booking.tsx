@@ -99,7 +99,7 @@ export function StepBooking({
       {/* 服務方式 */}
       <div>
         <Label className="mb-3 block">服務方式</Label>
-        <div className="grid gap-3 lg:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {serviceModes.map((mode) => {
             const Icon = mode.icon;
             const selected = form.serviceMode === mode.id;
@@ -143,7 +143,7 @@ export function StepBooking({
           <Label className="mb-3 block" required>
             揀選門市
           </Label>
-          <div className="grid gap-3 lg:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {siteConfig.shops.map((shop) => {
               const selected = form.shopName === shop.name;
               return (
@@ -161,7 +161,7 @@ export function StepBooking({
                 >
                   <span className="min-w-0">
                     <span className="block text-[0.92rem] font-bold text-ink">{shop.name}</span>
-                    <span className="mt-0.5 block truncate text-xs text-ink-faint">
+                    <span className="mt-0.5 block line-clamp-1 text-xs text-ink-faint">
                       {shop.mtr}
                     </span>
                   </span>
@@ -200,7 +200,7 @@ export function StepBooking({
         <Label className="mb-3 block" required>
           {form.serviceMode === 'walk_in' ? '到店日期' : '收件日期'}
         </Label>
-        <div className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-2">
+        <div className="-mx-1 flex snap-x snap-mandatory gap-2 overflow-x-auto px-1 pb-2 [scrollbar-width:thin]">
           {dateOptions.map((option) => {
             const selected = form.appointmentDate === option.value;
             return (
@@ -210,7 +210,7 @@ export function StepBooking({
                 onClick={() => onChange('appointmentDate', option.value)}
                 aria-pressed={selected}
                 className={cn(
-                  'flex w-[4.5rem] shrink-0 cursor-pointer flex-col items-center rounded-xl border py-2.5 transition-all duration-200',
+                  'flex w-[3.75rem] shrink-0 snap-start cursor-pointer flex-col items-center rounded-xl border py-2.5 transition-all duration-200 sm:w-[4.5rem]',
                   selected
                     ? 'border-transparent bg-brand-gradient text-white shadow-brand'
                     : 'border-slate-200 bg-white text-ink hover:border-brand-300 hover:bg-brand-50/50',
