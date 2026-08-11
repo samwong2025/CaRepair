@@ -6,6 +6,7 @@ import { generateMemberNo, generateOrderNo } from '../format';
 import { getServerSupabase } from '../supabase/server';
 import { loadModels, findModel } from '../catalog-store';
 import { loadPricing, savePricing } from '../pricing-store';
+import { loadInventory, saveInventory } from '../inventory-store';
 import type { DataRepository } from './types';
 import type {
   AfterSalesInput,
@@ -14,6 +15,7 @@ import type {
   Customer,
   MemberLevel,
   OrderStatus,
+  Part,
   Product,
   RepairOrder,
   RepairOrderEditPatch,
@@ -81,6 +83,7 @@ function rowToOrder(row: Record<string, unknown>): RepairOrder {
     status: row.status as OrderStatus,
     timeline: (row.timeline as RepairOrder['timeline']) ?? [],
     technician: (row.technician as string) ?? undefined,
+    partsUsed: (row.parts_used as RepairOrder['partsUsed']) ?? undefined,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
   };
@@ -499,6 +502,17 @@ export const supabaseRepository: DataRepository = {
     if (patch.appointmentAt !== undefined) order.appointmentAt = patch.appointmentAt;
     if (patch.remark !== undefined) order.remark = patch.remark ?? undefined;
 
+    if (patch.partsUsed !== undefined) {
+      order.partsUsed = patch.partsUsed.map((p) => ({ ...p }));
+      const partsSummary = order.partsUsed.map((p) => `${p.name}×${p.qty}`).join('、') || '（無）';
+      timelineAdditions.push({
+        status: order.status,
+        at: now,
+        note: `選用庫存配件：${partsSummary}`,
+        operator,
+      });
+    }
+
     if (patch.note) {
       timelineAdditions.push({ status: order.status, at: now, note: patch.note, operator });
     }
@@ -515,6 +529,7 @@ export const supabaseRepository: DataRepository = {
       shop_name: order.shopName,
       appointment_at: order.appointmentAt,
       remark: order.remark,
+      parts_used: order.partsUsed ?? null,
       timeline: [...order.timeline, ...timelineAdditions],
       updated_at: now,
     };
@@ -733,6 +748,15 @@ export const supabaseRepository: DataRepository = {
   async upsertPricing(rule: SymptomPricing): Promise<SymptomPricing | null> {
     const result = await savePricing(rule);
     return result.ok ? rule : null;
+  },
+
+  async listInventory(): Promise<Part[]> {
+    return loadInventory();
+  },
+
+  async upsertInventory(part: Part): Promise<Part | null> {
+    const result = await saveInventory(part);
+    return result.ok ? part : null;
   },
 };
 

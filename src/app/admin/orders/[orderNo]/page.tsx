@@ -17,10 +17,11 @@ export default async function OrderDetailPage({
   const order = await repo.getRepairOrderByNo(orderNo);
   if (!order) notFound();
 
-  const [currentUser, allModels, allSymptoms] = await Promise.all([
+  const [currentUser, allModels, allSymptoms, inventory] = await Promise.all([
     getCurrentUser(),
     loadModels(),
     loadSymptoms(),
+    repo.listInventory(),
   ]);
 
   const techOptions = await getTechnicianOptions();
@@ -56,6 +57,7 @@ export default async function OrderDetailPage({
         allSymptoms={allSymptoms}
         technicianOptions={techOptions}
         currentModel={currentModel}
+        inventory={inventory}
       />
     </div>
   );

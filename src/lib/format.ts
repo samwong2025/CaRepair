@@ -93,3 +93,42 @@ export function formatPhone(value: string | undefined | null): string {
   if (digits.length === 8) return `${digits.slice(0, 4)} ${digits.slice(4)}`;
   return value;
 }
+
+/* ── 日期區間判斷（師傅工作台用） ─────────────────── */
+function startOfDay(d: Date): Date {
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+}
+
+/** 是否為今天 */
+export function isToday(iso: string): boolean {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return false;
+  const today = startOfDay(new Date());
+  return d.getTime() >= today.getTime() && d.getTime() < today.getTime() + 86400000;
+}
+
+/** 是否為本週（週一~週日） */
+export function isThisWeek(iso: string): boolean {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return false;
+  const now = new Date();
+  const day = (now.getDay() + 6) % 7; // 週一=0
+  const monday = startOfDay(new Date(now.getTime() - day * 86400000));
+  return d.getTime() >= monday.getTime();
+}
+
+/** 是否為本月 */
+export function isThisMonth(iso: string): boolean {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return false;
+  const now = new Date();
+  return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+}
+
+/** 距預約時間剩餘時數（負數表示已過期） */
+export function hoursUntil(iso: string): number | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return (d.getTime() - Date.now()) / 3600000;
+}

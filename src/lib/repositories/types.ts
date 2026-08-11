@@ -62,4 +62,8 @@ export interface DataRepository {
   /* 維修價格（後台可編輯，取代寫死的 pricing.ts） */
   listPricing(): Promise<import('../../types').SymptomPricing[]>;
   upsertPricing(rule: import('../../types').SymptomPricing): Promise<import('../../types').SymptomPricing | null>;
+
+  /* 庫存配件 */
+  listInventory(): Promise<import('../../types').Part[]>;
+  upsertInventory(part: import('../../types').Part): Promise<import('../../types').Part | null>;
 }

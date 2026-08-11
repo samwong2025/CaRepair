@@ -26,6 +26,7 @@ interface PatchBody {
   customerPhone?: string;
   shopName?: string | null;
   appointmentAt?: string;
+  partsUsed?: import('../../../../types').UsedPart[];
 }
 
 /** PATCH /api/orders/[id] 後台更新維修訂單（狀態推進 或 編輯欄位） */
@@ -51,6 +52,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     'customerPhone',
     'shopName',
     'appointmentAt',
+    'partsUsed',
   ];
   const hasEdit = editKeys.some((k) => body[k] !== undefined);
   if (hasEdit) {
@@ -66,6 +68,7 @@ export async function PATCH(request: Request, { params }: { params: { id: string
       customerPhone: body.customerPhone,
       shopName: body.shopName,
       appointmentAt: body.appointmentAt,
+      partsUsed: body.partsUsed,
       operator: body.operator,
       note: body.note,
     };

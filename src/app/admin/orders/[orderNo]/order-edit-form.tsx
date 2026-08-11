@@ -6,6 +6,7 @@ import { Loader2, Save } from 'lucide-react';
 import { Badge } from '../../../../components/ui/badge';
 import { Button } from '../../../../components/ui/button';
 import { Input, Select, Textarea } from '../../../../components/ui/input';
+import { PartsPicker } from '../../../../components/admin/parts-picker';
 import { statusMeta } from '../../../../data/seed';
 import { formatDateTime, formatHKD } from '../../../../lib/format';
 import { cn } from '../../../../lib/utils';
@@ -13,8 +14,10 @@ import type { CurrentUser } from '../../../../lib/auth';
 import type {
   DeviceCategory,
   DeviceModel,
+  Part,
   RepairOrder,
   Symptom,
+  UsedPart,
 } from '../../../../types';
 
 interface EditFormProps {
@@ -25,6 +28,7 @@ interface EditFormProps {
   allSymptoms: Symptom[];
   technicianOptions: string[];
   currentModel: DeviceModel | null;
+  inventory: Part[];
 }
 
 const CATEGORY_LABEL: Record<DeviceCategory, string> = {
@@ -42,6 +46,7 @@ export function OrderEditForm({
   allSymptoms,
   technicianOptions,
   currentModel,
+  inventory,
 }: EditFormProps) {
   const router = useRouter();
 
@@ -51,6 +56,7 @@ export function OrderEditForm({
   const [modelId, setModelId] = React.useState(order.deviceModelId);
   const [symptomIds, setSymptomIds] = React.useState<string[]>([...order.symptomIds]);
   const [technician, setTechnician] = React.useState<string>(order.technician ?? '待分派');
+  const [partsUsed, setPartsUsed] = React.useState<UsedPart[]>([...(order.partsUsed ?? [])]);
   const [customerName, setCustomerName] = React.useState(order.customerName);
   const [customerPhone, setCustomerPhone] = React.useState(order.customerPhone);
   const [appointmentAt, setAppointmentAt] = React.useState(order.appointmentAt.slice(0, 16));
@@ -90,7 +96,8 @@ export function OrderEditForm({
     customerName !== order.customerName ||
     customerPhone !== order.customerPhone ||
     appointmentAt !== order.appointmentAt.slice(0, 16) ||
-    (remark || '') !== (order.remark ?? '');
+    (remark || '') !== (order.remark ?? '') ||
+    JSON.stringify(partsUsed) !== JSON.stringify(order.partsUsed ?? []);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -109,6 +116,7 @@ export function OrderEditForm({
           customerPhone,
           appointmentAt: new Date(appointmentAt).toISOString(),
           remark: remark || null,
+          partsUsed,
           operator: currentUser?.name ?? '後台管理員',
           note: extraNote.trim() || undefined,
         }),
@@ -245,6 +253,23 @@ export function OrderEditForm({
               })
             )}
           </div>
+        </div>
+      </section>
+
+      {/* 選擇庫存配件 */}
+      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
+        <h2 className="text-sm font-bold text-ink">選擇庫存配件</h2>
+        <p className="mt-1 text-xs text-ink-faint">
+          依機型與故障自動篩選適用配件，庫存不足會即時提示。選定後提交寫入工單。
+        </p>
+        <div className="mt-4">
+          <PartsPicker
+            inventory={inventory}
+            selected={partsUsed}
+            onChange={setPartsUsed}
+            deviceCategory={category}
+            symptomIds={symptomIds}
+          />
         </div>
       </section>
 

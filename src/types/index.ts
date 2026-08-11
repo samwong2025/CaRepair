@@ -152,8 +152,19 @@ export interface RepairOrder {
   status: OrderStatus;
   timeline: OrderTimelineEntry[];
   technician?: string;
+  /** 實際領用 / 選用的庫存配件清單（師傅作業時登記） */
+  partsUsed?: UsedPart[];
   createdAt: string;
   updatedAt: string;
+}
+
+/** 工單上實際選用的庫存配件（參照庫存 partId，便於扣庫存與追蹤） */
+export interface UsedPart {
+  partId: string;
+  name: string;
+  qty: number;
+  unitCost: number;
+  category?: string;
 }
 
 /** 後台可編輯欄位（PATCH /api/orders/[id] 接受）；型號 / 故障變更會自動重算報價 */
@@ -166,10 +177,44 @@ export interface RepairOrderEditPatch {
   customerPhone?: string;
   shopName?: string | null;
   appointmentAt?: string;
+  /** 實際領用 / 選用的庫存配件清單 */
+  partsUsed?: UsedPart[];
   /** 誰做的修改（寫入 timeline） */
   operator?: string;
   /** 額外備註寫入 timeline（如「客戶改機型」） */
   note?: string;
+}
+
+/* ─── 庫存配件 ─────────────────────────────────── */
+
+export type PartCategory = 'battery' | 'screen' | 'glass' | 'back_glass' | 'camera' | 'speaker' | 'charging' | 'other';
+
+/** 庫存配件（維修用料） */
+export interface Part {
+  id: string;
+  name: string;
+  category: PartCategory;
+  /** 對應的裝置類別（如 iphone / ipad / watch / macbook），用於作業時篩選適用配件 */
+  deviceCategory?: DeviceCategory;
+  /** 對應的故障 id（如 battery_replacement），用於報價自動帶出建議配件 */
+  symptomId?: string;
+  sku?: string;
+  stock: number;
+  /** 低庫存預警門檻，低於此值即提示補貨 */
+  lowStockThreshold: number;
+  unitCost: number;
+  /** 向客戶收的配件報價（與 quote.partFee 對齊，僅作展示用） */
+  unitPrice?: number;
+  supplier?: string;
+  updatedAt?: string;
+}
+
+export type InventoryAlertLevel = 'out' | 'low' | 'ok';
+
+export interface InventoryAlert {
+  part: Part;
+  level: InventoryAlertLevel;
+  message: string;
 }
 
 /* ─── 維修工單（後台） ───────────────────────────── */

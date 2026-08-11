@@ -15,6 +15,7 @@ import type {
   MemberLevel,
   OrderStatus,
   OrderTimelineEntry,
+  Part,
   Product,
   RepairOrder,
   RepairOrderEditPatch,
@@ -270,6 +271,19 @@ export const mockRepository: DataRepository = {
     }
     if (patch.remark !== undefined) order.remark = patch.remark ?? undefined;
 
+    if (patch.partsUsed !== undefined) {
+      const prevCount = order.partsUsed?.length ?? 0;
+      order.partsUsed = patch.partsUsed.map((p) => ({ ...p }));
+      const partsSummary = order.partsUsed.map((p) => `${p.name}×${p.qty}`).join('、') || '（無）';
+      timelineAdditions.push({
+        status: order.status,
+        at: now,
+        note: `選用庫存配件：${partsSummary}`,
+        operator,
+      });
+      void prevCount;
+    }
+
     if (patch.note) {
       timelineAdditions.push({ status: order.status, at: now, note: patch.note, operator });
     }
@@ -433,6 +447,17 @@ export const mockRepository: DataRepository = {
     const { savePricing } = await import('../pricing-store');
     const result = await savePricing(rule);
     return result.ok ? rule : null;
+  },
+
+  async listInventory() {
+    const { loadInventory } = await import('../inventory-store');
+    return loadInventory();
+  },
+
+  async upsertInventory(part: Part) {
+    const { saveInventory } = await import('../inventory-store');
+    const result = await saveInventory(part);
+    return result.ok ? part : null;
   },
 };
 
