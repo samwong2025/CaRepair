@@ -200,7 +200,7 @@ export function StepBooking({
         <Label className="mb-3 block" required>
           {form.serviceMode === 'walk_in' ? '到店日期' : '收件日期'}
         </Label>
-        <div className="-mx-1 flex snap-x snap-mandatory gap-2 overflow-x-auto px-1 pb-2 [scrollbar-width:thin]">
+        <div className="flex flex-wrap gap-2">
           {dateOptions.map((option) => {
             const selected = form.appointmentDate === option.value;
             return (
@@ -210,7 +210,7 @@ export function StepBooking({
                 onClick={() => onChange('appointmentDate', option.value)}
                 aria-pressed={selected}
                 className={cn(
-                  'flex w-[3.75rem] shrink-0 snap-start cursor-pointer flex-col items-center rounded-xl border py-2.5 transition-all duration-200 sm:w-[4.5rem]',
+                  'flex w-[3.75rem] shrink-0 cursor-pointer flex-col items-center rounded-xl border py-2.5 transition-all duration-200 sm:w-[4.5rem]',
                   selected
                     ? 'border-transparent bg-brand-gradient text-white shadow-brand'
                     : 'border-slate-200 bg-white text-ink hover:border-brand-300 hover:bg-brand-50/50',

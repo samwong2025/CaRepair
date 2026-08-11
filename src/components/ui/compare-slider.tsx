@@ -82,7 +82,7 @@ export function CompareSlider({
       }}
       onKeyDown={handleKeyDown}
       className={cn(
-        'group relative isolate cursor-ew-resize select-none overflow-hidden rounded-2xl bg-slate-900 outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-brand-500',
+        'group relative isolate cursor-ew-resize select-none overflow-hidden rounded-2xl bg-slate-900 outline-none ring-offset-2 focus-visible:ring-2 focus-visible:ring-brand-500 touch-none',
         className,
       )}
     >

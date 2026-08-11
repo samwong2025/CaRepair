@@ -16,6 +16,23 @@
     -webkit-text-size-adjust: 100%;
   }
 
+  /* 行動裝置鎖定：禁止橫向溢出、強制版面貼合屏幕、只能縱向下拉 */
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  @media (max-width: 1023px) {
+    html,
+    body {
+      /* 僅允許縱向拖動（pan-y），鎖定橫向平移與雙指縮放 */
+      touch-action: pan-y;
+      overscroll-behavior-x: none;
+    }
+  }
+
   body {
     @apply bg-surface-muted text-ink font-sans antialiased;
     text-rendering: optimizeLegibility;

@@ -30,7 +30,7 @@ export function CaseCompare() {
 
         {/* 案例切換 */}
         <Reveal className="mt-10">
-          <div className="-mx-4 flex gap-2.5 overflow-x-auto px-4 pb-2 lg:mx-0 lg:flex-wrap lg:justify-center lg:overflow-visible lg:px-0">
+          <div className="-mx-4 flex flex-wrap gap-2.5 px-4 pb-2 lg:mx-0 lg:justify-center lg:px-0">
             {repairCases.map((item) => {
               const selected = item.id === active.id;
               return (

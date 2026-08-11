@@ -34,7 +34,10 @@ export const viewport: Viewport = {
   themeColor: '#0A6CFF',
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 5,
+  // 鎖定行動裝置：禁用雙指縮放，強制版面貼合屏幕、只能縱向下拉
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
