@@ -30,10 +30,15 @@ export function Footer() {
                 <PhoneCall className="h-4 w-4 shrink-0 text-brand-400" />
                 客服熱線 {siteConfig.hotline}
               </a>
-              <p className="flex items-center gap-2.5 text-white/60">
-                <MessageCircle className="h-4 w-4 shrink-0 text-brand-400" />
+              <a
+                href={`https://wa.me/852${siteConfig.whatsapp.replace(/\s|\+/g, '')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex cursor-pointer items-center gap-2.5 text-white/80 transition-colors hover:text-[#25D366]"
+              >
+                <MessageCircle className="h-4 w-4 shrink-0 text-[#25D366]" />
                 WhatsApp {siteConfig.whatsapp}
-              </p>
+              </a>
               <p className="flex items-center gap-2.5 text-white/60">
                 <Clock3 className="h-4 w-4 shrink-0 text-brand-400" />
                 {siteConfig.serviceHours}

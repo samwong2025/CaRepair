@@ -7,7 +7,7 @@ export const siteConfig = {
   description:
     'CathyRepair 專注 iPhone、iPad、Apple Watch、MacBook 維修，提供即時報價、門市快修與順豐寄修服務，專業師傅施工、180 日保養承諾。',
   hotline: '9612 0461',
-  whatsapp: '9123 4567',
+  whatsapp: '9612 0461',
   serviceHours: '每日 10:00 – 21:00（公眾假期照常）',
   email: 'service@cathyrepair.hk',
   shops: [
