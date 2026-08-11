@@ -61,8 +61,8 @@ export function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="admin-sidebar no-print sticky top-0 z-30 h-auto shrink-0 border-b border-slate-200 bg-white lg:h-screen lg:w-64 lg:border-b-0 lg:border-r">
-      <div className="flex items-center gap-2.5 px-5 py-5">
+    <aside className="admin-sidebar no-print sticky top-0 z-30 flex shrink-0 flex-col border-b border-slate-200 bg-white lg:h-screen lg:w-64 lg:border-b-0 lg:border-r">
+      <div className="flex shrink-0 items-center gap-2.5 px-5 py-5">
         <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-gradient text-white">
           <Wrench className="h-5 w-5" strokeWidth={2.4} />
         </span>
@@ -74,7 +74,7 @@ export function AdminSidebar() {
         </div>
       </div>
 
-      <nav className="flex gap-1.5 overflow-x-auto px-3 pb-4 lg:flex-col lg:gap-3 lg:overflow-visible">
+      <nav className="flex gap-1.5 overflow-x-auto px-3 pb-4 lg:flex-1 lg:min-h-0 lg:flex-col lg:gap-3 lg:overflow-x-hidden lg:overflow-y-auto">
         {navGroups.map((group, gi) => (
           <div key={group.title ?? `g${gi}`} className="flex gap-1.5 lg:flex-col">
             {group.title && (
@@ -117,7 +117,7 @@ export function AdminSidebar() {
         ))}
       </nav>
 
-      <div className="hidden px-3 lg:mt-auto lg:block">
+      <div className="hidden shrink-0 px-3 pb-4 pt-2 lg:mt-auto lg:block">
         <Link
           href="/"
           className="flex items-center justify-between rounded-xl border border-slate-200 px-3.5 py-3 text-sm font-semibold text-ink-muted transition-colors duration-200 hover:border-brand-300 hover:text-brand-700"
