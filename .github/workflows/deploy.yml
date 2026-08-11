@@ -1,6 +1,6 @@
 name: Deploy to EdgeOne Pages
 
-# 触发：推送到 master 分支，或手动触发
+# 觸發：推送到 master 分支，或手動觸發
 on:
   push:
     branches: [master]
@@ -12,6 +12,16 @@ concurrency:
 
 permissions:
   contents: read
+
+# ⚠️ 臨時內聯：本機環境無 gh / node，無法寫 GitHub Secrets。
+# 部署成功後請在 Repository Settings → Secrets 改回 Secrets 引用，並輪換下方憑證。
+env:
+  NEXT_PUBLIC_SUPABASE_URL: https://stqqsdlrqfrbwurbrwhg.supabase.co
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0cXFzZGxycWZyYnd1cmJyd2hnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0NDI3MDMsImV4cCI6MjEwMjAxODcwM30.atcNu0HPfO1BZ_fW7glf4r2MOySO_Lb9WOPWvb6gArI
+  # 伺服器端使用（繞過 RLS 執行後台操作），切勿外洩
+  SUPABASE_SERVICE_ROLE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InN0cXFzZGxycWZyYnd1cmJyd2hnIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4NjQ0MjcwMywiZXhwIjoyMTAyMDE4NzAzfQ.1HFRIYXZV2310TdUe5GJV9mB4YTUd_xCKmdUDHqZ7bI
+  # EdgeOne Makers 部署 token（描述：推送修改，到期 2026-09-10）
+  EDGEONE_API_TOKEN: qUIDh/sW/UW9WpQNhzwrsY9vvDpExMubJQqMzBP4qFU=
 
 jobs:
   deploy:
@@ -29,16 +39,15 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # NEXT_PUBLIC_* 会在构建时内联进客户端 bundle，必须在此注入
+      # NEXT_PUBLIC_* 會在構建時內聯進客戶端 bundle；SERVICE_ROLE 供伺服器端運行時使用
       - name: Build
         run: npm run build
-        env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
       - name: Deploy to EdgeOne Pages (Production)
         id: deploy
         run: |
+          echo "::add-mask::$EDGEONE_API_TOKEN"
+          echo "::add-mask::$SUPABASE_SERVICE_ROLE_KEY"
           DEPLOY_OUTPUT=$(npx edgeone makers deploy ./.next -n CaRepair -t "$EDGEONE_API_TOKEN" 2>&1)
           echo "$DEPLOY_OUTPUT"
           DEPLOY_URL=$(echo "$DEPLOY_OUTPUT" | grep "EDGEONE_DEPLOY_URL=" | head -n1 | cut -d'=' -f2-)
@@ -47,10 +56,8 @@ jobs:
           fi
           echo "DEPLOY_URL=$DEPLOY_URL" >> "$GITHUB_OUTPUT"
           echo "部署地址: $DEPLOY_URL"
-        env:
-          EDGEONE_API_TOKEN: ${{ secrets.EDGEONE_API_TOKEN }}
 
-      # 部署成功后，自动把公网地址推送到微信（Server酱）
+      # 部署成功後，自動把公網地址推送到微信（Server酱）
       - name: Notify via WeChat (Server酱)
         if: ${{ success() && secrets.WECHAT_PUSH_TOKEN != '' }}
         run: |
