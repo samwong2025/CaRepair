@@ -169,16 +169,12 @@ export function RepairWizard({ initialCategory }: { initialCategory?: DeviceCate
     setSubmitting(true);
     setSubmitError('');
 
-    // 揀咗「（其他）」：用 sentinel id，型號名改為客戶自填文字
+    // 揀咗「（其他）」：用 sentinel id，型號名由 repository 根據 deviceModelId 推導
     const isOther = modelId === OTHER_MODEL_ID;
-    const resolvedModelName = isOther
-      ? (customModel.trim() || '（客戶未填寫型號）')
-      : (findModel(allModels, modelId)?.name ?? getModelById(modelId)?.name ?? '');
 
     const payload: RepairOrderInput = {
       deviceCategory: category,
       deviceModelId: isOther ? OTHER_MODEL_ID : modelId,
-      deviceModelName: resolvedModelName,
       symptomIds,
       serviceMode: form.serviceMode,
       shopName: form.serviceMode === 'walk_in' ? form.shopName : undefined,
