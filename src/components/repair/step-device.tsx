@@ -10,6 +10,48 @@ import type { DeviceCategory, DeviceModel } from '../../types';
 import { siteConfig } from '../../config/site';
 import { ModelCard } from './model-card';
 
+/** 「客戶自填型號」占位卡：揀唔到啱機型時用，modelId = OTHER_MODEL_ID */
+function OtherModelCard({
+  selected,
+  onSelect,
+}: {
+  selected: boolean;
+  onSelect: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onSelect}
+      aria-pressed={selected}
+      className={cn(
+        'product-card group flex min-h-[280px] cursor-pointer flex-col items-stretch overflow-hidden rounded-2xl border p-3 text-left box-border transition-all duration-300 ease-smooth',
+        selected
+          ? 'border-transparent bg-white shadow-lift ring-2 ring-brand-400'
+          : 'border-dashed border-slate-300 bg-surface-soft hover:-translate-y-1 hover:border-brand-300 hover:shadow-lift',
+      )}
+    >
+      <span className="relative flex min-h-[150px] w-full flex-1 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-brand-50/70 via-white to-surface-soft">
+        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-100 text-brand-600 transition-transform duration-500 group-hover:animate-bounce-soft">
+          <Plus className="h-6 w-6" strokeWidth={2} />
+        </span>
+        {selected ? (
+          <span className="absolute right-2.5 top-2.5 flex h-7 w-7 items-center justify-center rounded-full bg-brand-gradient text-white shadow-brand">
+            <Check className="h-3.5 w-3.5" strokeWidth={3} />
+          </span>
+        ) : null}
+      </span>
+      <span className="mt-3">
+        <span className="block break-words text-base font-extrabold leading-tight text-ink">
+          （其他）
+        </span>
+        <span className="mt-1 block line-clamp-2 text-xs leading-relaxed text-ink-muted">
+          搵唔到你部機？直接填寫型號，我哋技師會人手報價。
+        </span>
+      </span>
+    </button>
+  );
+}
+
 /** 客戶自填型號的 sentinel：選咗「（其他）」就用呢個 id，具體型號名由 customModel 提供 */
 export const OTHER_MODEL_ID = '__other__';
 
@@ -85,41 +127,24 @@ export function ModelPicker({
                   onSelect={onSelectModel}
                 />
               ))}
-
-              {/* 所有機型最後：客戶自填（漏咗或冇呢個型號） */}
-              <button
-                type="button"
-                onClick={() => onSelectModel(OTHER_MODEL_ID)}
-                aria-pressed={modelId === OTHER_MODEL_ID}
-                className={cn(
-                  'product-card group flex min-h-[280px] cursor-pointer flex-col items-stretch overflow-hidden rounded-2xl border p-3 text-left box-border transition-all duration-300 ease-smooth',
-                  modelId === OTHER_MODEL_ID
-                    ? 'border-transparent bg-white shadow-lift ring-2 ring-brand-400'
-                    : 'border-dashed border-slate-300 bg-surface-soft hover:-translate-y-1 hover:border-brand-300 hover:shadow-lift',
-                )}
-              >
-                <span className="relative flex min-h-[150px] w-full flex-1 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-brand-50/70 via-white to-surface-soft">
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-100 text-brand-600 transition-transform duration-500 group-hover:animate-bounce-soft">
-                    <Plus className="h-6 w-6" strokeWidth={2} />
-                  </span>
-                  {modelId === OTHER_MODEL_ID ? (
-                    <span className="absolute right-2.5 top-2.5 flex h-7 w-7 items-center justify-center rounded-full bg-brand-gradient text-white shadow-brand">
-                      <Check className="h-3.5 w-3.5" strokeWidth={3} />
-                    </span>
-                  ) : null}
-                </span>
-                <span className="mt-3">
-                  <span className="block break-words text-base font-extrabold leading-tight text-ink">
-                    （其他）
-                  </span>
-                  <span className="mt-1 block line-clamp-2 text-xs leading-relaxed text-ink-muted">
-                    搵唔到你部機？直接填寫型號，我哋技師會人手報價。
-                  </span>
-                </span>
-              </button>
             </div>
           </div>
         ))}
+
+        {/* 所有系列結束後：客戶自填（漏咗或冇呢個型號），每頁只出現一次 */}
+        {grouped.length > 0 ? (
+          <div>
+            <p className="mb-2.5 text-xs font-bold uppercase tracking-[0.18em] text-ink-faint">
+              其他
+            </p>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              <OtherModelCard
+                selected={modelId === OTHER_MODEL_ID}
+                onSelect={() => onSelectModel(OTHER_MODEL_ID)}
+              />
+            </div>
+          </div>
+        ) : null}
 
         {grouped.length === 0 ? (
           <p className="rounded-xl border border-dashed border-slate-300 bg-surface-soft px-4 py-8 text-center text-sm text-ink-muted">
@@ -310,41 +335,24 @@ export function StepDevice({
                       onSelect={onSelectModel}
                     />
                   ))}
-
-                  {/* 所有機型最後：客戶自填（漏咗或冇呢個型號） */}
-                  <button
-                    type="button"
-                    onClick={() => onSelectModel(OTHER_MODEL_ID)}
-                    aria-pressed={modelId === OTHER_MODEL_ID}
-                    className={cn(
-                      'product-card group flex min-h-[280px] cursor-pointer flex-col items-stretch overflow-hidden rounded-2xl border p-3 text-left box-border transition-all duration-300 ease-smooth',
-                      modelId === OTHER_MODEL_ID
-                        ? 'border-transparent bg-white shadow-lift ring-2 ring-brand-400'
-                        : 'border-dashed border-slate-300 bg-surface-soft hover:-translate-y-1 hover:border-brand-300 hover:shadow-lift',
-                    )}
-                  >
-                    <span className="relative flex min-h-[150px] w-full flex-1 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-brand-50/70 via-white to-surface-soft">
-                      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-100 text-brand-600 transition-transform duration-500 group-hover:scale-110">
-                        <Plus className="h-6 w-6" strokeWidth={2} />
-                      </span>
-                      {modelId === OTHER_MODEL_ID ? (
-                        <span className="absolute right-2.5 top-2.5 flex h-7 w-7 items-center justify-center rounded-full bg-brand-gradient text-white shadow-brand">
-                          <Check className="h-3.5 w-3.5" strokeWidth={3} />
-                        </span>
-                      ) : null}
-                    </span>
-                    <span className="mt-3">
-                      <span className="block break-words text-base font-extrabold leading-tight text-ink">
-                        （其他）
-                      </span>
-                      <span className="mt-1 block line-clamp-2 text-xs leading-relaxed text-ink-muted">
-                        搵唔到你部機？直接填寫型號，我哋技師會人手報價。
-                      </span>
-                    </span>
-                  </button>
                 </div>
               </div>
             ))}
+
+            {/* 所有系列結束後：客戶自填（漏咗或冇呢個型號），每頁只出現一次 */}
+            {grouped.length > 0 ? (
+              <div>
+                <p className="mb-2.5 text-xs font-bold uppercase tracking-[0.18em] text-ink-faint">
+                  其他
+                </p>
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  <OtherModelCard
+                    selected={modelId === OTHER_MODEL_ID}
+                    onSelect={() => onSelectModel(OTHER_MODEL_ID)}
+                  />
+                </div>
+              </div>
+            ) : null}
 
             {grouped.length === 0 ? (
               <p className="rounded-xl border border-dashed border-slate-300 bg-surface-soft px-4 py-8 text-center text-sm text-ink-muted">
