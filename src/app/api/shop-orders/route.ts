@@ -2,19 +2,22 @@ import { NextResponse } from 'next/server';
 import { getRepository } from '../../../lib/repositories';
 import { maskPhone, normalizePhone } from '../../../lib/format';
 
-/** GET /api/shop-orders?phone=91234567 查詢二手商店訂單 */
+/** GET /api/shop-orders?phone=91234567 或 ?orderNo=SH-... 查詢二手商店訂單 */
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const phone = searchParams.get('phone')?.trim();
+  const orderNo = searchParams.get('orderNo')?.trim().toUpperCase();
   const orders = await getRepository().listShopOrders();
 
-  if (!phone) {
+  if (!phone && !orderNo) {
     return NextResponse.json({ orders });
   }
 
-  const normalized = normalizePhone(phone);
+  const normalized = phone ? normalizePhone(phone) : '';
   const matched = orders.filter(
-    (order) => normalizePhone(order.customerPhone) === normalized,
+    (order) =>
+      (phone ? normalizePhone(order.customerPhone) === normalized : false) ||
+      (orderNo ? order.orderNo.toUpperCase() === orderNo : false),
   );
   return NextResponse.json({ orders: matched });
 }

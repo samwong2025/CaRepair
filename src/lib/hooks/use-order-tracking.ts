@@ -2,13 +2,15 @@
 
 import * as React from 'react';
 import { getBrowserSupabase, isSupabaseConfigured } from '../supabase/client';
-import type { RepairOrder } from '../../types';
+import type { RepairOrder, ShopOrder } from '../../types';
 import { siteConfig } from '../../config/site';
 
 export type TrackMode = 'orderNo' | 'phone';
 
+export type TrackOrder = RepairOrder | ShopOrder;
+
 interface TrackState {
-  orders: RepairOrder[];
+  orders: TrackOrder[];
   loading: boolean;
   searched: boolean;
   error: string;
@@ -18,12 +20,6 @@ interface TrackState {
 }
 
 const POLL_INTERVAL_MS = 20000;
-
-function buildQuery(mode: TrackMode, keyword: string) {
-  const params = new URLSearchParams();
-  params.set(mode === 'orderNo' ? 'orderNo' : 'phone', keyword);
-  return `/api/orders?${params.toString()}`;
-}
 
 /**
  * 訂單查詢與狀態即時追蹤。
@@ -45,12 +41,17 @@ export function useOrderTracking() {
   const fetchOrders = React.useCallback(async (mode: TrackMode, keyword: string, silent = false) => {
     if (!silent) setState((prev) => ({ ...prev, loading: true, error: '' }));
 
-    const response = await fetch(buildQuery(mode, keyword)).catch((error: unknown) => {
-      console.error('查詢維修訂單失敗', error);
-      return null;
-    });
+    const params = new URLSearchParams();
+    params.set(mode === 'orderNo' ? 'orderNo' : 'phone', keyword);
+    const query = params.toString();
 
-    if (!response || !response.ok) {
+    // 同時查維修訂單與二手購買訂單，合併呈現
+    const [repairRes, shopRes] = await Promise.all([
+      fetch(`/api/orders?${query}`).catch(() => null),
+      fetch(`/api/shop-orders?${query}`).catch(() => null),
+    ]);
+
+    if (!repairRes || !repairRes.ok) {
       setState((prev) => ({
         ...prev,
         loading: false,
@@ -60,10 +61,16 @@ export function useOrderTracking() {
       return;
     }
 
-    const data = (await response.json()) as { orders: RepairOrder[] };
+    const repairData = (await repairRes.json().catch(() => null)) as { orders: RepairOrder[] } | null;
+    const shopData = (await shopRes?.json().catch(() => null)) as { orders: ShopOrder[] } | null;
+
+    const merged: TrackOrder[] = [
+      ...(repairData?.orders ?? []),
+      ...(shopData?.orders ?? []),
+    ].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
     setState({
-      orders: data.orders ?? [],
+      orders: merged,
       loading: false,
       searched: true,
       error: '',

@@ -179,10 +179,10 @@ export function TrackPanel({ initialKeyword = '' }: { initialKeyword?: string })
               ) : (
                 <div className="rounded-2xl border border-dashed border-slate-300 bg-white px-6 py-14 text-center">
                   <PackageSearch className="mx-auto h-10 w-10 text-slate-300" strokeWidth={1.6} />
-                  <p className="mt-4 text-base font-bold text-ink">搵唔到相關維修訂單</p>
+                  <p className="mt-4 text-base font-bold text-ink">搵唔到相關訂單</p>
                   <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-ink-muted">
-                    請確認訂單編號或手提號碼是否正確；如係到店即場落單，
-                    可用收據上的訂單編號查詢，或致電 {siteConfig.hotline} 由客服協助。
+                    請確認訂單編號或手提號碼是否正確；維修或二手購買訂單都可使用此查詢，
+                    如係到店即場落單，可用收據上的訂單編號查詢，或致電 {siteConfig.hotline} 由客服協助。
                   </p>
                 </div>
               )}
