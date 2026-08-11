@@ -1,0 +1,283 @@
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3000
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 4.6s
+ ○ Compiling /_not-found ...
+ ✓ Compiled /_not-found in 9s (583 modules)
+ GET /_next/static/webpack/5205074e732a189e.webpack.hot-update.json 404 in 9381ms
+ GET /_next/static/webpack/5205074e732a189e.webpack.hot-update.json 404 in 9361ms
+ ○ Compiling /admin ...
+ ✓ Compiled /admin in 3.1s (904 modules)
+ GET /admin 200 in 3145ms
+ GET /admin 200 in 3156ms
+ GET /_next/static/webpack/5205074e732a189e.webpack.hot-update.json 404 in 1017ms
+ GET /_next/static/webpack/5205074e732a189e.webpack.hot-update.json 404 in 1016ms
+ GET /admin 200 in 96ms
+ GET /admin 200 in 104ms
+ GET / 200 in 42ms
+ ✓ Compiled /admin/login in 180ms (918 modules)
+ GET /admin/login 200 in 322ms
+ GET /admin/login 200 in 55ms
+ GET /admin/login 200 in 57ms
+ ✓ Compiled /admin/orders in 342ms (939 modules)
+ GET /admin/login 200 in 482ms
+ GET /admin/orders 200 in 332ms
+ GET /admin/orders 200 in 52ms
+ GET / 200 in 65ms
+ ✓ Compiled /admin/orders/[orderNo] in 207ms (966 modules)
+ GET /admin/orders/CR-20260810-A31F 200 in 703ms
+ GET /admin/orders/CR-20260810-A31F 200 in 34ms
+ ✓ Compiled /api/orders/[id] in 202ms (601 modules)
+ PATCH /api/orders/ord-001 200 in 1038ms
+ GET /admin/orders 200 in 74ms
+ GET /admin/orders/CR-20260810-M33C 200 in 119ms
+ GET /admin/orders/CR-20260810-M33C 200 in 27ms
+ GET /admin/orders/CR-20260810-M33C 200 in 25ms
+ ✓ Compiled /admin/customers in 413ms (833 modules)
+ GET /admin/customers 200 in 644ms
+ GET /admin/customers 200 in 10ms
+ GET /admin/customers 200 in 27ms
+ GET /admin/orders 200 in 131ms
+ GET /admin/orders 200 in 7ms
+ GET /admin/orders 200 in 25ms
+ GET /admin/customers 200 in 68ms
+ GET /admin/customers 200 in 6ms
+ GET /admin/customers 200 in 30ms
+ ✓ Compiled /admin/aftersales in 213ms (846 modules)
+ GET /admin/aftersales 200 in 408ms
+ GET /admin/aftersales 200 in 328ms
+ ✓ Compiled in 562ms (860 modules)
+ GET /admin/customers 200 in 103ms
+ GET /admin/customers 200 in 11ms
+ GET /admin/customers 200 in 26ms
+ GET /admin/orders 200 in 131ms
+ GET /admin/orders 200 in 24ms
+ GET /admin/orders 200 in 25ms
+ ✓ Compiled in 432ms (860 modules)
+ ✓ Compiled in 732ms (955 modules)
+ ✓ Compiled in 218ms (463 modules)
+ ✓ Compiled in 210ms (463 modules)
+ ✓ Compiled in 201ms (463 modules)
+ ✓ Compiled / in 310ms (630 modules)
+ GET / 500 in 628ms
+ ✓ Compiled in 194ms (463 modules)
+ ✓ Compiled in 188ms (463 modules)
+ ✓ Compiled /admin/models in 271ms (1098 modules)
+ ✓ Compiled /admin/symptoms in 209ms (1107 modules)
+ ✓ Compiled /admin/pricing in 270ms (1120 modules)
+ ✓ Compiled in 179ms (479 modules)
+ GET / 500 in 119ms
+ GET / 500 in 81ms
+ ✓ Compiled in 229ms (479 modules)
+ GET / 500 in 101ms
+ GET /admin 200 in 60ms
+ GET /admin 200 in 30ms
+ GET /admin 200 in 35ms
+ ✓ Compiled in 188ms (479 modules)
+ GET / 500 in 121ms
+ ✓ Compiled in 179ms (479 modules)
+ GET / 500 in 93ms
+ GET /admin/orders/CR-20260809-M77D 200 in 111ms
+ GET /admin/orders/CR-20260809-M77D 200 in 21ms
+ GET /admin/orders/CR-20260809-M77D 200 in 37ms
+ GET /admin/orders 200 in 44ms
+ GET /admin/orders 200 in 30ms
+ GET /admin/orders 200 in 50ms
+ GET /admin 200 in 60ms
+ GET /admin 200 in 51ms
+ GET /admin 200 in 42ms
+ ✓ Compiled /repair in 446ms (1149 modules)
+ GET /repair?category=iphone&symptom=battery 200 in 638ms
+ GET / 500 in 129ms
+ ✓ Compiled /admin/login in 138ms (663 modules)
+ GET /admin/login 200 in 272ms
+ GET /admin/login 200 in 38ms
+ GET /admin/orders 200 in 48ms
+ GET /admin/orders 200 in 33ms
+ GET /admin/orders 200 in 30ms
+ GET /admin 200 in 41ms
+ GET /admin 200 in 61ms
+ GET /admin 200 in 36ms
+ ✓ Compiled in 600ms (1130 modules)
+ ✓ Compiled in 0ms (625 modules)
+ ✓ Compiled in 0ms (625 modules)
+ ✓ Compiled in 0ms (625 modules)
+ GET / 500 in 490ms
+ ✓ Compiled in 433ms (1130 modules)
+ GET / 500 in 171ms
+ ✓ Compiled in 407ms (1130 modules)
+ ✓ Compiled in 0ms (625 modules)
+ ✓ Compiled in 0ms (625 modules)
+ ✓ Compiled in 0ms (625 modules)
+ GET / 500 in 421ms
+ ✓ Compiled /admin/login in 169ms (630 modules)
+ GET /admin/login 200 in 308ms
+ GET / 500 in 142ms
+ GET /admin/orders 200 in 69ms
+ GET /admin/orders 200 in 15ms
+ GET /admin/orders 200 in 36ms
+ GET /admin/orders/CR-20260810-J59V 200 in 106ms
+ GET /admin/orders/CR-20260810-J59V 200 in 31ms
+ GET /admin/orders/CR-20260810-J59V 200 in 69ms
+ GET /admin/orders/CR-20260810-J59V 200 in 52ms
+ GET /admin/orders/CR-20260810-J59V 200 in 21ms
+ GET /admin/orders/CR-20260810-J59V 200 in 34ms
+ ✓ Compiled /_not-found in 379ms (1119 modules)
+ GET /admin 404 in 692ms
+ GET / 500 in 530ms
+ GET /admin 200 in 159ms
+ ○ Compiling /_error ...
+ ✓ Compiled /_error in 948ms (1346 modules)
+ GET / 404 in 1005ms
+ GET / 404 in 587ms
+ GET /admin 404 in 19ms
+ GET / 404 in 16ms
+ GET / 404 in 15ms
+ GET / 404 in 14ms
+ GET / 404 in 13ms
+ GET / 500 in 105ms
+ ✓ Compiled in 815ms (1357 modules)
+ GET / 200 in 404ms
+ GET /admin 200 in 392ms
+ ✓ Compiled /_not-found in 208ms (1346 modules)
+ GET /_next/static/chunks/app-pages-internals.js 500 in 3416ms
+ GET /_next/static/chunks/main-app.js?v=1786427443222 500 in 3434ms
+ GET /_next/static/chunks/app/admin/layout.js 500 in 3411ms
+ GET /_next/static/chunks/main-app.js?v=1786427443412 500 in 3414ms
+ GET /_next/static/css/app/layout.css?v=1786427443412 500 in 3416ms
+ GET /_next/static/chunks/app-pages-internals.js 500 in 3424ms
+ GET /_next/static/css/app/layout.css?v=1786427443222 500 in 3461ms
+ GET /_next/static/chunks/app/(site)/layout.js 500 in 10ms
+ GET / 200 in 139ms
+ ✓ Compiled in 743ms (1357 modules)
+ ✓ Compiled in 403ms (1357 modules)
+ ✓ Compiled in 192ms (691 modules)
+ ✓ Compiled in 404ms (1485 modules)
+ ✓ Compiled in 197ms (691 modules)
+ ✓ Compiled in 436ms (1357 modules)
+ ✓ Compiled in 308ms (1357 modules)
+ ✓ Compiled in 291ms (691 modules)
+ ✓ Compiled in 199ms (691 modules)
+ ✓ Compiled in 180ms (691 modules)
+ ✓ Compiled in 457ms (1357 modules)
+ ✓ Compiled in 332ms (1357 modules)
+ ✓ Compiled in 372ms (1357 modules)
+ ✓ Compiled in 352ms (1357 modules)
+ ✓ Compiled in 316ms (1357 modules)
+ ✓ Compiled in 322ms (1357 modules)
+ ✓ Compiled in 174ms (691 modules)
+ ✓ Compiled in 172ms (691 modules)
+ ✓ Compiled in 488ms (1357 modules)
+ GET / 200 in 202ms
+ ✓ Compiled /admin/login in 307ms (671 modules)
+ GET /admin/login 500 in 443ms
+ ✓ Compiled /api/admin/tier-multipliers in 185ms (699 modules)
+ GET /api/admin/tier-multipliers 200 in 390ms
+ GET / 200 in 171ms
+ GET /admin/login 500 in 94ms
+ GET /admin/login 500 in 75ms
+ GET /admin/login 500 in 60ms
+ GET /admin/login 500 in 91ms
+ GET /admin/login 500 in 77ms
+ GET /admin/login 500 in 92ms
+ GET /admin/login 500 in 59ms
+ GET /admin/login 500 in 46ms
+ GET /admin/login 500 in 91ms
+ GET /admin/login 500 in 91ms
+ GET / 200 in 42ms
+ GET /admin/login 500 in 75ms
+ GET /admin/login 500 in 48ms
+ GET /admin/login 500 in 75ms
+ GET /admin/login 500 in 45ms
+ GET /admin/login 500 in 75ms
+ GET /admin/login 500 in 76ms
+ GET /admin/login 500 in 90ms
+ GET /admin/login 500 in 56ms
+ GET /admin/login 500 in 60ms
+ GET /admin/login 500 in 92ms
+ GET / 200 in 45ms
+ GET / 200 in 67ms
+ ✓ Compiled in 284ms (691 modules)
+ ✓ Compiled in 435ms (1357 modules)
+ ✓ Compiled in 319ms (1357 modules)
+ ✓ Compiled in 379ms (1357 modules)
+ ✓ Compiled in 312ms (1357 modules)
+ ✓ Compiled in 165ms (691 modules)
+ ✓ Compiled in 148ms (691 modules)
+ ✓ Compiled in 186ms (691 modules)
+ ✓ Compiled in 506ms (1359 modules)
+ ✓ Compiled in 292ms (1359 modules)
+ ✓ Compiled in 174ms (692 modules)
+ ✓ Compiled in 234ms (692 modules)
+ ✓ Compiled in 181ms (692 modules)
+ ✓ Compiled in 361ms (1473 modules)
+ GET / 200 in 277ms
+ ✓ Compiled in 162ms (692 modules)
+ ✓ Compiled in 166ms (1473 modules)
+ ✓ Compiled in 189ms (692 modules)
+ ✓ Compiled in 168ms (692 modules)
+ ✓ Compiled in 177ms (692 modules)
+ ✓ Compiled in 165ms (692 modules)
+ ✓ Compiled in 382ms (1487 modules)
+ ✓ Compiled in 213ms (692 modules)
+ ✓ Compiled in 368ms (1487 modules)
+ ✓ Compiled in 687ms (1359 modules)
+ ✓ Compiled in 284ms (692 modules)
+ ✓ Compiled in 194ms (692 modules)
+ ✓ Compiled in 200ms (692 modules)
+ ✓ Compiled in 185ms (692 modules)
+ ✓ Compiled in 203ms (692 modules)
+ ✓ Compiled in 184ms (692 modules)
+ ✓ Compiled in 300ms (692 modules)
+ GET / 200 in 388ms
+ ✓ Compiled in 319ms (692 modules)
+ ✓ Compiled in 208ms (692 modules)
+ ✓ Compiled in 195ms (692 modules)
+ ✓ Compiled in 162ms (692 modules)
+ ✓ Compiled in 186ms (692 modules)
+ ✓ Compiled in 750ms (1487 modules)
+ ✓ Compiled in 186ms (692 modules)
+ ✓ Compiled in 189ms (1473 modules)
+ ✓ Compiled in 412ms (1359 modules)
+ ✓ Compiled in 458ms (1361 modules)
+ ✓ Compiled in 256ms (693 modules)
+ GET / 200 in 90ms
+ ✓ Compiled in 278ms (693 modules)
+ ✓ Compiled in 470ms (1361 modules)
+ ✓ Compiled in 203ms (693 modules)
+ ✓ Compiled in 313ms (1361 modules)
+ ✓ Compiled in 336ms (1361 modules)
+ ✓ Compiled in 207ms (693 modules)
+ ✓ Compiled in 159ms (693 modules)
+ ✓ Compiled in 162ms (693 modules)
+ ✓ Compiled in 203ms (693 modules)
+ ✓ Compiled in 161ms (693 modules)
+ ✓ Compiled in 201ms (693 modules)
+ ✓ Compiled in 149ms (693 modules)
+ ✓ Compiled in 382ms (1489 modules)
+ ✓ Compiled in 198ms (693 modules)
+ ✓ Compiled in 392ms (1361 modules)
+ ✓ Compiled in 536ms (1363 modules)
+ ✓ Compiled /_not-found in 324ms (1352 modules)
+ GET / 500 in 11ms
+ GET / 500 in 8ms
+ GET / 500 in 7ms
+ GET / 500 in 6ms
+ GET / 500 in 8ms
+ ✓ Compiled in 279ms (694 modules)
+ ✓ Compiled in 269ms (694 modules)
+ ✓ Compiled in 560ms (1363 modules)
+ ✓ Compiled in 522ms (1363 modules)
+ GET / 500 in 65ms
+ GET / 500 in 23ms
+ GET / 500 in 16ms
+ GET / 500 in 15ms
+ GET / 500 in 15ms
+ GET / 500 in 16ms
+ GET / 500 in 15ms
+ GET / 500 in 14ms
+ GET / 500 in 14ms
+ GET / 500 in 17ms
+ GET / 500 in 15ms
