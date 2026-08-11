@@ -2,12 +2,14 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { BatteryCharging, Flame, PackageOpen, ShieldCheck, Sparkles } from 'lucide-react';
+import { BatteryCharging, Flame, PackageOpen, ShieldCheck, ShoppingCart, Sparkles } from 'lucide-react';
 import { Badge } from '../ui/badge';
+import { Button } from '../ui/button';
 import { SmartImage } from '../ui/smart-image';
 import { formatHKD } from '../../lib/format';
 import { gradeLabel } from '../../data/products';
 import { resolveProductCategoryLabel } from '../../lib/labels';
+import { useCart } from './cart-context';
 import type { Product } from '../../types';
 
 /** 二手商店商品卡片 */
@@ -15,6 +17,15 @@ export function ProductCard({ product }: { product: Product }) {
   const grade = gradeLabel[product.grade];
   const discount = Math.round((1 - product.price / product.originalPrice) * 100);
   const categoryDisplay = resolveProductCategoryLabel(product);
+  const cart = useCart();
+  const soldOut = product.stock <= 0;
+
+  const handleAdd = (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (soldOut) return;
+    cart.addItem(product, 1);
+  };
 
   return (
     <Link
@@ -44,6 +55,16 @@ export function ProductCard({ product }: { product: Product }) {
             省 {discount}%
           </span>
         ) : null}
+        <button
+          type="button"
+          onClick={handleAdd}
+          disabled={soldOut}
+          aria-label="加入購物車"
+          className="absolute inset-x-2 bottom-2 flex items-center justify-center gap-1.5 rounded-xl bg-cta-gradient py-2 text-sm font-bold text-white shadow-cta transition-all duration-200 hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <ShoppingCart className="h-4 w-4" />
+          {soldOut ? '已售罄' : '加入購物車'}
+        </button>
       </div>
 
       <div className="flex flex-1 flex-col p-4">

@@ -8,10 +8,12 @@ import { Input, Label, Select, Textarea } from '../ui/input';
 import { formatHKD } from '../../lib/format';
 import { cn } from '../../lib/utils';
 import { siteConfig } from '../../config/site';
+import { useCart } from './cart-context';
 import type { FulfillmentMethod, Product } from '../../types';
 
 /** 二手商品下單面板：支援送貨上門與到店自取 */
 export function ProductDetail({ product }: { product: Product }) {
+  const cart = useCart();
   const [qty, setQty] = React.useState(1);
   const [fulfillment, setFulfillment] = React.useState<FulfillmentMethod>('pickup');
   const [deliveryAddress, setDeliveryAddress] = React.useState('');
@@ -248,12 +250,23 @@ export function ProductDetail({ product }: { product: Product }) {
 
       {errors.form ? <p className="mt-3 text-sm font-semibold text-red-600">{errors.form}</p> : null}
 
-      <Button type="submit" variant="cta" size="lg" className="mt-4 w-full" disabled={submitting}>
-        {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-        {submitting ? '提交中…' : `確認落單・${formatHKD(total)}`}
-      </Button>
+      <div className="mt-4 flex gap-3">
+        <Button
+          type="button"
+          variant="outline"
+          size="lg"
+          disabled={submitting}
+          onClick={() => cart.addItem(product, qty)}
+        >
+          加入購物車
+        </Button>
+        <Button type="submit" variant="cta" size="lg" block disabled={submitting}>
+          {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+          {submitting ? '提交中…' : `立即購買・${formatHKD(total)}`}
+        </Button>
+      </div>
       <p className="mt-2 text-center text-[0.7rem] text-ink-faint">
-        落單後門市會致電確認，{product.warrantyDays} 日本店保養生效。
+        落單後門市會致電確認，{product.warrantyDays} 日本店保養生效。多件可「加入購物車」一併結帳。
       </p>
     </form>
   );
