@@ -1,13 +1,14 @@
 'use client';
 
 import * as React from 'react';
-import { Check, Flame, Laptop, Search, Smartphone, Tablet, Watch } from 'lucide-react';
+import { Check, Search, Smartphone } from 'lucide-react';
 import { Input } from '../ui/input';
-import { deviceGroups, tierLabel, getModelImage } from '../../data/devices';
+import { deviceGroups } from '../../data/devices';
 import { resolveIcon } from '../../lib/icons';
 import { cn } from '../../lib/utils';
 import type { DeviceCategory, DeviceModel } from '../../types';
 import { siteConfig } from '../../config/site';
+import { ModelCard } from './model-card';
 
 /** 步驟 2 內嵌入的型號選擇器：點即跳（搭配 wizard 內部控制） */
 export function ModelPicker({
@@ -22,13 +23,6 @@ export function ModelPicker({
   allModels: DeviceModel[];
 }) {
   const [keyword, setKeyword] = React.useState('');
-
-  const thumbIcon = (cat: DeviceCategory) => {
-    if (cat === 'watch') return Watch;
-    if (cat === 'ipad') return Tablet;
-    if (cat === 'macbook') return Laptop;
-    return Smartphone;
-  };
 
   const models = React.useMemo(() => {
     const kw = keyword.trim().toLowerCase();
@@ -75,60 +69,15 @@ export function ModelPicker({
             <p className="mb-2.5 text-xs font-bold uppercase tracking-[0.18em] text-ink-faint">
               {series}
             </p>
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
-              {list.map((model) => {
-                const selected = model.id === modelId;
-                const Thumb = thumbIcon(model.category);
-                const img = getModelImage(model);
-                return (
-                  <button
-                    key={model.id}
-                    type="button"
-                    onClick={() => onSelectModel(model.id)}
-                    aria-pressed={selected}
-                    className={cn(
-                      'product-card relative flex cursor-pointer items-center gap-4 overflow-hidden rounded-2xl border px-4 py-4 pr-5 text-left box-border transition-all duration-200 ease-smooth',
-                      selected
-                        ? 'border-brand-500 bg-brand-50/70 shadow-card'
-                        : 'border-slate-200 bg-white hover:bg-surface-soft',
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        'flex h-[68px] w-[68px] shrink-0 items-center justify-center overflow-hidden rounded-xl',
-                        img ? 'bg-white' : 'bg-brand-50 text-brand-600',
-                      )}
-                    >
-                      {img ? (
-                        <img src={img} alt={model.name} className="h-[68px] w-[68px] object-contain" />
-                      ) : (
-                        <Thumb className="h-7 w-7" strokeWidth={2} />
-                      )}
-                    </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="flex items-center gap-1.5">
-                        <span className="truncate text-[0.95rem] font-bold text-ink">
-                          {model.name}
-                        </span>
-                        {model.hot ? (
-                          <Flame className="h-3.5 w-3.5 shrink-0 text-accent-500" />
-                        ) : null}
-                      </span>
-                      <span className="mt-0.5 block text-[0.72rem] text-ink-faint">
-                        {model.year} 年・{tierLabel[model.tier]}
-                      </span>
-                    </span>
-                    <span
-                      className={cn(
-                        'flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-colors duration-200',
-                        selected ? 'border-brand-500 bg-brand-500 text-white' : 'border-slate-300',
-                      )}
-                    >
-                      {selected ? <Check className="h-3.5 w-3.5" strokeWidth={3.5} /> : null}
-                    </span>
-                  </button>
-                );
-              })}
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {list.map((model) => (
+                <ModelCard
+                  key={model.id}
+                  model={model}
+                  selected={model.id === modelId}
+                  onSelect={onSelectModel}
+                />
+              ))}
             </div>
           </div>
         ))}
@@ -161,13 +110,6 @@ export function StepDevice({
   mode?: 'full' | 'category-only';
 }) {
   const [keyword, setKeyword] = React.useState('');
-
-  const thumbIcon = (category: DeviceCategory) => {
-    if (category === 'watch') return Watch;
-    if (category === 'ipad') return Tablet;
-    if (category === 'macbook') return Laptop;
-    return Smartphone;
-  };
 
   const models = React.useMemo(() => {
     if (!category) return [];
@@ -281,60 +223,15 @@ export function StepDevice({
                 <p className="mb-2.5 text-xs font-bold uppercase tracking-[0.18em] text-ink-faint">
                   {series}
                 </p>
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
-                  {list.map((model) => {
-                    const selected = model.id === modelId;
-                    const Thumb = thumbIcon(model.category);
-                    const img = getModelImage(model);
-                    return (
-                      <button
-                        key={model.id}
-                        type="button"
-                        onClick={() => onSelectModel(model.id)}
-                        aria-pressed={selected}
-                        className={cn(
-                          'product-card relative flex cursor-pointer items-center gap-4 overflow-hidden rounded-2xl border px-4 py-4 pr-5 text-left box-border transition-all duration-200 ease-smooth',
-                          selected
-                            ? 'border-brand-500 bg-brand-50/70 shadow-card'
-                            : 'border-slate-200 bg-white hover:bg-surface-soft',
-                        )}
-                      >
-                        <span
-                          className={cn(
-                            'flex h-[68px] w-[68px] shrink-0 items-center justify-center overflow-hidden rounded-xl',
-                            img ? 'bg-white' : 'bg-brand-50 text-brand-600',
-                          )}
-                        >
-                          {img ? (
-                            <img src={img} alt={model.name} className="h-[68px] w-[68px] object-contain" />
-                          ) : (
-                            <Thumb className="h-7 w-7" strokeWidth={2} />
-                          )}
-                        </span>
-                        <span className="min-w-0 flex-1">
-                          <span className="flex items-center gap-1.5">
-                            <span className="truncate text-[0.95rem] font-bold text-ink">
-                              {model.name}
-                            </span>
-                            {model.hot ? (
-                              <Flame className="h-3.5 w-3.5 shrink-0 text-accent-500" />
-                            ) : null}
-                          </span>
-                          <span className="mt-0.5 block text-[0.72rem] text-ink-faint">
-                            {model.year} 年・{tierLabel[model.tier]}
-                          </span>
-                        </span>
-                        <span
-                          className={cn(
-                            'flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 transition-colors duration-200',
-                            selected ? 'border-brand-500 bg-brand-500 text-white' : 'border-slate-300',
-                          )}
-                        >
-                          {selected ? <Check className="h-3.5 w-3.5" strokeWidth={3.5} /> : null}
-                        </span>
-                      </button>
-                    );
-                  })}
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {list.map((model) => (
+                    <ModelCard
+                      key={model.id}
+                      model={model}
+                      selected={model.id === modelId}
+                      onSelect={onSelectModel}
+                    />
+                  ))}
                 </div>
               </div>
             ))}
