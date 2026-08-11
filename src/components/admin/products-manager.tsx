@@ -32,7 +32,7 @@ const emptyProduct = (): Product => ({
   price: 0,
   originalPrice: 0,
   stock: 1,
-  warrantyDays: 90,
+  warrantyDays: 30,
   image: '',
   highlights: [],
   description: '',

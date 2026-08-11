@@ -1,0 +1,36 @@
+delete from public.products;
+
+insert into public.products (
+  id, name, category, storage, color, grade, battery_health,
+  price, original_price, stock, warranty_days, image, highlights, accessories, services, hot
+) values
+  ('P1001', 'Apple Watch Series 9（45mm GPS）', 'watch', '64GB', '午夜暗色', '99新', 96,
+   1690, 3299, 3, 90, '', array['電池健康度 96%','無花無崩・近全新','原裝配件齊全'],
+   array['全新原裝包裝盒','全新 USB-C 磁吸充電線'], array['32 項功能檢測報告','90 日本店保養'], true),
+  ('P1002', 'Apple Watch SE（40mm GPS）', 'watch', '32GB', '星光色', '95新', 91,
+   990, 2199, 5, 90, '', array['成色極佳','功能正常'],
+   array['全新原裝包裝盒','全新透明保護殼'], array['32 項功能檢測報告','90 日本店保養'], false),
+  ('P1003', 'iPhone 13（128GB）', 'iphone', '128GB', '藍色', '9成新', 88,
+   2590, 4999, 2, 90, '', array['電池 88%','外觀輕微使用痕跡'],
+   array['全新 USB-C 充電線'], array['32 項功能檢測報告','90 日本店保養'], true),
+  ('P1004', 'iPhone 14（128GB）', 'iphone', '128GB', '紫色', '95新', 90,
+   3190, 5599, 4, 90, '', array['電池 90%','面容 ID 正常'],
+   array['全新原裝充電線'], array['32 項功能檢測報告','90 日本店保養'], false),
+  ('P1005', 'iPad Air（5代 64GB WiFi）', 'ipad', '64GB', '星光色', '9成新', 92,
+   3290, 5699, 3, 90, '', array['電池 92%','螢幕無亮點'],
+   array['全新原裝充電器','全新 USB-C 線'], array['32 項功能檢測報告','90 日本店保養'], false),
+  ('P1006', 'iPad Pro（11吋 M2 128GB）', 'ipad', '128GB', '深空灰', '95新', 94,
+   5290, 8299, 2, 90, '', array['電池 94%','M2 極速','面容 ID 正常'],
+   array['全新原裝充電器'], array['32 項功能檢測報告','90 日本店保養'], false),
+  ('P1007', 'Apple Watch Ultra（49mm）', 'watch', '64GB', '鈦金屬原色', '99新', 95,
+   4290, 6299, 3, 90, '', array['電池 95%','鈦金屬無傷','動作按鈕正常'],
+   array['全新原裝高山錶環','全新磁力快充線'], array['32 項功能檢測報告','90 日本店保養'], true),
+  ('P1008', 'Apple Watch Series 9（41mm GPS）', 'watch', '64GB', '粉紅色', '95新', 90,
+   1490, 2999, 4, 90, '', array['電池 90%','成色極佳'],
+   array['全新運動錶帶','全新磁力充電線'], array['32 項功能檢測報告','90 日本店保養'], false),
+  ('P1009', 'MacBook Air（13吋 M2 256GB）', 'macbook', '256GB', '午夜暗色', '95新', 93,
+   6290, 9499, 2, 180, '', array['電池 93%','M2 靜音','原廠盒裝'],
+   array['全新原裝 35W 雙口充電器','全新 MagSafe 充電線'], array['32 項功能檢測報告','180 日本店保養'], true),
+  ('P1010', 'MacBook Pro（14吋 M3 512GB）', 'macbook', '512GB', '深空黑', '95新', 91,
+   9290, 13499, 1, 180, '', array['電池 91%','M3 Pro 強勁','原廠盒裝'],
+   array['全新原裝 70W 充電器','全新 MagSafe 3 編織線'], array['32 項功能檢測報告','180 日本店保養'], false);

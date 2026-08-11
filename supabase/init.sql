@@ -191,6 +191,7 @@ create table if not exists public.products (
   highlights     text[] default '{}',
   description    text default '',
   accessories    text[] default '{}',
+  services       text[] not null default '{}',
   hot            boolean not null default false,
   created_at     timestamptz not null default now(),
   updated_at     timestamptz not null default now()

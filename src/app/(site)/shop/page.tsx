@@ -7,7 +7,7 @@ import { SectionHeading } from '../../../components/ui/section';
 export const metadata: Metadata = {
   title: '二手商店｜CathyRepair',
   description:
-    'CathyRepair 二手商店嚴選 iPhone、iPad、Apple Watch、MacBook，全機 32 項功能檢測、分級評估、90 日本店保養，支援送貨上門與到店自取。',
+    'CathyRepair 二手商店嚴選 iPhone、iPad、Apple Watch、MacBook，全機 32 項功能檢測、分級評估、30 日本店保養，支援送貨上門與到店自取。',
 };
 
 export const dynamic = 'force-dynamic';
@@ -25,7 +25,7 @@ export default async function ShopPage() {
         <h1 className="mt-2 text-3xl font-extrabold sm:text-4xl">二手商店・嚴選靚機</h1>
         <p className="mt-3 max-w-2xl text-sm text-white/85 sm:text-base">
           每一部機器均經 32 項功能檢測與外觀分級，附原裝或全新配件及檢測報告。
-          香港行貨來源、透明評級、90 日本店保養，買得安心用得放心。
+          香港行貨來源、透明評級、30 日本店保養，買得安心用得放心。
         </p>
         <div className="mt-6 flex flex-wrap gap-3 text-sm">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5 font-semibold backdrop-blur">
@@ -38,7 +38,7 @@ export default async function ShopPage() {
           </span>
           <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5 font-semibold backdrop-blur">
             <ShieldCheck className="h-4 w-4" />
-            90 日本店保養
+            30 日本店保養
           </span>
         </div>
       </div>
