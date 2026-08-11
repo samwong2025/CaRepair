@@ -124,6 +124,15 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error('批量落二手單失敗', error);
-    return NextResponse.json({ ok: false, message: '伺服器異常，請稍後再試。' }, { status: 500 });
+    const envServiceRole = Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY);
+    const envUrl = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL);
+    return NextResponse.json(
+      {
+        ok: false,
+        message: '伺服器異常，請稍後再試。',
+        debug: { envUrl, envServiceRole },
+      },
+      { status: 500 },
+    );
   }
 }
