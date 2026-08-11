@@ -246,9 +246,9 @@ export function RepairWizard({ initialCategory }: { initialCategory?: DeviceCate
 
   /** 已選產品 chip：任何步驟都可一鍵回到揀機型 */
   const renderSelectedChip = (onBack: () => void) => (
-    <div className="mb-6 flex flex-wrap items-center gap-2 rounded-xl border border-slate-200 bg-surface-soft px-4 py-2.5 text-sm">
-      <span className="text-ink-muted">已選產品</span>
-      <span className="font-bold text-ink">
+    <div className="mb-6 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-xl border border-slate-200 bg-surface-soft px-4 py-2.5 text-sm">
+      <span className="text-ink-muted shrink-0">已選產品</span>
+      <span className="min-w-0 flex-1 truncate font-bold text-ink">
         {modelId === OTHER_MODEL_ID ? (customModel.trim() || '（其他）') : (model?.name ?? '—')}
       </span>
       <Button
@@ -256,7 +256,7 @@ export function RepairWizard({ initialCategory }: { initialCategory?: DeviceCate
         variant="ghost"
         size="sm"
         onClick={onBack}
-        className="ml-auto h-7 px-2 text-brand-600 hover:bg-brand-50"
+        className="h-7 shrink-0 px-2 text-brand-600 hover:bg-brand-50"
       >
         更改
       </Button>
@@ -270,7 +270,7 @@ export function RepairWizard({ initialCategory }: { initialCategory?: DeviceCate
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_20rem] lg:gap-8">
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-card sm:p-7 lg:p-8">
+        <div className="rounded-2xl border border-slate-200 bg-white p-5 pb-[calc(96px+env(safe-area-inset-bottom))] shadow-card sm:p-7 sm:pb-[calc(112px+env(safe-area-inset-bottom))] lg:p-8 lg:pb-8">
           {/* 步驟 1：揀產品分類（點類別即跳步驟 2） */}
           {step === 1 ? (
             <StepDevice

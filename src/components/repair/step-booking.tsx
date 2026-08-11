@@ -99,7 +99,7 @@ export function StepBooking({
       {/* 服務方式 */}
       <div>
         <Label className="mb-3 block">服務方式</Label>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2 lg:grid-cols-3">
           {serviceModes.map((mode) => {
             const Icon = mode.icon;
             const selected = form.serviceMode === mode.id;
@@ -110,7 +110,7 @@ export function StepBooking({
                 onClick={() => onChange('serviceMode', mode.id)}
                 aria-pressed={selected}
                 className={cn(
-                  'relative flex cursor-pointer flex-col gap-2.5 rounded-2xl border p-4 text-left transition-all duration-200 ease-smooth',
+                  'relative flex cursor-pointer flex-col gap-2 rounded-2xl border p-3.5 text-left transition-all duration-200 ease-smooth sm:p-4',
                   selected
                     ? 'border-brand-500 bg-brand-50/60 shadow-card'
                     : 'border-slate-200 bg-white hover:border-brand-200 hover:shadow-card',
