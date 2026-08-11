@@ -754,44 +754,42 @@ export const supabaseRepository: DataRepository = {
 
   async createShopOrder(input: ShopOrderInput) {
     const supabase = client();
-    const { data: productRow, error: productError } = await supabase
-      .from('products')
-      .select('*')
-      .eq('id', input.productId)
-      .maybeSingle();
-    if (productError || !productRow) throw new Error('找不到對應商品');
-
-    const product = rowToProduct(productRow);
-    if (product.stock < input.qty) throw new Error('商品庫存不足');
-
-    const { data, error } = await supabase
-      .from('shop_orders')
-      .insert({
-        order_no: generateOrderNo('SH'),
-        product_id: product.id,
-        product_name: product.name,
-        price: product.price,
-        qty: input.qty,
-        fulfillment: input.fulfillment,
-        delivery_address: input.deliveryAddress,
-        pickup_shop: input.pickupShop,
-        pickup_at: input.pickupAt,
-        customer_name: input.customerName,
-        customer_phone: input.customerPhone,
-        phone_digits: normalizePhone(input.customerPhone),
-        remark: input.remark,
-        status: 'pending',
-      })
-      .select('*')
-      .single();
-    if (error) throw new Error(`建立商店訂單失敗：${error.message}`);
-
-    await supabase
-      .from('products')
-      .update({ stock: product.stock - input.qty })
-      .eq('id', product.id);
-
-    return rowToShopOrder(data);
+    // 透過 SECURITY DEFINER RPC 建單並扣庫存，使公開下單（anon）亦可寫入，
+    // 不依賴 serverless 環境是否注入 SUPABASE_SERVICE_ROLE_KEY。
+    const { data, error } = await supabase.rpc('create_shop_order', {
+      p_product_id: input.productId,
+      p_qty: input.qty,
+      p_customer_name: input.customerName,
+      p_customer_phone: input.customerPhone,
+      p_fulfillment: input.fulfillment,
+      p_pickup_shop: input.pickupShop ?? null,
+      p_pickup_at: input.pickupAt ?? null,
+      p_delivery_address: input.deliveryAddress ?? null,
+      p_remark: input.remark ?? null,
+    });
+    if (error) {
+      console.error('[supabase] createShopOrder', error.message);
+      return null;
+    }
+    const row = (data ?? null) as Record<string, unknown> | null;
+    if (!row) return null;
+    return {
+      id: String(row.id ?? ''),
+      orderNo: String(row.orderNo ?? ''),
+      productId: String(row.productId ?? ''),
+      productName: String(row.productName ?? ''),
+      price: Number(row.price ?? 0),
+      qty: Number(row.qty ?? 0),
+      fulfillment: (row.fulfillment as ShopOrder['fulfillment']) ?? 'pickup',
+      pickupShop: row.pickupShop ? String(row.pickupShop) : null,
+      pickupAt: row.pickupAt ? String(row.pickupAt) : null,
+      deliveryAddress: row.deliveryAddress ? String(row.deliveryAddress) : null,
+      customerName: String(row.customerName ?? ''),
+      customerPhone: String(row.customerPhone ?? ''),
+      remark: row.remark ? String(row.remark) : null,
+      status: (row.status as ShopOrder['status']) ?? 'pending',
+      createdAt: String(row.createdAt ?? new Date().toISOString()),
+    };
   },
 
   async listShopOrders() {
