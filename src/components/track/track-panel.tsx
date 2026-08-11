@@ -8,6 +8,7 @@ import { OrderCard } from './order-card';
 import { AfterSalesPanel } from './aftersales-panel';
 import { useOrderTracking, type TrackMode } from '../../lib/hooks/use-order-tracking';
 import { formatDateTime } from '../../lib/format';
+import { siteConfig } from '../../config/site';
 import { cn } from '../../lib/utils';
 
 const HK_PHONE = /^[2-9]\d{7}$/;
@@ -181,7 +182,7 @@ export function TrackPanel({ initialKeyword = '' }: { initialKeyword?: string })
                   <p className="mt-4 text-base font-bold text-ink">搵唔到相關維修訂單</p>
                   <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-ink-muted">
                     請確認訂單編號或手提號碼是否正確；如係到店即場落單，
-                    可用收據上的訂單編號查詢，或致電 3188 6688 由客服協助。
+                    可用收據上的訂單編號查詢，或致電 {siteConfig.hotline} 由客服協助。
                   </p>
                 </div>
               )}

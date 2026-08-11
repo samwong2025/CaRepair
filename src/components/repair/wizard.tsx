@@ -191,7 +191,7 @@ export function RepairWizard({ initialCategory }: { initialCategory?: DeviceCate
         (data: { message?: string }) => data.message,
         () => undefined,
       );
-      setSubmitError(message ?? '提交失敗，請稍後再試或致電 3188 6688 由客服代辦。');
+      setSubmitError(message ?? `提交失敗，請稍後再試或致電 ${siteConfig.hotline} 由客服代辦。`);
       setSubmitting(false);
       return;
     }

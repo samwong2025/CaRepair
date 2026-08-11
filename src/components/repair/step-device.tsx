@@ -7,6 +7,7 @@ import { deviceGroups, tierLabel, getModelImage } from '../../data/devices';
 import { resolveIcon } from '../../lib/icons';
 import { cn } from '../../lib/utils';
 import type { DeviceCategory, DeviceModel } from '../../types';
+import { siteConfig } from '../../config/site';
 
 /** 步驟 2 內嵌入的型號選擇器：點即跳（搭配 wizard 內部控制） */
 export function ModelPicker({
@@ -134,7 +135,7 @@ export function ModelPicker({
 
         {grouped.length === 0 ? (
           <p className="rounded-xl border border-dashed border-slate-300 bg-surface-soft px-4 py-8 text-center text-sm text-ink-muted">
-            搵唔到「{keyword}」相關型號，可致電 3188 6688 由技師人手確認。
+            搵唔到「{keyword}」相關型號，可致電 {siteConfig.hotline} 由技師人手確認。
           </p>
         ) : null}
       </div>
@@ -340,7 +341,7 @@ export function StepDevice({
 
             {grouped.length === 0 ? (
               <p className="rounded-xl border border-dashed border-slate-300 bg-surface-soft px-4 py-8 text-center text-sm text-ink-muted">
-                搵唔到「{keyword}」相關型號，可致電 3188 6688 由技師人手確認。
+                搵唔到「{keyword}」相關型號，可致電 {siteConfig.hotline} 由技師人手確認。
               </p>
             ) : null}
           </div>

@@ -3,6 +3,7 @@
 import * as React from 'react';
 import { getBrowserSupabase, isSupabaseConfigured } from '../supabase/client';
 import type { RepairOrder } from '../../types';
+import { siteConfig } from '../../config/site';
 
 export type TrackMode = 'orderNo' | 'phone';
 
@@ -54,7 +55,7 @@ export function useOrderTracking() {
         ...prev,
         loading: false,
         searched: true,
-        error: '查詢失敗，請稍後再試或致電 3188 6688。',
+        error: `查詢失敗，請稍後再試或致電 ${siteConfig.hotline}。`,
       }));
       return;
     }
