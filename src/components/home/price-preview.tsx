@@ -47,7 +47,7 @@ export function PricePreview() {
                   onClick={() => setCategory(group.id)}
                   aria-pressed={selected}
                   className={cn(
-                    'glow-card relative flex cursor-pointer items-start gap-3 overflow-hidden rounded-2xl border p-4 text-left transition-all duration-300 ease-smooth',
+                    'glow-card group relative flex min-h-[120px] cursor-pointer items-center gap-3 overflow-hidden rounded-2xl border p-4 text-left transition-all duration-300 ease-smooth sm:min-h-[132px] sm:gap-4 sm:px-5',
                     selected
                       ? 'border-brand-500 bg-white shadow-lift'
                       : 'border-slate-200/80 bg-white/70 hover:-translate-y-1 hover:bg-white hover:shadow-card',
@@ -57,10 +57,10 @@ export function PricePreview() {
                     <img
                       src={group.coverImage}
                       alt={group.name}
-                      width={112}
-                      height={112}
+                      width={120}
+                      height={120}
                       loading="lazy"
-                      className="pointer-events-none absolute -right-4 -top-3 h-[72px] w-[72px] object-contain opacity-95"
+                      className="pointer-events-none ml-auto h-16 w-16 shrink-0 object-contain opacity-95 transition-transform duration-300 ease-smooth sm:h-20 sm:w-20 group-hover:scale-105"
                     />
                   ) : null}
                   <span
@@ -71,7 +71,7 @@ export function PricePreview() {
                   >
                     <Icon className="h-5 w-5" strokeWidth={2} />
                   </span>
-                  <span className="min-w-0">
+                  <span className="min-w-0 flex-1">
                     <span className="block text-[0.95rem] font-extrabold text-ink">
                       {group.name}
                     </span>
