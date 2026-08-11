@@ -21,7 +21,8 @@ export const products: Product[] = [
     highlights: ['電池健康度 96%', '無花無崩・近全新', '原裝配件齊全'],
     description:
       '香港行貨，機主換機放售，全程有貼膜連殼使用，機身無任何刮痕與崩角。已完成 32 項功能檢測（Face ID、三鏡頭、5G 訊號、防水膠圈、無線充電全部正常），並更換全新原廠級防水膠。附原裝盒、USB-C 充電線與檢測報告。',
-    accessories: ['原裝包裝盒', 'USB-C 充電線', '32 項檢測報告', '90 日本店保養'],
+    accessories: ['全新原裝包裝盒', '全新 USB-C 充電線'],
+    services: ['32 項功能檢測報告', '90 日本店保養'],
     hot: true,
   },
   {
@@ -40,7 +41,8 @@ export const products: Product[] = [
     highlights: ['電池健康度 91%', '邊框輕微使用痕跡', '螢幕零瑕疵'],
     description:
       '香港行貨，日常使用機，邊框有極輕微使用痕跡（需仔細對光才可見），螢幕完全無花無鬼影。靈動島、Face ID、長焦鏡頭運作正常，已重新校正電池健康度顯示。適合追求性價比的用家。',
-    accessories: ['全新充電線', '保護殼一個', '32 項檢測報告', '90 日本店保養'],
+    accessories: ['全新充電線', '全新透明保護殼'],
+    services: ['32 項功能檢測報告', '90 日本店保養'],
   },
   {
     id: 'p-03',
@@ -58,7 +60,8 @@ export const products: Product[] = [
     highlights: ['電池健康度 89%', '學生／後備機首選', '已換全新電池可加購'],
     description:
       '性價比極高的日常用機，外觀 A 級，機身背面有兩處細微擦痕已作打磨處理。所有功能正常，支援 5G 與 MagSafe。可加 HK$480 即場更換全新電池，健康度回復 100%。',
-    accessories: ['全新充電線', '32 項檢測報告', '90 日本店保養'],
+    accessories: ['全新充電線'],
+    services: ['32 項功能檢測報告', '90 日本店保養'],
     hot: true,
   },
   {
@@ -77,7 +80,8 @@ export const products: Product[] = [
     highlights: ['支援 Apple Pencil 2', '120Hz ProMotion', '機身零刮痕'],
     description:
       '設計師換機放售，一直配鍵盤保護套使用，機身與螢幕均無刮痕。M2 晶片效能足以應付 Procreate、剪片與多工處理，支援 Apple Pencil 2 磁吸充電。已完成觸控全區域檢測。',
-    accessories: ['原裝充電器', 'USB-C 線', '32 項檢測報告', '90 日本店保養'],
+    accessories: ['全新原裝充電器', '全新 USB-C 線'],
+    services: ['32 項功能檢測報告', '90 日本店保養'],
   },
   {
     id: 'p-05',
@@ -95,7 +99,8 @@ export const products: Product[] = [
     highlights: ['輕巧 462g', '適合追劇與筆記', '邊框輕微使用痕'],
     description:
       '輕量化日常用機，重量僅 462g，適合通勤追劇、電子筆記與網課。邊框有輕微使用痕跡，螢幕完好。支援 Apple Pencil Pro 與 Magic Keyboard。',
-    accessories: ['原裝充電器', '32 項檢測報告', '90 日本店保養'],
+    accessories: ['全新原裝充電器'],
+    services: ['32 項功能檢測報告', '90 日本店保養'],
   },
   {
     id: 'p-06',
@@ -113,7 +118,8 @@ export const products: Product[] = [
     highlights: ['已更換全新防水膠', '附全新原色錶帶', '雙指互點功能正常'],
     description:
       '錶身輕微使用痕跡已作拋光處理，錶面玻璃完好無花。已重新更換防水膠圈並通過 5ATM 氣壓測試，可安心游泳使用。血氧、心電圖、雙指互點等功能全部實測正常。',
-    accessories: ['全新運動錶帶', '磁力充電線', '32 項檢測報告', '90 日本店保養'],
+    accessories: ['全新運動錶帶', '全新磁力充電線'],
+    services: ['32 項功能檢測報告', '90 日本店保養'],
     hot: true,
   },
   {
@@ -132,7 +138,8 @@ export const products: Product[] = [
     highlights: ['100 米防水潛水規格', '雙頻 GPS', '附高山錶環'],
     description:
       '行山愛好者放售，錶身鈦金屬有使用痕跡屬正常，錶面藍寶石玻璃無花。已完成潛水防水複測，動作按鈕、警報器、雙頻 GPS 全部正常。續航實測一般使用可達 32 小時。',
-    accessories: ['原裝高山錶環', '磁力快充線', '32 項檢測報告', '90 日本店保養'],
+    accessories: ['全新原裝高山錶環', '全新磁力快充線'],
+    services: ['32 項功能檢測報告', '90 日本店保養'],
   },
   {
     id: 'p-08',
@@ -150,7 +157,8 @@ export const products: Product[] = [
     highlights: ['循環次數僅 86 次', '鍵盤零打油', '可升級 512GB'],
     description:
       '公司行政機回收，使用不足一年，電池循環次數僅 86 次。鍵盤與觸控板無任何打油或磨損，機身四角完好。已重灌最新 macOS 並清除所有原有資料，可加 HK$1,280 升級至 512GB SSD。',
-    accessories: ['原裝 35W 雙口充電器', 'MagSafe 充電線', '32 項檢測報告', '180 日本店保養'],
+    accessories: ['全新原裝 35W 雙口充電器', '全新 MagSafe 充電線'],
+    services: ['32 項功能檢測報告', '180 日本店保養'],
     hot: true,
   },
   {
@@ -169,7 +177,8 @@ export const products: Product[] = [
     highlights: ['16GB 統一記憶體', 'XDR 螢幕零壞點', '剪片修圖首選'],
     description:
       '影片剪接師升級換機放售，M3 晶片配 16GB 記憶體，4K 多軌剪接流暢。Liquid Retina XDR 螢幕實測零壞點、零漏光。機身 A 面有一處極輕微壓痕（已附圖說明），其餘完好。',
-    accessories: ['原裝 70W 充電器', 'MagSafe 3 編織線', '32 項檢測報告', '180 日本店保養'],
+    accessories: ['全新原裝 70W 充電器', '全新 MagSafe 3 編織線'],
+    services: ['32 項功能檢測報告', '180 日本店保養'],
   },
   {
     id: 'p-10',
@@ -187,7 +196,8 @@ export const products: Product[] = [
     highlights: ['入門文書首選', '無風扇靜音', '掌托有使用痕跡'],
     description:
       '學生文書、上網課的高性價比選擇。掌托與 A 面有明顯使用痕跡（已如實列明），故評為 B 級，但螢幕完好、鍵盤手感正常。M1 晶片效能仍足以應付 Office、Zoom 與輕度修圖。',
-    accessories: ['原裝 30W 充電器', 'USB-C 線', '32 項檢測報告', '90 日本店保養'],
+    accessories: ['全新原裝 30W 充電器', '全新 USB-C 線'],
+    services: ['32 項功能檢測報告', '90 日本店保養'],
   },
 ];
 

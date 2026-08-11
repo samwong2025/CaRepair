@@ -319,7 +319,10 @@ export interface Product {
   image: string;
   highlights: string[];
   description: string;
+  /** 隨機附送配件（全部全新） */
   accessories: string[];
+  /** 品質保證與售後服務，如檢測報告、門市保養 */
+  services: string[];
   hot?: boolean;
 }
 

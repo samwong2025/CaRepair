@@ -98,10 +98,23 @@ export default async function ProductPage({ params }: { params: { id: string } }
 
             <h3 className="mt-5 flex items-center gap-2 text-sm font-bold text-ink">
               <Package className="h-4 w-4 text-brand-600" />
-              隨機配件
+              隨機全新配件
             </h3>
             <ul className="mt-2 grid gap-1.5 sm:grid-cols-2">
               {product.accessories.map((item) => (
+                <li key={item} className="flex items-center gap-2 text-sm text-ink-muted">
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+
+            <h3 className="mt-5 flex items-center gap-2 text-sm font-bold text-ink">
+              <ShieldCheck className="h-4 w-4 text-brand-600" />
+              品質保證
+            </h3>
+            <ul className="mt-2 grid gap-1.5 sm:grid-cols-2">
+              {product.services.map((item) => (
                 <li key={item} className="flex items-center gap-2 text-sm text-ink-muted">
                   <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />
                   {item}

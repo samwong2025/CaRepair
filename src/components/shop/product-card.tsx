@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { BatteryCharging, Flame, ShieldCheck } from 'lucide-react';
+import { BatteryCharging, Flame, PackageOpen, ShieldCheck, Sparkles } from 'lucide-react';
 import { Badge } from '../ui/badge';
 import { SmartImage } from '../ui/smart-image';
 import { formatHKD } from '../../lib/format';
@@ -61,6 +61,43 @@ export function ProductCard({ product }: { product: Product }) {
             </li>
           ))}
         </ul>
+
+        <div className="mt-3 space-y-2 rounded-xl bg-slate-50 p-3">
+          <div>
+            <p className="mb-1 flex items-center gap-1 text-[0.68rem] font-bold uppercase tracking-wide text-ink-faint">
+              <PackageOpen className="h-3 w-3 text-brand-500" />
+              隨機全新配件
+            </p>
+            <div className="flex flex-wrap gap-1">
+              {product.accessories.map((acc) => (
+                <span
+                  key={acc}
+                  className="inline-flex items-center gap-1 rounded-md bg-white px-1.5 py-0.5 text-[0.68rem] font-medium text-ink-muted ring-1 ring-slate-200"
+                >
+                  <Sparkles className="h-2.5 w-2.5 text-success" />
+                  {acc}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p className="mb-1 flex items-center gap-1 text-[0.68rem] font-bold uppercase tracking-wide text-ink-faint">
+              <ShieldCheck className="h-3 w-3 text-brand-500" />
+              品質保證
+            </p>
+            <div className="flex flex-wrap gap-1">
+              {product.services.map((svc) => (
+                <span
+                  key={svc}
+                  className="inline-flex items-center gap-1 rounded-md bg-brand-50 px-1.5 py-0.5 text-[0.68rem] font-medium text-brand-700"
+                >
+                  <ShieldCheck className="h-2.5 w-2.5 text-brand-500" />
+                  {svc}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
 
         <div className="mt-auto flex items-end justify-between pt-4">
           <div>

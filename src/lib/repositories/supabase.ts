@@ -151,6 +151,7 @@ function rowToProduct(row: Record<string, unknown>): Product {
     highlights: (row.highlights as string[]) ?? [],
     description: row.description as string,
     accessories: (row.accessories as string[]) ?? [],
+    services: (row.services as string[]) ?? [],
     hot: Boolean(row.hot),
   };
 }
@@ -739,6 +740,7 @@ export const supabaseRepository: DataRepository = {
         highlights: product.highlights,
         description: product.description,
         accessories: product.accessories,
+        services: product.services,
         hot: product.hot,
       })
       .select('*')

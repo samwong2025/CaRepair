@@ -37,6 +37,7 @@ const emptyProduct = (): Product => ({
   highlights: [],
   description: '',
   accessories: [],
+  services: [],
   hot: false,
 });
 
@@ -367,7 +368,7 @@ function ProductEditor({
             />
           </Field>
 
-          <Field label="隨附配件（每行一項）" className="sm:col-span-2">
+          <Field label="隨附全新配件（每行一項）" className="sm:col-span-2">
             <textarea
               value={draft.accessories.join('\n')}
               onChange={(e) =>
@@ -375,7 +376,19 @@ function ProductEditor({
               }
               rows={3}
               className="form-input"
-              placeholder="原裝包裝盒\nUSB-C 充電線"
+              placeholder="全新原裝包裝盒\n全新 USB-C 充電線"
+            />
+          </Field>
+
+          <Field label="品質保證與售後（每行一項）" className="sm:col-span-2">
+            <textarea
+              value={draft.services.join('\n')}
+              onChange={(e) =>
+                patch({ services: e.target.value.split('\n').map((s) => s.trim()).filter(Boolean) })
+              }
+              rows={2}
+              className="form-input"
+              placeholder="32 項功能檢測報告\n90 日本店保養"
             />
           </Field>
 
