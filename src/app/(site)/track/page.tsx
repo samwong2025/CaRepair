@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { ClipboardCheck, MessageSquareText, ShieldCheck } from 'lucide-react';
+import { ClipboardCheck, HandHeart, MessageSquareText, ShieldCheck } from 'lucide-react';
 import { TrackPanel } from '../../../components/track/track-panel';
 
 export const metadata: Metadata = {
@@ -25,6 +25,11 @@ const notes = [
     title: '狀態變更即時通知',
     description: '每個階段完成都會 WhatsApp 通知，唔使自己不停 F5。',
   },
+  {
+    icon: HandHeart,
+    title: '十年手作 · Cathy 親手跟進',
+    description: '唔做花巧廣告，由下單到取機都由 Cathy 親手跟進，口碑先係長線。',
+  },
 ];
 
 export default function TrackPage({ searchParams }: { searchParams?: { q?: string } }) {
@@ -46,7 +51,7 @@ export default function TrackPage({ searchParams }: { searchParams?: { q?: strin
             由落單、檢測、施工到品檢取機，每個階段都有時間戳與處理人記錄，公開透明。
           </p>
 
-          <ul className="mx-auto mt-8 grid max-w-4xl gap-3 sm:grid-cols-3">
+          <ul className="mx-auto mt-8 grid max-w-4xl gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {notes.map((item) => {
               const Icon = item.icon;
               return (
