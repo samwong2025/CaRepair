@@ -1,8 +1,14 @@
 'use client';
 
 import * as React from 'react';
-import { Printer, X } from 'lucide-react';
+import { Mail, MessageCircle, Printer, X } from 'lucide-react';
 import { Button } from '../ui/button';
+import {
+  openReceiptEmail,
+  openReceiptWhatsapp,
+  triggerReceiptPdf,
+} from '../../lib/receipt-share';
+import type { RepairOrder } from '../../types';
 
 /**
  * 可列印檢視彈窗。
@@ -15,12 +21,15 @@ export function PrintDialog({
   description,
   onClose,
   children,
+  order,
 }: {
   open: boolean;
   title: string;
   description?: string;
   onClose: () => void;
   children: React.ReactNode;
+  /** 售後收據用：帶入訂單後，標題列會多出「Email 客戶」「WhatsApp 客戶」電子單按鈕 */
+  order?: RepairOrder;
 }) {
   React.useEffect(() => {
     if (!open) return;
@@ -56,7 +65,38 @@ export function PrintDialog({
             <h2 className="text-base font-extrabold text-ink">{title}</h2>
             {description ? <p className="mt-0.5 text-xs text-ink-muted">{description}</p> : null}
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            {order ? (
+              <>
+                <Button
+                  variant="soft"
+                  size="sm"
+                  onClick={() => triggerReceiptPdf(order)}
+                  title="在新視窗開啟收據，於列印對話框選擇「另存為 PDF」即可下載"
+                >
+                  <Printer className="h-3.5 w-3.5" />
+                  下載 PDF
+                </Button>
+                <Button
+                  variant="soft"
+                  size="sm"
+                  onClick={() => openReceiptWhatsapp(order)}
+                  title="下載 PDF 並打開 WhatsApp，把 PDF 附件給客戶"
+                >
+                  <MessageCircle className="h-3.5 w-3.5" />
+                  WhatsApp 客戶
+                </Button>
+                <Button
+                  variant="soft"
+                  size="sm"
+                  onClick={() => openReceiptEmail(order)}
+                  title="下載 PDF 並開啟 Email 草稿，把 PDF 附件給客戶"
+                >
+                  <Mail className="h-3.5 w-3.5" />
+                  Email 客戶
+                </Button>
+              </>
+            ) : null}
             <Button variant="primary" size="sm" onClick={() => window.print()}>
               <Printer className="h-3.5 w-3.5" />
               列印

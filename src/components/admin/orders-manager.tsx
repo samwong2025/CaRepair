@@ -328,6 +328,7 @@ export function OrdersManager({
             : '70mm × 100mm 標籤紙，建議使用熱敏標籤機'
         }
         onClose={() => setPrintTarget(null)}
+        order={printTarget?.type === 'receipt' ? printTarget.order : undefined}
       >
         {printTarget?.type === 'label' ? <RepairLabel order={printTarget.order} /> : null}
         {printTarget?.type === 'receipt' ? <Receipt order={printTarget.order} /> : null}
