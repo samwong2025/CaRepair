@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
-import { Clock3, ShieldCheck, Sparkles } from 'lucide-react';
+import { Clock3, HandHeart, ShieldCheck, Sparkles } from 'lucide-react';
 import { RepairWizard } from '../../../components/repair/wizard';
 import { deviceGroups } from '../../../data/devices';
 import type { DeviceCategory } from '../../../types';
@@ -16,6 +16,12 @@ const highlights = [
   { icon: Clock3, title: '最快 30 分鐘取機', description: '常見故障門市即場快修，等埋都得。' },
   { icon: ShieldCheck, title: '最長 365 日保養', description: '質保期內同類故障免費再修，安心無憂。' },
   { icon: Sparkles, title: '網上落單即減 HK$50', description: '同時修兩項或以上，另有套餐折扣。' },
+  {
+    icon: HandHeart,
+    title: '十年手作 · Cathy 親手修',
+    description:
+      '唔做花巧廣告，每位客人、每部機都係 Cathy 經手；價錢豐儉由人，零件級別任揀，口碑先係長線。',
+  },
 ];
 
 export default function RepairPage({
