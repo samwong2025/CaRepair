@@ -5,7 +5,7 @@ import { CalendarCheck, ChevronDown, MapPin, ShieldCheck, Truck, UserCog, Wrench
 import { Badge } from '../ui/badge';
 import { StatusTimeline } from './status-timeline';
 import { statusMeta } from '../../data/seed';
-import { formatDateTime, formatHKD, maskName } from '../../lib/format';
+import { formatDateTime, formatHKD, maskName, effectivePrice, isDiscounted } from '../../lib/format';
 import { formatDuration } from '../../lib/quote-engine';
 import { cn } from '../../lib/utils';
 import type { RepairOrder } from '../../types';
@@ -40,8 +40,13 @@ export function OrderCard({ order, defaultOpen = false }: { order: RepairOrder; 
         <div className="text-left sm:text-right">
           <p className="text-xs text-ink-faint">維修總額</p>
           <p className="text-2xl font-extrabold leading-none text-brand-600">
-            {formatHKD(order.quote.total)}
+            {formatHKD(effectivePrice(order))}
           </p>
+          {isDiscounted(order) ? (
+            <p className="mt-0.5 text-xs text-emerald-600">
+              講價優惠 HK${(order.quote.total - effectivePrice(order)).toLocaleString()}（原 {formatHKD(order.quote.total)}）
+            </p>
+          ) : null}
         </div>
       </header>
 

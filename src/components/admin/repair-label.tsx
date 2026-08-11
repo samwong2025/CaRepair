@@ -1,7 +1,7 @@
 import { Barcode } from './barcode';
 import { statusMeta } from '../../data/seed';
 import { siteConfig } from '../../config/site';
-import { formatDateTime, formatHKD } from '../../lib/format';
+import { formatDateTime, formatHKD, effectivePrice, isDiscounted } from '../../lib/format';
 import type { RepairOrder } from '../../types';
 
 /**
@@ -70,7 +70,10 @@ export function RepairLabel({ order }: { order: RepairOrder }) {
         </div>
         <div className="text-right">
           <p className="text-[0.55rem] text-slate-500">應收</p>
-          <p className="text-base font-extrabold leading-none">{formatHKD(order.quote.total)}</p>
+          <p className="text-base font-extrabold leading-none">{formatHKD(effectivePrice(order))}</p>
+          {isDiscounted(order) ? (
+            <p className="text-[0.5rem] text-emerald-700">優惠價（原 {formatHKD(order.quote.total)}）</p>
+          ) : null}
         </div>
       </div>
 

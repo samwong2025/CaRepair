@@ -52,6 +52,8 @@ create table if not exists public.repair_orders (
                                       'quality_check','ready','completed','cancelled')),
   timeline          jsonb not null default '[]'::jsonb,
   technician        text,
+  manual_price      numeric(12,2),                    -- 講價後人工最終報價；NULL 表示以系統報價為準
+  price_note        text,                             -- 改價說明（如「老客戶優惠」）
   created_at        timestamptz not null default now(),
   updated_at        timestamptz not null default now()
 );

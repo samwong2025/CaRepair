@@ -62,6 +62,11 @@ export function OrderEditForm({
   const [appointmentAt, setAppointmentAt] = React.useState(order.appointmentAt.slice(0, 16));
   const [remark, setRemark] = React.useState(order.remark ?? '');
   const [extraNote, setExtraNote] = React.useState('');
+  /* 講價：可手動覆寫最終報價 */
+  const [priceInput, setPriceInput] = React.useState<string>(
+    order.manualPrice != null ? String(order.manualPrice) : '',
+  );
+  const [priceNoteInput, setPriceNoteInput] = React.useState<string>(order.priceNote ?? '');
 
   const [saving, setSaving] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
@@ -97,7 +102,11 @@ export function OrderEditForm({
     customerPhone !== order.customerPhone ||
     appointmentAt !== order.appointmentAt.slice(0, 16) ||
     (remark || '') !== (order.remark ?? '') ||
-    JSON.stringify(partsUsed) !== JSON.stringify(order.partsUsed ?? []);
+    JSON.stringify(partsUsed) !== JSON.stringify(order.partsUsed ?? []) ||
+    (priceInput.trim() === ''
+      ? order.manualPrice != null
+      : Number(priceInput) !== order.manualPrice) ||
+    priceNoteInput.trim() !== (order.priceNote ?? '');
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -117,6 +126,9 @@ export function OrderEditForm({
           appointmentAt: new Date(appointmentAt).toISOString(),
           remark: remark || null,
           partsUsed,
+          manualPrice:
+            priceInput.trim() === '' ? null : Number(priceInput),
+          priceNote: priceNoteInput.trim() || null,
           operator: currentUser?.name ?? '後台管理員',
           note: extraNote.trim() || undefined,
         }),
@@ -256,6 +268,48 @@ export function OrderEditForm({
         </div>
       </section>
 
+      {/* 報價（可講價） */}
+      <section className="rounded-2xl border border-amber-200 bg-amber-50/50 p-5 shadow-card">
+        <h2 className="text-sm font-bold text-ink">報價與講價</h2>
+        <p className="mt-1 text-xs text-ink-faint">
+          系統報價 <span className="font-semibold text-ink">{formatHKD(order.quote.total)}</span>
+          。若客戶議價，可在此手動填入最終收費金額；留空則以系統報價為準。
+        </p>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <Field label="最終報價（HK$，留空=依系統報價）">
+            <Input
+              type="number"
+              min={0}
+              inputMode="numeric"
+              value={priceInput}
+              onChange={(e) => setPriceInput(e.target.value)}
+              placeholder={String(order.quote.total)}
+            />
+          </Field>
+          <Field label="改價說明（可選）">
+            <Input
+              value={priceNoteInput}
+              onChange={(e) => setPriceNoteInput(e.target.value)}
+              placeholder="例：老客戶優惠、現金結帳折扣"
+            />
+          </Field>
+        </div>
+        {priceInput.trim() !== '' && Number(priceInput) !== order.quote.total ? (
+          <p
+            className={cn(
+              'mt-3 rounded-lg px-3 py-2 text-xs',
+              Number(priceInput) < order.quote.total
+                ? 'bg-emerald-50 text-emerald-700'
+                : 'bg-amber-100 text-amber-800',
+            )}
+          >
+            {Number(priceInput) < order.quote.total
+              ? `已優惠 HK$${formatHKD(order.quote.total - Number(priceInput)).replace('HK$', '')}（原價 HK$${order.quote.total.toLocaleString()} → 最終 HK$${Number(priceInput).toLocaleString()}）`
+              : `已加價 HK$${formatHKD(Number(priceInput) - order.quote.total).replace('HK$', '')}（原價 HK$${order.quote.total.toLocaleString()} → 最終 HK$${Number(priceInput).toLocaleString()}）`}
+          </p>
+        ) : null}
+      </section>
+
       {/* 選擇庫存配件 */}
       <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
         <h2 className="text-sm font-bold text-ink">選擇庫存配件</h2>
@@ -300,12 +354,33 @@ export function OrderEditForm({
       <section className="rounded-2xl border border-brand-200 bg-brand-50/50 p-5 shadow-card">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <p className="text-xs text-ink-faint">
-              目前報價（變更機型 / 故障後將依新報價為準）
-            </p>
-            <p className="mt-1 text-2xl font-extrabold text-brand-700">
-              {formatHKD(order.quote.total)}
-            </p>
+            {(() => {
+              const finalPrice =
+                priceInput.trim() === ''
+                  ? order.quote.total
+                  : Number(priceInput);
+              const discounted = priceInput.trim() !== '' && Number(priceInput) < order.quote.total;
+              return (
+                <>
+                  <p className="text-xs text-ink-faint">
+                    最終報價（系統價 {formatHKD(order.quote.total)}）
+                  </p>
+                  <p
+                    className={cn(
+                      'mt-1 text-2xl font-extrabold',
+                      discounted ? 'text-emerald-700' : 'text-brand-700',
+                    )}
+                  >
+                    {formatHKD(finalPrice)}
+                    {discounted ? (
+                      <span className="ml-2 text-xs font-semibold text-emerald-600">
+                        已優惠 HK${(order.quote.total - finalPrice).toLocaleString()}
+                      </span>
+                    ) : null}
+                  </p>
+                </>
+              );
+            })()}
             <p className="mt-1 text-xs text-ink-muted">
               建立：{formatDateTime(order.createdAt)} ・最近更新：
               {formatDateTime(order.updatedAt)}

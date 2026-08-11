@@ -8,6 +8,17 @@ export function formatHKD(amount: number, withDecimals = false): string {
   })}`;
 }
 
+/** 取訂單最終收費金額：講價後的人工報價優先，否則以系統報價為準 */
+export function effectivePrice(order: { quote?: { total?: number }; manualPrice?: number }): number {
+  const system = order.quote?.total ?? 0;
+  return order.manualPrice != null && Number.isFinite(order.manualPrice) ? order.manualPrice : system;
+}
+
+/** 是否為講價（最終價 ≠ 系統價） */
+export function isDiscounted(order: { quote?: { total?: number }; manualPrice?: number }): boolean {
+  return order.manualPrice != null && order.manualPrice < (order.quote?.total ?? 0);
+}
+
 export function formatNumber(value: number): string {
   return (Number.isFinite(value) ? value : 0).toLocaleString('zh-HK');
 }

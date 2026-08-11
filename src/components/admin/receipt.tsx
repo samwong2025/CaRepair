@@ -1,6 +1,6 @@
 import { Barcode } from './barcode';
 import { siteConfig } from '../../config/site';
-import { formatDateTime, formatFullDate, formatHKD } from '../../lib/format';
+import { formatDateTime, formatFullDate, formatHKD, effectivePrice, isDiscounted } from '../../lib/format';
 import { formatDuration } from '../../lib/quote-engine';
 import type { RepairOrder } from '../../types';
 
@@ -124,8 +124,20 @@ export function Receipt({ order }: { order: RepairOrder }) {
           ) : null}
           <div className="flex justify-between border-t-2 border-slate-900 pt-2 text-base font-extrabold">
             <dt>實收總額</dt>
-            <dd>{formatHKD(order.quote.total)}</dd>
+            <dd>{formatHKD(effectivePrice(order))}</dd>
           </div>
+          {isDiscounted(order) ? (
+            <div className="flex justify-between text-emerald-700">
+              <dt>講價優惠</dt>
+              <dd>−{formatHKD(order.quote.total - effectivePrice(order))}</dd>
+            </div>
+          ) : null}
+          {order.priceNote ? (
+            <div className="flex justify-between text-slate-500">
+              <dt>改價說明</dt>
+              <dd className="text-right">{order.priceNote}</dd>
+            </div>
+          ) : null}
         </dl>
       </section>
 

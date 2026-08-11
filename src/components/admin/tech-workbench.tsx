@@ -25,6 +25,8 @@ import {
   formatPhone,
   hoursUntil,
   isToday,
+  effectivePrice,
+  isDiscounted,
 } from '../../lib/format';
 import { buildWhatsappUrl } from '../../lib/utils';
 import { getSymptomById } from '../../data/symptoms';
@@ -250,8 +252,13 @@ export function TechWorkbench({
                       已過預約
                     </span>
                   )}
-                  <span className="ml-auto tabular text-sm font-extrabold text-brand-600">
-                    {formatHKD(order.quote.total)}
+                  <span className="ml-auto flex items-center gap-1.5 tabular text-sm font-extrabold text-brand-600">
+                    {formatHKD(effectivePrice(order))}
+                    {isDiscounted(order) ? (
+                      <span className="rounded bg-emerald-50 px-1 text-[0.6rem] font-bold text-emerald-700">
+                        優惠
+                      </span>
+                    ) : null}
                   </span>
                 </div>
 

@@ -13,7 +13,7 @@ import { AdminPageHeader } from '../../components/admin/page-header';
 import { TechWorkbench } from '../../components/admin/tech-workbench';
 import { Badge } from '../../components/ui/badge';
 import { statusFlow, statusMeta } from '../../data/seed';
-import { formatDateTime, formatHKD, formatNumber, isThisMonth, isThisWeek } from '../../lib/format';
+import { formatDateTime, formatHKD, formatNumber, isThisMonth, isThisWeek, effectivePrice } from '../../lib/format';
 import { computeInventoryAlerts, loadInventory } from '../../lib/inventory-store';
 import { getRepository } from '../../lib/repositories';
 import { getCurrentUser } from '../../lib/auth';
@@ -33,18 +33,18 @@ export default async function AdminDashboardPage() {
   ]);
 
   const completedOrders = orders.filter((order) => order.status === 'completed');
-  // 今日預計收入：進行中（未完成 / 未取消）工單報價總和
+  // 今日預計收入：進行中（未完成 / 未取消）工單最終報價總和（含講價）
   const todayProjected = orders
     .filter((order) => order.status !== 'completed' && order.status !== 'cancelled')
-    .reduce((sum, order) => sum + order.quote.total, 0);
+    .reduce((sum, order) => sum + effectivePrice(order), 0);
   // 本週實際收入：本週完成工單
   const weekActual = completedOrders
     .filter((order) => isThisWeek(order.updatedAt))
-    .reduce((sum, order) => sum + order.quote.total, 0);
+    .reduce((sum, order) => sum + effectivePrice(order), 0);
   // 本月實際收入：本月完成工單
   const monthActual = completedOrders
     .filter((order) => isThisMonth(order.updatedAt))
-    .reduce((sum, order) => sum + order.quote.total, 0);
+    .reduce((sum, order) => sum + effectivePrice(order), 0);
 
   const alerts = computeInventoryAlerts(inventory);
 

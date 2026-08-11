@@ -19,7 +19,7 @@ import { PrintDialog } from './print-dialog';
 import { RepairLabel } from './repair-label';
 import { Receipt } from './receipt';
 import { statusFlow, statusMeta } from '../../data/seed';
-import { formatDateTime, formatHKD, formatPhone } from '../../lib/format';
+import { formatDateTime, formatHKD, formatPhone, effectivePrice, isDiscounted } from '../../lib/format';
 import { cn, buildWhatsappUrl } from '../../lib/utils';
 import type { CurrentUser } from '../../lib/auth';
 import type { OrderStatus, RepairOrder } from '../../types';
@@ -222,9 +222,14 @@ export function OrdersManager({
                     </div>
                   </div>
 
-                  <div className="flex shrink-0 flex-col gap-2 lg:items-end">
-                    <p className="text-xl font-extrabold leading-none text-brand-600">
-                      {formatHKD(order.quote.total)}
+                  <div className="flex shrink-0 flex-col items-end gap-1">
+                    <p className="flex items-center gap-1.5 text-xl font-extrabold leading-none text-brand-600">
+                      {formatHKD(effectivePrice(order))}
+                      {isDiscounted(order) ? (
+                        <span className="rounded bg-emerald-50 px-1 text-[0.6rem] font-bold text-emerald-700">
+                          優惠
+                        </span>
+                      ) : null}
                     </p>
                     <p className="text-[0.7rem] text-ink-faint">
                       {order.serviceMode === 'walk_in'

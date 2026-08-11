@@ -154,6 +154,13 @@ export interface RepairOrder {
   technician?: string;
   /** 實際領用 / 選用的庫存配件清單（師傅作業時登記） */
   partsUsed?: UsedPart[];
+  /**
+   * 講價後的人工最終報價（HK$）。
+   * 有值時優先於 quote.total 作為向客戶收取的金額；未設定則以系統報價為準。
+   */
+  manualPrice?: number;
+  /** 改價說明（如「老客戶優惠 -$200」），展示與歷程用 */
+  priceNote?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -179,6 +186,10 @@ export interface RepairOrderEditPatch {
   appointmentAt?: string;
   /** 實際領用 / 選用的庫存配件清單 */
   partsUsed?: UsedPart[];
+  /** 講價後的人工最終報價（HK$）；傳入 null 可清除改價、回復系統報價 */
+  manualPrice?: number | null;
+  /** 改價說明（如「老客戶優惠」） */
+  priceNote?: string | null;
   /** 誰做的修改（寫入 timeline） */
   operator?: string;
   /** 額外備註寫入 timeline（如「客戶改機型」） */

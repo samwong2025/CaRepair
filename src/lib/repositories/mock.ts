@@ -284,6 +284,32 @@ export const mockRepository: DataRepository = {
       void prevCount;
     }
 
+    /* 講價 / 人工改價 */
+    if (patch.manualPrice !== undefined || patch.priceNote !== undefined) {
+      const prevPrice = order.manualPrice;
+      const systemPrice = order.quote?.total ?? 0;
+      if (patch.manualPrice !== undefined) {
+        order.manualPrice = patch.manualPrice === null ? undefined : patch.manualPrice;
+      }
+      if (patch.priceNote !== undefined) {
+        order.priceNote = patch.priceNote === null ? undefined : patch.priceNote;
+      }
+      const finalPrice = order.manualPrice ?? systemPrice;
+      const delta = finalPrice - systemPrice;
+      let noteText = '報價調整';
+      if (order.manualPrice === undefined) {
+        noteText = `報價復原為系統價 HK$${systemPrice.toLocaleString()}`;
+      } else if (delta < 0) {
+        noteText = `講價優惠 HK$${finalPrice.toLocaleString()}（原價 HK$${systemPrice.toLocaleString()}，減 HK$${Math.abs(delta).toLocaleString()}）${order.priceNote ? `：${order.priceNote}` : ''}`;
+      } else if (delta > 0) {
+        noteText = `報價調整為 HK$${finalPrice.toLocaleString()}（原價 HK$${systemPrice.toLocaleString()}，加 HK$${delta.toLocaleString()}）${order.priceNote ? `：${order.priceNote}` : ''}`;
+      } else {
+        noteText = `報價維持 HK$${finalPrice.toLocaleString()}${order.priceNote ? `：${order.priceNote}` : ''}`;
+      }
+      void prevPrice;
+      timelineAdditions.push({ status: order.status, at: now, note: noteText, operator });
+    }
+
     if (patch.note) {
       timelineAdditions.push({ status: order.status, at: now, note: patch.note, operator });
     }

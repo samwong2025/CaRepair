@@ -84,6 +84,8 @@ function rowToOrder(row: Record<string, unknown>): RepairOrder {
     timeline: (row.timeline as RepairOrder['timeline']) ?? [],
     technician: (row.technician as string) ?? undefined,
     partsUsed: (row.parts_used as RepairOrder['partsUsed']) ?? undefined,
+    manualPrice: row.manual_price != null ? Number(row.manual_price) : undefined,
+    priceNote: (row.price_note as string) ?? undefined,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
   };
@@ -513,6 +515,30 @@ export const supabaseRepository: DataRepository = {
       });
     }
 
+    /* 講價 / 人工改價 */
+    if (patch.manualPrice !== undefined || patch.priceNote !== undefined) {
+      const systemPrice = order.quote?.total ?? 0;
+      if (patch.manualPrice !== undefined) {
+        order.manualPrice = patch.manualPrice === null ? undefined : patch.manualPrice;
+      }
+      if (patch.priceNote !== undefined) {
+        order.priceNote = patch.priceNote === null ? undefined : patch.priceNote;
+      }
+      const finalPrice = order.manualPrice ?? systemPrice;
+      const delta = finalPrice - systemPrice;
+      let noteText: string;
+      if (order.manualPrice === undefined) {
+        noteText = `報價復原為系統價 HK$${systemPrice.toLocaleString()}`;
+      } else if (delta < 0) {
+        noteText = `講價優惠 HK$${finalPrice.toLocaleString()}（原價 HK$${systemPrice.toLocaleString()}，減 HK$${Math.abs(delta).toLocaleString()}）${order.priceNote ? `：${order.priceNote}` : ''}`;
+      } else if (delta > 0) {
+        noteText = `報價調整為 HK$${finalPrice.toLocaleString()}（原價 HK$${systemPrice.toLocaleString()}，加 HK$${delta.toLocaleString()}）${order.priceNote ? `：${order.priceNote}` : ''}`;
+      } else {
+        noteText = `報價維持 HK$${finalPrice.toLocaleString()}${order.priceNote ? `：${order.priceNote}` : ''}`;
+      }
+      timelineAdditions.push({ status: order.status, at: now, note: noteText, operator });
+    }
+
     if (patch.note) {
       timelineAdditions.push({ status: order.status, at: now, note: patch.note, operator });
     }
@@ -530,6 +556,8 @@ export const supabaseRepository: DataRepository = {
       appointment_at: order.appointmentAt,
       remark: order.remark,
       parts_used: order.partsUsed ?? null,
+      manual_price: order.manualPrice ?? null,
+      price_note: order.priceNote ?? null,
       timeline: [...order.timeline, ...timelineAdditions],
       updated_at: now,
     };
