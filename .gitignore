@@ -15,6 +15,9 @@ tsconfig.tsbuildinfo
 # 运行时生成数据 / 日志（非源码，不纳入备份）
 dev-server.err.log
 dev-server.log
+*.log
+*.err
+*.out
 Global/
 Profiles/
 .codebuddy/
