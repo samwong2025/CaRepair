@@ -11,7 +11,8 @@ import { formatDateTime } from '../../lib/format';
 import { siteConfig } from '../../config/site';
 import { cn } from '../../lib/utils';
 
-const HK_PHONE = /^[2-9]\d{7}$/;
+// 支援香港 8 位號碼，亦接受台灣／內地等手機號碼：去除非數字後至少 6 位即可查詢
+const phoneDigits = (value: string): string => value.replace(/[^\d]/g, '');
 
 const tabs = [
   { id: 'orders', label: '維修進度' },
@@ -41,22 +42,22 @@ export function TrackPanel({ initialKeyword = '' }: { initialKeyword?: string })
     const value = keyword.trim();
 
     if (mode === 'orderNo' && value.length < 6) {
-      setHint('請輸入完整訂單編號，例如 CR-20260810-A1B2');
+      setHint('請輸入完整訂單編號，例如 CR-20260810-A1B2 或 SH-20260810-1234');
       return;
     }
-    if (mode === 'phone' && !HK_PHONE.test(value)) {
-      setHint('請輸入 8 位香港手提號碼');
+    if (mode === 'phone' && phoneDigits(value).length < 6) {
+      setHint('請輸入手提號碼（香港 8 位，台灣／內地號碼亦可）');
       return;
     }
 
     setHint('');
-    search(mode, mode === 'orderNo' ? value.toUpperCase() : value);
+    search(mode, mode === 'orderNo' ? value.toUpperCase() : phoneDigits(value));
   };
 
   const refresh = () => {
     const value = keyword.trim();
     if (!value) return;
-    search(mode, mode === 'orderNo' ? value.toUpperCase() : value);
+    search(mode, mode === 'orderNo' ? value.toUpperCase() : phoneDigits(value));
   };
 
   return (
@@ -130,7 +131,7 @@ export function TrackPanel({ initialKeyword = '' }: { initialKeyword?: string })
                     setHint('');
                   }}
                   placeholder={
-                    mode === 'orderNo' ? '輸入訂單編號，例如 CR-20260810-A1B2' : '輸入 8 位手提號碼'
+                    mode === 'orderNo' ? '輸入訂單編號，例如 CR-20260810-A1B2' : '輸入手提號碼（香港 8 位或台灣／內地號碼）'
                   }
                   inputMode={mode === 'phone' ? 'numeric' : 'text'}
                   maxLength={mode === 'phone' ? 8 : 24}
