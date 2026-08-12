@@ -851,6 +851,24 @@ export const supabaseRepository: DataRepository = {
     return data ? rowToShopOrder(data) : null;
   },
 
+  async updateShopOrderCustomer(id, patch) {
+    const { data, error } = await client()
+      .from('shop_orders')
+      .update({
+        customer_name: patch.customerName,
+        customer_phone: patch.customerPhone,
+        remark: patch.remark ?? null,
+      })
+      .eq('id', id)
+      .select('*')
+      .maybeSingle();
+    if (error) {
+      console.error('[supabase] updateShopOrderCustomer', error.message);
+      return null;
+    }
+    return data ? rowToShopOrder(data) : null;
+  },
+
   async listPricing(): Promise<SymptomPricing[]> {
     return loadPricing();
   },

@@ -488,6 +488,16 @@ export const mockRepository: DataRepository = {
     return clone(order);
   },
 
+  async updateShopOrderCustomer(id, patch) {
+    const store = getStore();
+    const order = store.shopOrders.find((o) => o.id === id);
+    if (!order) return null;
+    order.customerName = patch.customerName;
+    order.customerPhone = patch.customerPhone;
+    if (patch.remark !== undefined) order.remark = patch.remark;
+    return clone(order);
+  },
+
   async listPricing() {
     const { loadPricing: load } = await import('../pricing-store');
     return load();

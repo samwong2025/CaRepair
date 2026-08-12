@@ -60,6 +60,11 @@ export interface DataRepository {
   createShopOrder(input: ShopOrderInput): Promise<ShopOrder>;
   listShopOrders(): Promise<ShopOrder[]>;
   updateShopOrderStatus(id: string, status: ShopOrder['status']): Promise<ShopOrder | null>;
+  /** 局部更新訂單（如客戶姓名 / 電話 / 備註）—— 不允許改金額、商品、訂單號等關鍵欄位 */
+  updateShopOrderCustomer(
+    id: string,
+    patch: { customerName: string; customerPhone: string; remark?: string },
+  ): Promise<ShopOrder | null>;
 
   /* 商品分類（庫存與二手商城共用） */
   listCategories(): Promise<import('../../types').ProductCategory[]>;
