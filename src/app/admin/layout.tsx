@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
+import { ArrowUpRight } from 'lucide-react';
 import { AdminSidebar } from '../../components/admin/sidebar';
 import { AdminUserMenu } from '../../components/admin/user-menu';
 import { getRepository } from '../../lib/repositories';
@@ -27,6 +29,15 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </p>
           <div className="flex items-center gap-3">
             <p className="hidden text-xs text-ink-faint sm:block">內部系統・僅供 CathyRepair 員工使用</p>
+            <Link
+              href="/"
+              prefetch={false}
+              className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-2.5 py-2 text-xs font-semibold text-ink-muted transition-colors duration-200 hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700"
+              aria-label="返回前台"
+            >
+              <ArrowUpRight className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">返回前台</span>
+            </Link>
             <AdminUserMenu user={user} />
           </div>
         </div>
