@@ -74,9 +74,12 @@ export function AdminSidebar() {
         </div>
       </div>
 
-      <nav className="flex gap-1.5 overflow-x-auto px-3 pb-4 lg:flex-1 lg:min-h-0 lg:flex-col lg:gap-3 lg:overflow-x-hidden lg:overflow-y-auto">
+      <nav
+        aria-label="後台導航"
+        className="flex flex-col gap-3 overflow-y-auto px-3 pb-3 lg:flex-1 lg:min-h-0 lg:gap-3 lg:overflow-x-hidden lg:overflow-y-auto lg:px-3 lg:pb-4"
+      >
         {navGroups.map((group, gi) => (
-          <div key={group.title ?? `g${gi}`} className="flex gap-1.5 lg:flex-col">
+          <div key={group.title ?? `g${gi}`} className="flex flex-col gap-2 lg:flex-col lg:gap-2">
             {group.title && (
               <p className="hidden px-3.5 pb-1 text-[0.62rem] font-bold uppercase tracking-[0.18em] text-ink-faint lg:block">
                 {group.title}
@@ -92,24 +95,14 @@ export function AdminSidebar() {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    'flex shrink-0 items-center gap-3 rounded-xl px-3.5 py-2.5 transition-all duration-200',
+                    'flex shrink-0 items-center gap-2 rounded-xl px-3 py-2 text-[0.8rem] transition-all duration-200 lg:gap-3 lg:px-3.5 lg:py-2.5 lg:text-sm',
                     active
                       ? 'bg-brand-gradient text-white shadow-brand'
                       : 'text-ink-muted hover:bg-slate-100 hover:text-ink',
                   )}
                 >
                   <Icon className="h-[1.125rem] w-[1.125rem] shrink-0" strokeWidth={2} />
-                  <span className="min-w-0">
-                    <span className="block text-sm font-bold">{item.label}</span>
-                    <span
-                      className={cn(
-                        'hidden text-[0.68rem] lg:block',
-                        active ? 'text-white/65' : 'text-ink-faint',
-                      )}
-                    >
-                      {item.description}
-                    </span>
-                  </span>
+                  <span className="font-bold">{item.label}</span>
                 </Link>
               );
             })}
@@ -117,7 +110,7 @@ export function AdminSidebar() {
         ))}
       </nav>
 
-      <div className="hidden shrink-0 px-3 pb-4 pt-2 lg:mt-auto lg:block">
+      <div className="shrink-0 px-3 pb-4 pt-2 lg:mt-auto">
         <Link
           href="/"
           className="flex items-center justify-between rounded-xl border border-slate-200 px-3.5 py-3 text-sm font-semibold text-ink-muted transition-colors duration-200 hover:border-brand-300 hover:text-brand-700"
