@@ -57,7 +57,7 @@ export function Hero() {
             </span>
 
             <h1 className="mt-6 text-display-lg text-white">
-              蘋果產品壞咗？
+              Apple 產品壞咗？
               <br />
               <span className="bg-gradient-to-r from-accent-300 via-accent-400 to-accent-200 bg-clip-text text-transparent">
                 30 分鐘
