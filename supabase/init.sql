@@ -61,6 +61,7 @@ create table if not exists public.repair_orders (
   price_note        text,
   source            text not null default 'manual'
                     check (source in ('online','manual')),
+  parts_used        jsonb not null default '[]'::jsonb, -- 訂單實際選用的庫存配件
   created_at        timestamptz not null default now(),
   updated_at        timestamptz not null default now()
 );

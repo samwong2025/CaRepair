@@ -595,7 +595,7 @@ export const supabaseRepository: DataRepository = {
       shop_name: order.shopName,
       appointment_at: order.appointmentAt,
       remark: order.remark,
-      parts_used: order.partsUsed ?? null,
+      parts_used: order.partsUsed ?? [],
       manual_price: order.manualPrice ?? null,
       price_note: order.priceNote ?? null,
       timeline: [...order.timeline, ...timelineAdditions],
