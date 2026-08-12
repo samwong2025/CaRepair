@@ -305,7 +305,7 @@ export const mockRepository: DataRepository = {
       if (order.manualPrice === undefined) {
         noteText = `報價復原為系統價 HK$${systemPrice.toLocaleString()}`;
       } else if (delta < 0) {
-        noteText = `講價優惠 HK$${finalPrice.toLocaleString()}（原價 HK$${systemPrice.toLocaleString()}，減 HK$${Math.abs(delta).toLocaleString()}）${order.priceNote ? `：${order.priceNote}` : ''}`;
+        noteText = `尊享折扣 HK$${finalPrice.toLocaleString()}（原價 HK$${systemPrice.toLocaleString()}，減 HK$${Math.abs(delta).toLocaleString()}）${order.priceNote ? `：${order.priceNote}` : ''}`;
       } else if (delta > 0) {
         noteText = `報價調整為 HK$${finalPrice.toLocaleString()}（原價 HK$${systemPrice.toLocaleString()}，加 HK$${delta.toLocaleString()}）${order.priceNote ? `：${order.priceNote}` : ''}`;
       } else {

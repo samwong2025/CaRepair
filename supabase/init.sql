@@ -517,3 +517,95 @@ on conflict (category, symptom_id) do nothing;
 insert into public.repair_tier_multipliers (id, flagship, premium, standard, legacy)
 values ('default', 1.40, 1.20, 1.00, 0.80)
 on conflict (id) do nothing;
+
+-- ============================================================================
+-- 14. 二手商城下單 RPC（create_shop_order）
+--     供匿名用戶（anon）建立商城訂單並原子扣減庫存。
+--     ⚠️ 已納入版本控制：更換 Supabase 專案重跑 init.sql 時會自動重建，
+--        解決原先僅經 Management API 部署、倉庫無源碼導致重建庫後商城下單失效的問題。
+-- ============================================================================
+create or replace function public.create_shop_order(
+  p_product_id       text,
+  p_qty              integer,
+  p_customer_name    text,
+  p_customer_phone   text,
+  p_fulfillment      text,
+  p_pickup_shop      text default null,
+  p_pickup_at        text default null,
+  p_delivery_address  text default null,
+  p_remark           text default null
+)
+returns table (
+  id                text,
+  "orderNo"         text,
+  "productId"       text,
+  "productName"     text,
+  price             numeric,
+  qty               integer,
+  fulfillment       text,
+  "pickupShop"      text,
+  "pickupAt"        text,
+  "deliveryAddress" text,
+  "customerName"    text,
+  "customerPhone"   text,
+  remark            text,
+  status            text,
+  "createdAt"       timestamptz
+)
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_product   products%rowtype;
+  v_order_id  text;
+  v_order_no  text;
+  v_now       timestamptz := now();
+begin
+  select * into v_product from products where id = p_product_id;
+  if not found then
+    raise exception '找不到對應商品';
+  end if;
+  if v_product.stock < p_qty then
+    raise exception '商品庫存不足';
+  end if;
+
+  update products set stock = stock - p_qty, updated_at = v_now where id = p_product_id;
+
+  v_order_id := 'SHO-' || replace(gen_random_uuid()::text, '-', '');
+  v_order_no := 'SH-' || to_char(v_now, 'YYYYMMDD') || '-' || upper(substring(md5(gen_random_uuid()::text) from 1 for 4));
+
+  insert into shop_orders (
+    id, order_no, product_id, product_name, price, qty,
+    fulfillment, delivery_address, pickup_shop, pickup_at,
+    customer_name, customer_phone, phone_digits, remark, status, created_at, updated_at
+  ) values (
+    v_order_id, v_order_no, v_product.id, v_product.name, v_product.price, p_qty,
+    p_fulfillment, p_delivery_address, p_pickup_shop, p_pickup_at,
+    p_customer_name, p_customer_phone, regexp_replace(p_customer_phone, '\D', '', 'g'),
+    p_remark, 'pending', v_now, v_now
+  );
+
+  return query
+  select
+    v_order_id,
+    v_order_no,
+    v_product.id,
+    v_product.name,
+    v_product.price,
+    p_qty,
+    p_fulfillment,
+    p_pickup_shop,
+    p_pickup_at,
+    p_delivery_address,
+    p_customer_name,
+    p_customer_phone,
+    p_remark,
+    'pending',
+    v_now;
+end;
+$$;
+
+grant execute on function public.create_shop_order(
+  text, integer, text, text, text, text, text, text, text
+) to anon, authenticated, service_role;

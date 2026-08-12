@@ -57,7 +57,7 @@ npm run typecheck
 主要表：
 - `customers`：會員檔案（member_no、level: regular/silver/gold/vip、points…）。
 - `repair_orders`：維修訂單。關鍵欄位：
-  - `order_no`：格式 `SH-YYYYMMDD-XXXX`
+  - `order_no`：格式 `CR-YYYYMMDD-XXXX`（維修單前綴 CR；二手商城單為 `SH-YYYYMMDD-XXXX`，由 RPC `create_shop_order` 產生）
   - `device_category`：`iphone|ipad|watch|macbook`
   - `quote`：`jsonb`（報價結構）
   - `status`：`submitted|confirmed|diagnosing|repairing|quality_check|ready|completed|cancelled`

@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   CheckCircle2,
   Loader2,
@@ -621,6 +621,14 @@ function SuccessView({
   result: { orderNos: string[]; message: string };
   onClose: () => void;
 }) {
+  const router = useRouter();
+  const goTrack = () => {
+    if (result.orderNos.length === 1) {
+      router.push(`/track?q=${encodeURIComponent(result.orderNos[0])}`);
+    } else {
+      router.push('/track');
+    }
+  };
   return (
     <div className="flex flex-1 flex-col items-center justify-center px-6 py-10 text-center">
       <span className="flex h-14 w-14 items-center justify-center rounded-full bg-success text-white">
@@ -637,12 +645,15 @@ function SuccessView({
             </li>
           ))}
         </ul>
+        {result.orderNos.length > 1 ? (
+          <p className="mt-2 text-xs text-ink-faint">多張訂單？前往查單頁輸入電話即可一次查看全部。</p>
+        ) : null}
       </div>
       <div className="mt-5 flex w-full gap-3">
         <Button variant="outline" block onClick={onClose}>
           繼續購物
         </Button>
-        <Button variant="primary" block onClick={onClose}>
+        <Button variant="primary" block onClick={goTrack}>
           前往查單
         </Button>
       </div>
