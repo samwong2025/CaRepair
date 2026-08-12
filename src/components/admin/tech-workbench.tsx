@@ -111,6 +111,7 @@ export function TechWorkbench({
       hint: `進行中 ${activeOrders.length} 張工單`,
       icon: Coins,
       accent: 'from-brand-500/15 to-brand-500/0',
+      href: '/admin/orders?status=active',
     },
     {
       label: '本週實際收入',
@@ -118,6 +119,7 @@ export function TechWorkbench({
       hint: '本週已完成結算',
       icon: ClipboardList,
       accent: 'from-sky-500/15 to-sky-500/0',
+      href: '/admin/reports',
     },
     {
       label: '本月實際收入',
@@ -125,6 +127,7 @@ export function TechWorkbench({
       hint: '本月已完成結算',
       icon: PackageSearch,
       accent: 'from-emerald-500/15 to-emerald-500/0',
+      href: '/admin/reports',
     },
   ];
 
@@ -135,9 +138,10 @@ export function TechWorkbench({
         {stats.map((item) => {
           const Icon = item.icon;
           return (
-            <div
+            <Link
               key={item.label}
-              className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-card"
+              href={item.href}
+              className="group relative block overflow-hidden rounded-2xl border border-slate-200 bg-white p-5 shadow-card transition-all hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-lift"
             >
               <div
                 className={`pointer-events-none absolute inset-x-0 top-0 h-16 bg-gradient-to-b ${item.accent}`}
@@ -150,8 +154,11 @@ export function TechWorkbench({
                 </span>
               </div>
               <p className="tabular relative mt-3 text-2xl font-extrabold leading-none text-ink">{item.value}</p>
-              <p className="relative mt-2 text-[0.7rem] text-ink-faint">{item.hint}</p>
-            </div>
+              <p className="relative mt-2 flex items-center gap-1 text-[0.7rem] text-ink-faint">
+                {item.hint}
+                <ChevronRight className="h-3 w-3 text-brand-400 opacity-0 transition-opacity group-hover:opacity-100" />
+              </p>
+            </Link>
           );
         })}
       </div>

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { AlertTriangle, PackageX, PackageSearch } from 'lucide-react';
 import type { InventoryAlert, Part } from '../../types';
 
@@ -12,10 +13,13 @@ interface InventoryAlertBannerProps {
 export function InventoryAlertBanner({ alerts, onJumpToInventory }: InventoryAlertBannerProps) {
   if (!alerts || alerts.length === 0) {
     return (
-      <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+      <Link
+        href="/admin/inventory"
+        className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700 transition-colors hover:bg-emerald-100"
+      >
         <PackageSearch className="h-4 w-4" />
-        庫存充足，無缺貨風險
-      </div>
+        庫存充足，無缺貨風險（點擊查看庫存）
+      </Link>
     );
   }
 
@@ -23,7 +27,10 @@ export function InventoryAlertBanner({ alerts, onJumpToInventory }: InventoryAle
   const lowCount = alerts.filter((a) => a.level === 'low').length;
 
   return (
-    <div className="rounded-xl border border-amber-200 bg-amber-50 p-4">
+    <Link
+      href="/admin/inventory"
+      className="block rounded-xl border border-amber-200 bg-amber-50 p-4 transition-colors hover:bg-amber-100"
+    >
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 font-bold text-amber-800">
           <AlertTriangle className="h-4 w-4" />
@@ -39,15 +46,9 @@ export function InventoryAlertBanner({ alerts, onJumpToInventory }: InventoryAle
             </span>
           )}
         </div>
-        {onJumpToInventory && (
-          <button
-            type="button"
-            onClick={onJumpToInventory}
-            className="text-[0.7rem] font-bold text-amber-800 underline-offset-2 hover:underline"
-          >
-            管理庫存
-          </button>
-        )}
+        <span className="text-[0.7rem] font-bold text-amber-800 underline-offset-2 hover:underline">
+          管理庫存
+        </span>
       </div>
       <ul className="mt-2 space-y-1">
         {alerts.slice(0, 6).map((alert) => (
@@ -64,7 +65,7 @@ export function InventoryAlertBanner({ alerts, onJumpToInventory }: InventoryAle
           <li className="text-[0.65rem] text-amber-700">…還有 {alerts.length - 6} 項</li>
         )}
       </ul>
-    </div>
+    </Link>
   );
 }
 
