@@ -184,7 +184,7 @@ export function TechWorkbench({
         ) : (
           <ul className="mt-3 divide-y divide-slate-100">
             {newToday.map((order) => (
-              <li key={order.id} className="flex flex-wrap items-center gap-3 py-3">
+              <li key={order.id} className="flex flex-col gap-3 py-3 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
                 <Link
                   href={`/admin/orders/${encodeURIComponent(order.orderNo)}`}
                   className="font-mono text-sm font-bold text-ink hover:text-brand-600"
@@ -194,20 +194,24 @@ export function TechWorkbench({
                 <span className="text-sm text-ink-muted">
                   {order.customerName}・{order.deviceModelName}
                 </span>
-                <span className="rounded-md bg-slate-100 px-2 py-0.5 text-[0.65rem] font-semibold text-ink-muted">
+                <span className="inline-flex w-fit rounded-md bg-slate-100 px-2 py-0.5 text-[0.65rem] font-semibold text-ink-muted">
                   {symptomNames(order)}
                 </span>
-                <span className="ml-auto flex items-center gap-2">
-                  <span className="text-xs text-ink-faint">{formatPhone(order.customerPhone)}</span>
+                {/* 手機端：電話與 WhatsApp 各自獨立成行；WhatsApp 按鈕撐滿寬度，符合 44px 觸控標準 */}
+                <div className="flex flex-col gap-2 sm:ml-auto sm:flex-row sm:items-center sm:gap-2">
+                  <span className="tabular text-sm font-semibold text-ink sm:text-xs sm:font-normal sm:text-ink-faint">
+                    {formatPhone(order.customerPhone)}
+                  </span>
                   <a
                     href={buildWhatsappUrl(order.customerPhone, `你好 ${order.customerName}，我是 CathyRepair 師傅，關於您的 ${order.deviceModelName} 維修…`)}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-1 rounded-lg bg-emerald-500 px-2.5 py-1 text-[0.7rem] font-bold text-white hover:bg-emerald-600"
+                    aria-label={`用 WhatsApp 聯絡 ${order.customerName}`}
+                    className="inline-flex h-11 w-full items-center justify-center gap-1.5 rounded-xl bg-emerald-500 px-4 text-sm font-bold text-white shadow-sm transition-all duration-200 hover:bg-emerald-600 hover:shadow-md active:scale-[0.98] sm:h-9 sm:w-auto sm:px-3 sm:text-xs sm:shadow-none"
                   >
-                    <MessageCircle className="h-3.5 w-3.5" /> WhatsApp
+                    <MessageCircle className="h-4 w-4 sm:h-3.5 sm:w-3.5" /> WhatsApp
                   </a>
-                </span>
+                </div>
               </li>
             ))}
           </ul>
