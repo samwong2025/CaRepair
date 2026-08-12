@@ -18,8 +18,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <AdminSidebar />
 
       <main className="min-w-0 flex-1">
-        <div className="no-print flex items-center justify-between gap-4 border-b border-slate-200 bg-white px-5 py-3 lg:px-8">
-          <p className="text-xs text-ink-faint">
+        <div className="no-print flex items-center justify-between gap-4 border-b border-slate-200 bg-white px-3 py-2 lg:px-8 lg:py-3">
+          <p className="text-[0.7rem] text-ink-faint lg:text-xs">
             資料來源：
             <span className="ml-1 font-bold text-ink">
               {source === 'supabase' ? 'Supabase 雲端資料庫' : '本地示範資料（Mock）'}

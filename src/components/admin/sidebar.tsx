@@ -62,7 +62,7 @@ export function AdminSidebar() {
 
   return (
     <aside className="admin-sidebar no-print sticky top-0 z-30 flex shrink-0 flex-col border-b border-slate-200 bg-white lg:h-screen lg:w-64 lg:border-b-0 lg:border-r">
-      <div className="flex shrink-0 items-center gap-2.5 px-5 py-5">
+      <div className="flex shrink-0 items-center gap-2.5 px-4 py-3 lg:px-5 lg:py-5">
         <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-gradient text-white">
           <Wrench className="h-5 w-5" strokeWidth={2.4} />
         </span>
@@ -76,10 +76,13 @@ export function AdminSidebar() {
 
       <nav
         aria-label="後台導航"
-        className="flex flex-col gap-3 overflow-y-auto px-3 pb-3 lg:flex-1 lg:min-h-0 lg:gap-3 lg:overflow-x-hidden lg:overflow-y-auto lg:px-3 lg:pb-4"
+        className="flex gap-2 overflow-x-auto px-3 pb-3 lg:flex-1 lg:min-h-0 lg:flex-col lg:gap-3 lg:overflow-x-hidden lg:overflow-y-auto lg:px-3 lg:pb-4"
       >
         {navGroups.map((group, gi) => (
-          <div key={group.title ?? `g${gi}`} className="flex flex-col gap-2 lg:flex-col lg:gap-2">
+          <div
+            key={group.title ?? `g${gi}`}
+            className="flex shrink-0 gap-2 lg:flex-col lg:gap-2"
+          >
             {group.title && (
               <p className="hidden px-3.5 pb-1 text-[0.62rem] font-bold uppercase tracking-[0.18em] text-ink-faint lg:block">
                 {group.title}
@@ -95,10 +98,10 @@ export function AdminSidebar() {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    'flex shrink-0 items-center gap-2 rounded-xl px-3 py-2 text-[0.8rem] transition-all duration-200 lg:gap-3 lg:px-3.5 lg:py-2.5 lg:text-sm',
+                    'flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-[0.78rem] transition-all duration-200 lg:gap-3 lg:whitespace-normal lg:rounded-xl lg:px-3.5 lg:py-2.5 lg:text-sm',
                     active
                       ? 'bg-brand-gradient text-white shadow-brand'
-                      : 'text-ink-muted hover:bg-slate-100 hover:text-ink',
+                      : 'bg-slate-100 text-ink-muted hover:bg-slate-200 hover:text-ink',
                   )}
                 >
                   <Icon className="h-[1.125rem] w-[1.125rem] shrink-0" strokeWidth={2} />
@@ -110,7 +113,7 @@ export function AdminSidebar() {
         ))}
       </nav>
 
-      <div className="shrink-0 px-3 pb-4 pt-2 lg:mt-auto">
+      <div className="hidden shrink-0 px-3 pb-4 pt-2 lg:mt-auto lg:block">
         <Link
           href="/"
           className="flex items-center justify-between rounded-xl border border-slate-200 px-3.5 py-3 text-sm font-semibold text-ink-muted transition-colors duration-200 hover:border-brand-300 hover:text-brand-700"
