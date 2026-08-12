@@ -5,6 +5,7 @@ import {
   Banknote,
   Lock,
   ShieldCheck,
+  Star,
   Timer,
   Video,
   type LucideIcon,
@@ -18,6 +19,7 @@ const iconMap: Record<string, LucideIcon> = {
   Timer,
   Banknote,
   Lock,
+  Star,
 };
 
 /** 信任徽章帶 —— 緊接 Hero 之下，強化下單信心 */

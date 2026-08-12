@@ -103,4 +103,5 @@ export const trustBadges = [
   { icon: 'Timer', label: '30 分鐘快修', detail: '常見故障即日取機' },
   { icon: 'Banknote', label: '透明報價', detail: '配件費、人工費逐項列明' },
   { icon: 'Lock', label: '私隱保密', detail: '不查看、不備份任何個人資料' },
+  { icon: 'Star', label: '多年口碑', detail: '客人回流率近半・Google 4.9★' },
 ] as const;
