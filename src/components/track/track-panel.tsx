@@ -11,7 +11,8 @@ import { formatDateTime } from '../../lib/format';
 import { siteConfig } from '../../config/site';
 import { cn } from '../../lib/utils';
 
-// 支援香港 8 位號碼，亦接受台灣／內地等手機號碼：去除非數字後至少 6 位即可查詢
+// 僅支援香港 8 位手提號碼
+const HK_PHONE = /^[2-9]\d{7}$/;
 const phoneDigits = (value: string): string => value.replace(/[^\d]/g, '');
 
 const tabs = [
@@ -68,8 +69,8 @@ function OrderSearchSection({
       setHint(isShop ? '請輸入完整商城訂單編號，例如 SH-20260810-1234' : '請輸入完整維修訂單編號，例如 CR-20260810-A1B2');
       return;
     }
-    if (mode === 'phone' && phoneDigits(value).length < 6) {
-      setHint('請輸入有效手提號碼（香港 8 位，台灣／內地號碼亦可）');
+    if (mode === 'phone' && !HK_PHONE.test(phoneDigits(value))) {
+      setHint('請輸入 8 位香港手提號碼');
       return;
     }
 
@@ -132,7 +133,7 @@ function OrderSearchSection({
               }}
               placeholder={mode === 'orderNo' ? orderNoPlaceholder : phonePlaceholder}
               inputMode={mode === 'phone' ? 'numeric' : 'text'}
-              maxLength={mode === 'phone' ? 16 : 24}
+              maxLength={mode === 'phone' ? 8 : 24}
               className="pl-10"
               aria-label="查詢關鍵字"
               invalid={Boolean(hint)}
@@ -228,7 +229,7 @@ export function TrackPanel({ initialKeyword = '', initialShopKeyword = '' }: Tra
           kind="repair"
           initialKeyword={initialKeyword}
           orderNoPlaceholder="輸入維修訂單編號，例如 CR-20260810-A1B2"
-          phonePlaceholder="輸入手提號碼（香港 8 位或台灣／內地號碼）"
+          phonePlaceholder="輸入 8 位香港手提號碼"
           emptyTitle="搵唔到相關維修訂單"
           emptyHint={`請確認訂單編號或手提號碼是否正確；如係到店即場落單，可用收據上的訂單編號查詢，或致電 ${siteConfig.hotline} 由客服協助。`}
         />
@@ -237,7 +238,7 @@ export function TrackPanel({ initialKeyword = '', initialShopKeyword = '' }: Tra
           kind="shop"
           initialKeyword={initialShopKeyword}
           orderNoPlaceholder="輸入商城訂單編號，例如 SH-20260810-1234"
-          phonePlaceholder="輸入手提號碼（香港 8 位或台灣／內地號碼）"
+          phonePlaceholder="輸入 8 位香港手提號碼"
           emptyTitle="搵唔到相關商城訂單"
           emptyHint={`請確認訂單編號或手提號碼是否正確；二手購買訂單一般需時 1 個工作天確認庫存，或致電 ${siteConfig.hotline} 由客服協助。`}
         />

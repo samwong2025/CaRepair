@@ -416,8 +416,9 @@ function CheckoutForm({
 
   const validate = () => {
     const next: Record<string, string> = {};
+    const phone = customerPhone.replace(/\D/g, '');
     if (customerName.trim().length < 2) next.customerName = '請填寫聯絡人姓名';
-    if (customerPhone.replace(/\D/g, '').length < 8) next.customerPhone = '請填寫正確的聯絡電話';
+    if (!/^[2-9]\d{7}$/.test(phone)) next.customerPhone = '請輸入 8 位香港手提號碼';
     if (fulfillment === 'delivery' && deliveryAddress.trim().length < 6)
       next.deliveryAddress = '請填寫完整送貨地址';
     if (fulfillment === 'pickup' && !pickupShop) next.pickupShop = '請選擇自取門市';
@@ -457,7 +458,7 @@ function CheckoutForm({
         onSuccess({
           orderNos: data.orderNos,
           message: data.message ?? '多件訂單已落單成功。',
-          phone: customerPhone.trim(),
+          phone: customerPhone.replace(/\D/g, ''),
         });
         return;
       }
@@ -502,7 +503,8 @@ function CheckoutForm({
               value={customerPhone}
               onChange={(e) => setCustomerPhone(e.target.value)}
               placeholder="例：9123 4567"
-              inputMode="tel"
+              inputMode="numeric"
+              maxLength={8}
               invalid={!!errors.customerPhone}
             />
             <FieldError>{errors.customerPhone}</FieldError>
