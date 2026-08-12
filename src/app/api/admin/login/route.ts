@@ -19,5 +19,11 @@ export async function POST(request: Request) {
   if (!result.ok) {
     return NextResponse.json({ message: result.error ?? '登入失敗' }, { status: 401 });
   }
-  return NextResponse.json({ ok: true, role: result.role ?? 'admin' });
+
+  const res = NextResponse.json({ ok: true, role: result.role ?? 'admin' });
+  // 將 Supabase session cookie 寫入回應（Route Handler 中 cookies() 為唯讀，必須手動寫入）
+  for (const c of result.cookiesToSet ?? []) {
+    res.cookies.set(c.name, c.value, c.options);
+  }
+  return res;
 }

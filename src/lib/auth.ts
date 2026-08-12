@@ -70,10 +70,18 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
 }
 
 /** Server 端登入（mock 模式用密碼比對，Supabase 模式用 Auth） */
+export interface SignInResult {
+  ok: boolean;
+  error?: string;
+  role?: AppRole;
+  /** 需在 Route Handler 回應中手動設定的 cookie（Supabase session） */
+  cookiesToSet?: { name: string; value: string; options?: Record<string, unknown> }[];
+}
+
 export async function serverSignIn(
   email: string,
   password: string,
-): Promise<{ ok: boolean; error?: string; role?: AppRole }> {
+): Promise<SignInResult> {
   if (!isSupabaseConfigured()) {
     const user = findMockUser(email, password);
     if (!user) {
@@ -84,6 +92,7 @@ export async function serverSignIn(
     return { ok: true, role: user.role };
   }
 
+  const cookiesToSet: { name: string; value: string; options?: Record<string, unknown> }[] = [];
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -92,29 +101,28 @@ export async function serverSignIn(
         getAll() {
           return cookies().getAll();
         },
-        setAll(
-          cookiesToSet: { name: string; value: string; options?: Record<string, unknown> }[],
-        ) {
-          const store = cookies();
-          cookiesToSet.forEach(({ name, value, options }) =>
-            store.set(name, value, options),
-          );
+        setAll(toSet: { name: string; value: string; options?: Record<string, unknown> }[]) {
+          // Route Handler 中 cookies() 為唯讀，必須收集後由呼叫方寫入 NextResponse
+          cookiesToSet.push(...toSet);
         },
       },
     },
   );
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) return { ok: false, error: error.message };
-  return { ok: true };
+  return { ok: true, cookiesToSet };
 }
 
 /** Server 端登出 */
-export async function serverSignOut(): Promise<void> {
+export async function serverSignOut(): Promise<{
+  cookiesToSet?: { name: string; value: string; options?: Record<string, unknown> }[];
+}> {
   if (!isSupabaseConfigured()) {
     const store = await cookies();
     store.delete(MOCK_COOKIE);
-    return;
+    return {};
   }
+  const cookiesToSet: { name: string; value: string; options?: Record<string, unknown> }[] = [];
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -124,15 +132,13 @@ export async function serverSignOut(): Promise<void> {
           return cookies().getAll();
         },
         setAll(
-          cookiesToSet: { name: string; value: string; options?: Record<string, unknown> }[],
+          toSet: { name: string; value: string; options?: Record<string, unknown> }[],
         ) {
-          const store = cookies();
-          cookiesToSet.forEach(({ name, value, options }) =>
-            store.set(name, value, options),
-          );
+          cookiesToSet.push(...toSet);
         },
       },
     },
   );
   await supabase.auth.signOut();
+  return { cookiesToSet };
 }
