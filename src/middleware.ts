@@ -1,60 +1,33 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
-import { getMockUserById } from './lib/mock-users';
 
 const ADMIN_PREFIX = '/admin';
 const LOGIN_PATH = '/admin/login';
 const MOCK_COOKIE = 'cathy_admin_session';
 
 /**
- * 後台守衛：
- *  - 連上 Supabase：以 Supabase Auth session 為準
- *  - 未連線（mock 模式）：以 ADMIN_PASSWORD 種下的 cookie 為準
- * 兩者皆無效則導向 /admin/login
+ * 後台守衛（運行於 Edge 執行環境）。
+ *
+ * 注意：Next.js 中介層固定跑在 Edge runtime，而 @supabase/ssr 的 supabase.auth.getUser()
+ * 在部分邊緣執行環境會崩潰（導致連線被重置 / 白屏）。因此這裡只做「輕量」的閘門：
+ * 依據是否存在 Supabase session cookie 或本地 mock cookie 決定是否放行，
+ * 真正的身分驗證交由 Node runtime 的頁面 / API（getCurrentUser）執行，做到縱深防禦。
  */
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   if (!pathname.startsWith(ADMIN_PREFIX)) return NextResponse.next();
   if (pathname === LOGIN_PATH) return NextResponse.next();
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const cookies = request.cookies.getAll();
+  const hasSupabaseSession = cookies.some((c) => /^sb-.*-auth-token$/.test(c.name));
+  const mockSession = request.cookies.get(MOCK_COOKIE)?.value;
 
-  // ── Supabase 模式：檢查 session ──
-  if (supabaseUrl && supabaseKey) {
-    const response = NextResponse.next();
-    const supabase = createServerClient(supabaseUrl, supabaseKey, {
-      cookies: {
-        getAll() {
-          return request.cookies.getAll();
-        },
-        setAll(
-          cookiesToSet: { name: string; value: string; options?: Record<string, unknown> }[],
-        ) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            response.cookies.set(name, value, options);
-          });
-        },
-      },
-    });
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
-      const url = request.nextUrl.clone();
-      url.pathname = LOGIN_PATH;
-      return NextResponse.redirect(url);
-    }
-    return response;
+  if (!hasSupabaseSession && !mockSession) {
+    const url = request.nextUrl.clone();
+    url.pathname = LOGIN_PATH;
+    return NextResponse.redirect(url);
   }
 
-  // ── Mock 模式：檢查 cookie 中的使用者 id ──
-  const session = request.cookies.get(MOCK_COOKIE)?.value;
-  if (session && getMockUserById(session)) return NextResponse.next();
-
-  const url = request.nextUrl.clone();
-  url.pathname = LOGIN_PATH;
-  return NextResponse.redirect(url);
+  return NextResponse.next();
 }
 
 export const config = {
