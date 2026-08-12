@@ -4,6 +4,7 @@ import * as React from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
+  ArrowUpRight,
   ChevronRight,
   ClipboardList,
   Coins,
@@ -241,9 +242,11 @@ export function TechWorkbench({
                 <div className="flex flex-wrap items-center gap-3">
                   <Link
                     href={`/admin/orders/${encodeURIComponent(order.orderNo)}`}
-                    className="font-mono text-sm font-bold text-ink hover:text-brand-600"
+                    className="group inline-flex items-center gap-1.5 rounded-md px-1 py-0.5 font-mono text-sm font-bold text-brand-700 transition-colors duration-200 hover:bg-brand-50"
+                    aria-label={`打開工單 ${order.orderNo}`}
                   >
                     {order.orderNo}
+                    <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
                   </Link>
                   <Badge variant={meta.tone} size="sm">
                     {meta.label}
@@ -321,7 +324,7 @@ export function TechWorkbench({
                   {next && (
                     <Button
                       size="sm"
-                      className="ml-auto gap-1"
+                      className="ml-auto gap-1.5 shadow-sm hover:shadow-md"
                       disabled={pendingId === order.id}
                       onClick={() => advance(order)}
                     >
@@ -330,7 +333,7 @@ export function TechWorkbench({
                       ) : (
                         <CheckCircle2 className="h-3.5 w-3.5" />
                       )}
-                      確認客戶並推進
+                      確認並推進至「{statusMeta[next].label}」
                     </Button>
                   )}
                 </div>
