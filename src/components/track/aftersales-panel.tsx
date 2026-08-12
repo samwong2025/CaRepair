@@ -310,7 +310,7 @@ export function AfterSalesPanel() {
               id="as-detail"
               value={form.detail}
               onChange={(event) => updateForm('detail', event.target.value)}
-              placeholder="請描述問題出現的時間、頻率與情境，方便技師預先判斷。"
+              placeholder="請描述問題出現的時間、頻率與情境，方便師傅預先判斷。"
               rows={4}
               invalid={Boolean(errors.detail)}
             />

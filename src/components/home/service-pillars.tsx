@@ -13,7 +13,7 @@ export function ServicePillars() {
           eyebrow="服務承諾"
           title="唔止修得好，仲要修得放心"
           titleEn="Why CathyRepair"
-          description="由技師資歷、品檢流程到時間承諾，全部寫明白紙黑字，做唔到就照跌價。"
+          description="由師傅資歷、品檢流程到時間承諾，全部寫明白紙黑字，做唔到就照跌價。"
         />
 
         <div className="mt-12 grid gap-6 lg:grid-cols-3">

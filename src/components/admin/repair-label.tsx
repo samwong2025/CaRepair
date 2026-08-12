@@ -50,7 +50,7 @@ export function RepairLabel({ order }: { order: RepairOrder }) {
           <dd>{order.quote.items.map((item) => item.partName).join('、')}</dd>
         </div>
         <div className="flex gap-2">
-          <dt className="w-14 shrink-0 text-slate-500">技師</dt>
+          <dt className="w-14 shrink-0 text-slate-500">師傅</dt>
           <dd className="font-bold">{order.technician ?? '待分派'}</dd>
         </div>
         <div className="flex gap-2">

@@ -124,7 +124,7 @@ export function StepSymptoms({
       </div>
 
       <p className="rounded-xl border border-brand-100 bg-brand-50/60 px-4 py-3 text-xs leading-relaxed text-brand-800">
-        搵唔到你嘅故障？可以先勾選最接近的一項，並於最後一步的備註欄詳細描述，技師會於檢測後同你確認方案先施工。
+        搵唔到你嘅故障？可以先勾選最接近的一項，並於最後一步的備註欄詳細描述，師傅會於檢測後同你確認方案先施工。
       </p>
     </div>
   );

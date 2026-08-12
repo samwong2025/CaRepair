@@ -117,7 +117,7 @@ function RepairOrderCard({ order, defaultOpen = false }: { order: RepairOrder; d
         <div>
           <p className="flex items-center gap-1.5 text-xs text-ink-faint">
             <UserCog className="h-3.5 w-3.5" />
-            主理技師
+            主理師傅
           </p>
           <p className="mt-1 text-sm font-bold text-ink">{order.technician ?? '待分派'}</p>
           <p className="mt-0.5 flex items-center gap-1 text-xs text-ink-muted">

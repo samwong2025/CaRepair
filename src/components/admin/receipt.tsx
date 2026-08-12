@@ -70,7 +70,7 @@ export function Receipt({ order }: { order: RepairOrder }) {
           <span>{formatDateTime(order.updatedAt)}</span>
         </div>
         <div className="flex gap-2">
-          <span className="w-20 shrink-0 text-slate-500">主理技師</span>
+          <span className="w-20 shrink-0 text-slate-500">主理師傅</span>
           <span className="font-bold">{order.technician ?? '—'}</span>
         </div>
         <div className="flex gap-2">

@@ -288,7 +288,7 @@ export function OrdersManager({
                         {order.quote.items.map((item) => item.name).join('、')}
                       </p>
                       <p>
-                        <span className="text-ink-faint">技師：</span>
+                        <span className="text-ink-faint">師傅：</span>
                         {order.technician ?? '待分派'}
                       </p>
                       <p>

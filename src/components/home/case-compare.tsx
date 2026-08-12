@@ -106,7 +106,7 @@ export function CaseCompare() {
                 <div>
                   <dt className="flex items-center gap-1.5 text-[0.7rem] font-semibold text-ink-faint">
                     <UserCog className="h-3.5 w-3.5" />
-                    主理技師
+                    主理師傅
                   </dt>
                   <dd className="mt-1.5 text-base font-extrabold text-ink">{active.technician}</dd>
                 </div>

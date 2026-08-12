@@ -90,7 +90,7 @@ export function Navbar() {
       >
         <nav className="section-shell flex h-16 items-center justify-between gap-4 lg:h-24">
                 <Link href="/" className="group flex shrink-0 items-center gap-3.5">
-                  {/* 品牌標誌：直接採用設計稿 PNG（蘋果外輪廓 + 內部女技師剪影） */}
+                  {/* 品牌標誌：直接採用設計稿 PNG（蘋果外輪廓 + 內部女師傅剪影） */}
                   <img
                     src="/logo-mark.png"
                     alt="CathyRepair"

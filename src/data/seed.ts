@@ -48,8 +48,8 @@ export const statusMeta: Record<
 > = {
   submitted: { label: '已落單', description: '訂單已提交，等待客服致電確認故障', tone: 'neutral' },
   confirmed: { label: '已確認', description: '客服已聯絡客戶並確認維修方案', tone: 'brand' },
-  diagnosing: { label: '檢測中', description: '技師正進行 27 項入機檢測', tone: 'brand' },
-  repairing: { label: '維修中', description: '技師施工中，專業師傅按標準工序處理', tone: 'accent' },
+  diagnosing: { label: '檢測中', description: '師傅正進行 27 項入機檢測', tone: 'brand' },
+  repairing: { label: '維修中', description: '師傅施工中，專業師傅按標準工序處理', tone: 'accent' },
   quality_check: { label: '品檢中', description: '維修完成，正進行出機功能檢測', tone: 'accent' },
   ready: { label: '待取機', description: '已完成，可到店取機或安排送遞', tone: 'success' },
   completed: { label: '已完成', description: '客戶已取機，進入保養期', tone: 'success' },
@@ -70,7 +70,7 @@ function buildTimeline(status: OrderStatus, createdAt: string, technician?: stri
     submitted: '客戶於網上提交維修申請，系統即時生成報價單',
     confirmed: '客服致電確認故障描述與維修方案，客戶已同意報價',
     diagnosing: '完成入機 27 項檢測，確認故障範圍與所需配件',
-    repairing: `${technician ?? '技師'}開始施工，按標準工序進行維修`,
+    repairing: `${technician ?? '師傅'}開始施工，按標準工序進行維修`,
     quality_check: '維修完成，進行觸控、鏡頭、訊號、防水等出機檢測',
     ready: '全部檢測通過，已清潔消毒並貼上維修識別標籤',
     completed: '客戶已取機並簽收，保養期由今日起計',
@@ -81,7 +81,7 @@ function buildTimeline(status: OrderStatus, createdAt: string, technician?: stri
     status: s,
     at: new Date(base + i * 55 * 60 * 1000).toISOString(),
     note: notes[s],
-    operator: i <= 1 ? '客服 Amy' : (technician ?? '技師'),
+    operator: i <= 1 ? '客服 Amy' : (technician ?? '師傅'),
   }));
 }
 

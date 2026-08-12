@@ -77,7 +77,7 @@ export default function AboutPage() {
               第一張工作枱上寫住一句話：「唔會做喺客唔知嘅嘢。」
             </p>
             <p>
-              今日，我哋喺荔枝角設有門市、駐店技師平均擁有 8 年蘋果維修經驗，
+              今日，我哋喺荔枝角設有門市、駐店師傅平均擁有 8 年蘋果維修經驗，
               維修過程由專業師傅按標準工序處理、配件費與人工費逐項列明。由一粒螺絲到一塊主機板，
               我哋守護嘅唔單止係部機，更加係你嘅資料、私隱同信任。
             </p>
@@ -99,7 +99,7 @@ export default function AboutPage() {
         <div className="relative overflow-hidden rounded-3xl shadow-lift">
           <SmartImage
             src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1200&q=80"
-            alt="CathyRepair 技師維修蘋果產品"
+            alt="CathyRepair 師傅維修蘋果產品"
             wrapperClassName="aspect-[4/3]"
             fallbackText="CathyRepair 維修實況"
           />

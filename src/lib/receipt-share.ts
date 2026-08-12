@@ -42,7 +42,7 @@ export function buildReceiptMessage(order: RepairOrder): string {
     `聯絡電話：${order.customerPhone}`,
     `維修機型：${order.deviceModelName}`,
     `服務方式：${SERVICE_MODE_LABEL[order.serviceMode] ?? order.serviceMode}`,
-    `主理技師：${order.technician ?? '—'}`,
+    `主理師傅：${order.technician ?? '—'}`,
     `收機時間：${formatDateTime(order.createdAt)}`,
     `完成時間：${formatDateTime(order.updatedAt)}`,
     ``,
@@ -236,7 +236,7 @@ export function buildPrintableReceiptHtml(order: RepairOrder): string {
         <div class="row"><span class="k">服務方式</span><span class="v">${escapeHtml(SERVICE_MODE_LABEL[order.serviceMode] ?? order.serviceMode)}</span></div>
         <div class="row"><span class="k">收機時間</span><span>${escapeHtml(formatDateTime(order.createdAt))}</span></div>
         <div class="row"><span class="k">完成時間</span><span>${escapeHtml(formatDateTime(order.updatedAt))}</span></div>
-        <div class="row"><span class="k">主理技師</span><span class="v">${escapeHtml(order.technician ?? '—')}</span></div>
+        <div class="row"><span class="k">主理師傅</span><span class="v">${escapeHtml(order.technician ?? '—')}</span></div>
         <div class="row"><span class="k">保養到期</span><span class="v">${escapeHtml(warranty)}</span></div>
       </section>
 

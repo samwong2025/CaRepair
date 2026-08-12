@@ -45,7 +45,7 @@ function OtherModelCard({
           （其他）
         </span>
         <span className="mt-1 block line-clamp-2 text-xs leading-relaxed text-ink-muted">
-          搵唔到你部機？直接填寫型號，我哋技師會人手報價。
+          搵唔到你部機？直接填寫型號，我哋師傅會人手報價。
         </span>
       </span>
     </button>
@@ -148,7 +148,7 @@ export function ModelPicker({
 
         {grouped.length === 0 ? (
           <p className="rounded-xl border border-dashed border-slate-300 bg-surface-soft px-4 py-8 text-center text-sm text-ink-muted">
-            搵唔到「{keyword}」相關型號，可致電 {siteConfig.hotline} 由技師人手確認。
+            搵唔到「{keyword}」相關型號，可致電 {siteConfig.hotline} 由師傅人手確認。
           </p>
         ) : null}
 
@@ -166,7 +166,7 @@ export function ModelPicker({
               autoFocus
             />
             <p className="mt-1.5 text-xs text-ink-muted">
-              提交後我哋會按你填嘅型號安排技師報價，唔會影響落單。
+              提交後我哋會按你填嘅型號安排師傅報價，唔會影響落單。
             </p>
           </div>
         ) : null}
@@ -361,7 +361,7 @@ export function StepDevice({
 
             {grouped.length === 0 ? (
               <p className="rounded-xl border border-dashed border-slate-300 bg-surface-soft px-4 py-8 text-center text-sm text-ink-muted">
-                搵唔到「{keyword}」相關型號，可致電 {siteConfig.hotline} 由技師人手確認。
+                搵唔到「{keyword}」相關型號，可致電 {siteConfig.hotline} 由師傅人手確認。
               </p>
             ) : null}
 
@@ -379,7 +379,7 @@ export function StepDevice({
                   autoFocus
                 />
                 <p className="mt-1.5 text-xs text-ink-muted">
-                  提交後我哋會按你填嘅型號安排技師報價，唔會影響落單。
+                  提交後我哋會按你填嘅型號安排師傅報價，唔會影響落單。
                 </p>
               </div>
             ) : null}
