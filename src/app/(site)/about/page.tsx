@@ -172,12 +172,13 @@ export default function AboutPage() {
             <p className="mt-2 text-sm text-ink-muted">門市鄰近港鐵站，即場維修無需預約。點擊門市卡片即開 Google 地圖導航。</p>
           </div>
         </div>
-        <div className="mt-6 grid gap-5 md:grid-cols-1 md:max-w-xl">
-          {siteConfig.shops.map((shop) => {
+        <div className="mt-6 grid gap-5 md:grid-cols-2 md:items-stretch">
+          {siteConfig.shops.flatMap((shop) => {
             const mapHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(shop.mapsQuery ?? shop.address)}`;
-            return (
+            const embedSrc = `https://www.google.com/maps?q=${encodeURIComponent(shop.embedQuery ?? shop.mapsQuery ?? shop.address)}&hl=zh-HK&z=17&output=embed`;
+            const card = (
               <a
-                key={shop.name}
+                key={`card-${shop.name}`}
                 href={mapHref}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -212,23 +213,26 @@ export default function AboutPage() {
                 </span>
               </a>
             );
+            const map = (
+              // 嵌入 Google 地圖 iframe，一鍵直觀看位置
+              <div
+                key={`map-${shop.name}`}
+                className="overflow-hidden rounded-2xl border border-slate-200 shadow-card md:flex md:flex-col md:min-h-[320px]"
+              >
+                <iframe
+                  title={`${shop.name} Google 地圖位置`}
+                  src={embedSrc}
+                  width="100%"
+                  height="320"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="block h-[320px] w-full md:h-full md:flex-1"
+                />
+              </div>
+            );
+            return [card, map];
           })}
         </div>
-
-        {/* 嵌入 Google 地圖 iframe，一鍵直觀看位置 */}
-        {siteConfig.shops.map((shop) => (
-          <div key={`map-${shop.name}`} className="mt-5 overflow-hidden rounded-2xl border border-slate-200 shadow-card md:max-w-xl">
-            <iframe
-              title={`${shop.name} Google 地圖位置`}
-              src={`https://www.google.com/maps?q=${encodeURIComponent(shop.embedQuery ?? shop.mapsQuery ?? shop.address)}&hl=zh-HK&z=17&output=embed`}
-              width="100%"
-              height="320"
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              className="block w-full"
-            />
-          </div>
-        ))}
       </section>
 
       {/* 保養條款 */}
