@@ -34,8 +34,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
               prefetch={false}
               className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-2.5 py-2 text-xs font-semibold text-ink-muted transition-colors duration-200 hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700"
               aria-label="返回前台"
+              title="返回前台"
             >
               <ArrowUpRight className="h-3.5 w-3.5" />
+              <span className="sm:hidden">前台</span>
               <span className="hidden sm:inline">返回前台</span>
             </Link>
             <AdminUserMenu user={user} />

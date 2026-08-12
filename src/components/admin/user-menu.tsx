@@ -41,11 +41,12 @@ export function AdminUserMenu({ user }: { user: CurrentUser | null }) {
 
   return (
     <div className="flex items-center gap-2.5">
-      {/* 頭像圓圈：行動版始終可見，作為下拉開關；桌面版並排姓名／信箱 */}
+      {/* 頭像圓圈：行動版作為下拉開關；桌面版並排姓名／信箱 */}
       <details className="group relative">
         <summary
           className="flex h-9 w-9 cursor-pointer list-none items-center justify-center rounded-full bg-brand-gradient text-white transition-transform duration-200 active:scale-95"
           aria-label="使用者選單"
+          title={`${user.name}・${ROLE_LABEL[user.role] ?? user.role}`}
         >
           <UserRound className="h-4 w-4" />
         </summary>
@@ -57,17 +58,31 @@ export function AdminUserMenu({ user }: { user: CurrentUser | null }) {
               {ROLE_LABEL[user.role] ?? user.role}
             </Badge>
           </div>
+          {/* 行動版下拉內的登出：sm 以下顯示，桌面版另有獨立登出鈕 */}
           <button
             type="button"
             onClick={logout}
             disabled={loading}
-            className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-ink-muted transition-colors duration-200 hover:border-rose-300 hover:bg-rose-50 hover:text-rose-600"
+            className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-xl border border-slate-200 px-3 py-2 text-xs font-semibold text-ink-muted transition-colors duration-200 hover:border-rose-300 hover:bg-rose-50 hover:text-rose-600 sm:hidden"
           >
             <LogOut className="h-3.5 w-3.5" />
             <span>{loading ? '登出中…' : '登出'}</span>
           </button>
         </div>
       </details>
+
+      {/* 行動版：在頭像旁直接顯示一個獨立「登出」鈕，避免用戶找不到登出入口 */}
+      <button
+        type="button"
+        onClick={logout}
+        disabled={loading}
+        aria-label="登出"
+        title="登出"
+        className="flex items-center gap-1.5 rounded-xl border border-slate-200 px-2.5 py-2 text-xs font-semibold text-ink-muted transition-colors duration-200 hover:border-rose-300 hover:bg-rose-50 hover:text-rose-600 sm:hidden"
+      >
+        <LogOut className="h-3.5 w-3.5" />
+        <span>{loading ? '登出中…' : '登出'}</span>
+      </button>
 
       {/* 桌面版：展開式資訊（>sm 可見） */}
       <span className="hidden items-center gap-2 sm:flex">
