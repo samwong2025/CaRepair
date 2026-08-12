@@ -31,7 +31,7 @@ function OtherModelCard({
       )}
     >
       <span className="relative flex min-h-[150px] w-full flex-1 items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-brand-50/70 via-white to-surface-soft">
-        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-100 text-brand-600 transition-transform duration-500 group-hover:animate-bounce-soft">
+        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-100 text-brand-600 group-hover:animate-bounce-soft hover:animate-bounce-soft">
           <Plus className="h-6 w-6" strokeWidth={2} />
         </span>
         {selected ? (
@@ -266,7 +266,7 @@ export function StepDevice({
                       width={120}
                       height={120}
                       loading="lazy"
-                      className="max-h-[120px] w-auto max-w-[78%] object-contain transition-transform duration-500 ease-smooth group-hover:animate-bounce-soft"
+                      className="max-h-[120px] w-auto max-w-[78%] object-contain group-hover:animate-bounce-soft hover:animate-bounce-soft"
                     />
                   ) : (
                     <Icon className="h-12 w-12 text-brand-500" strokeWidth={1.8} />
