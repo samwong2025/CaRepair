@@ -162,7 +162,13 @@ function mergeOverrides(overrides: SymptomPricing[]): SymptomPricing[] {
   for (const o of overrides) {
     const key = `${o.category}:${o.symptomId}`;
     const base = map.get(key);
-    map.set(key, { ...base, ...o, category: o.category, symptomId: o.symptomId });
+    map.set(key, { ...base, ...o, category: o.category, symptomId: o.symptomId, preset: false });
+  }
+  // 預設項若未被覆寫，標記為 preset（待確認）
+  for (const [key, val] of map) {
+    if (!(overrides as SymptomPricing[]).some((o) => `${o.category}:${o.symptomId}` === key)) {
+      map.set(key, { ...val, preset: true });
+    }
   }
   return [...map.values()];
 }
@@ -186,15 +192,28 @@ export async function fetchPricingFromSupabase(): Promise<SymptomPricing[] | nul
     durationMinutes: Number(row.duration_minutes ?? 30),
     warrantyDays: Number(row.warranty_days ?? 90),
     requiresLab: Boolean(row.requires_lab),
+    preset: false,
   }));
 }
 
-/* ── 主要讀取入口（前端 / 後台共用） ───────────────────── */
+/* ── 主要讀取入口（前端 / 後台共用） ─────────────────────
+ * 邏輯合併：先讀雲端 repair_pricing（真值），再將預設定價
+ * (pricing.ts) 中「雲端缺漏」的 (category, symptomId) 組合補齊，
+ * 並標記 preset=true 以提示「待確認」。這樣故障與價格表脫節時，
+ * 線上報價仍能用合理預設值，而不會跳過該項。 */
 export async function loadPricing(): Promise<SymptomPricing[]> {
-  // 已連 Supabase：優先讀雲端價格表
   if (isSupabaseConfigured()) {
     const server = await fetchPricingFromSupabase();
-    if (server) return server;
+    if (server) {
+      const merged = new Map<string, SymptomPricing>();
+      for (const r of server) merged.set(`${r.category}:${r.symptomId}`, r);
+      // 補齊預設定價中雲端缺漏的組合
+      for (const r of pricingRules) {
+        const key = `${r.category}:${r.symptomId}`;
+        if (!merged.has(key)) merged.set(key, { ...r, preset: true });
+      }
+      return [...merged.values()];
+    }
   }
   // mock 模式：讀 localStorage 覆寫，合併預設
   return mergeOverrides(readLocalOverrides());
@@ -248,6 +267,59 @@ export function findRule(
   symptomId: string,
 ): SymptomPricing | undefined {
   return rules.find((r) => r.category === category && r.symptomId === symptomId);
+}
+
+/** 依 symptom_id 刪除某故障的所有關聯價格行（故障刪除時聯動清理孤兒資料） */
+export async function deletePricingBySymptom(symptomId: string): Promise<SaveResult> {
+  if (isSupabaseConfigured()) {
+    const supabase = getServerSupabase();
+    if (!supabase) return { ok: false, mode: 'supabase', error: 'Supabase 未設定' };
+    const { error } = await supabase.from('repair_pricing').delete().eq('symptom_id', symptomId);
+    if (error) return { ok: false, mode: 'supabase', error: error.message };
+    return { ok: true, mode: 'supabase' };
+  }
+  const overrides = readLocalOverrides().filter((r) => r.symptomId !== symptomId);
+  writeLocalOverrides(overrides);
+  return { ok: true, mode: 'local' };
+}
+
+/**
+ * 依故障的適用機型清單，自動補齊 repair_pricing 中缺失的 (category, symptomId) 組合。
+ * 新增機型勾選時自動建一筆預設價格行；取消機型勾選時不改動既有價格（保留歷史，
+ * 由 deleteSymptom 統一清理），避免誤刪管理員手動設定的價格。
+ */
+export async function ensurePricingForSymptom(
+  symptomId: string,
+  categories: DeviceCategory[],
+): Promise<SaveResult> {
+  if (!isSupabaseConfigured()) return { ok: true, mode: 'local' };
+  const supabase = getServerSupabase();
+  if (!supabase) return { ok: false, mode: 'supabase', error: 'Supabase 未設定' };
+  try {
+    const { data } = await supabase
+      .from('repair_pricing')
+      .select('category')
+      .eq('symptom_id', symptomId);
+    const existing = new Set((data as { category: string }[] | null)?.map((r) => r.category) ?? []);
+    const missing = categories.filter((c) => !existing.has(c));
+    if (missing.length === 0) return { ok: true, mode: 'supabase' };
+    const insertRows = missing.map((c) => ({
+      category: c,
+      symptom_id: symptomId,
+      part_name: '',
+      base_part_fee: 0,
+      base_labor_fee: 0,
+      duration_minutes: 30,
+      warranty_days: 90,
+      requires_lab: false,
+      updated_at: new Date().toISOString(),
+    }));
+    const { error } = await supabase.from('repair_pricing').insert(insertRows);
+    if (error) return { ok: false, mode: 'supabase', error: error.message };
+    return { ok: true, mode: 'supabase' };
+  } catch (e) {
+    return { ok: false, mode: 'supabase', error: e instanceof Error ? e.message : '網路錯誤' };
+  }
 }
 
 export { symptomName };

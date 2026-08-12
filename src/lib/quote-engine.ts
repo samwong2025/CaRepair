@@ -26,7 +26,12 @@ function resolveRule(
   symptomId: string,
   rules?: SymptomPricing[],
 ): SymptomPricing | undefined {
-  if (rules) return rules.find((r) => r.category === category && r.symptomId === symptomId);
+  // 優先使用傳入的自訂價格表（後台雲端／localStorage）
+  if (rules) {
+    const hit = rules.find((r) => r.category === category && r.symptomId === symptomId);
+    if (hit) return hit;
+  }
+  // 回退至預設定價（pricing.ts），確保任何組合都不會靜默漏報
   return findPricingRule(category, symptomId);
 }
 
@@ -51,9 +56,27 @@ export function calculateQuote(
   const items: QuoteLineItem[] = [];
 
   symptomIds.forEach((symptomId) => {
-    const rule = resolveRule(model.category, symptomId, rules);
     const symptom = getSymptomById(symptomId);
-    if (!rule || !symptom) return;
+    // 故障本身不存在才跳過（故障是報價的必須實體）
+    if (!symptom) return;
+
+    const rule = resolveRule(model.category, symptomId, rules);
+    if (!rule) {
+      // 價格表缺漏：產出「待確認」提示項，而非靜默漏報
+      items.push({
+        symptomId,
+        name: symptom.name,
+        partName: '價格待確認',
+        partFee: 0,
+        laborFee: 0,
+        subtotal: 0,
+        durationMinutes: 0,
+        warrantyDays: 0,
+        requiresLab: false,
+        pending: true,
+      });
+      return;
+    }
 
     const partFee = roundToTen(rule.basePartFee * multiplier);
     const laborFee = roundToTen(rule.baseLaborFee * multiplier);
@@ -68,6 +91,7 @@ export function calculateQuote(
       durationMinutes: rule.durationMinutes,
       warrantyDays: rule.warrantyDays,
       requiresLab: Boolean(rule.requiresLab),
+      pending: rule.preset,
     });
   });
 
@@ -77,7 +101,9 @@ export function calculateQuote(
   const laborTotal = items.reduce((sum, i) => sum + i.laborFee, 0);
   const gross = partsTotal + laborTotal;
 
-  const matchedRate = bundleDiscountRates.find((r) => items.length >= r.minItems);
+  // 套餐減免以「有效（已報價）項數」計算，待確認項不納入檔位
+  const billableCount = items.filter((i) => !i.pending).length;
+  const matchedRate = bundleDiscountRates.find((r) => billableCount >= r.minItems);
   const bundleDiscount = matchedRate
     ? Math.min(roundToTen(gross * matchedRate.rate), MAX_BUNDLE_DISCOUNT)
     : 0;

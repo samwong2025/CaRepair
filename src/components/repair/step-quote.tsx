@@ -45,8 +45,17 @@ export function StepQuote({ quote, modelName }: { quote: Quote; modelName: strin
                     <Icon className="h-5 w-5" strokeWidth={2} />
                   </span>
                   <div className="min-w-0">
-                    <p className="text-[0.95rem] font-bold text-ink">{item.name}</p>
-                    <p className="mt-0.5 text-xs text-ink-faint">更換／使用：{item.partName}</p>
+                    <p className="flex items-center gap-2 text-[0.95rem] font-bold text-ink">
+                      {item.name}
+                      {item.pending ? (
+                        <span className="rounded bg-amber-50 px-1.5 py-0.5 text-[0.65rem] font-semibold text-amber-700">
+                          價格待確認
+                        </span>
+                      ) : null}
+                    </p>
+                    <p className="mt-0.5 text-xs text-ink-faint">
+                      {item.pending ? '此項目價格表缺漏，將由師傅檢測後報價' : `更換／使用：${item.partName}`}
+                    </p>
                     <p className="mt-1.5 flex flex-wrap items-center gap-2.5 text-[0.7rem] text-ink-faint">
                       <span className="flex items-center gap-1">
                         <Clock3 className="h-3 w-3" />
@@ -68,15 +77,15 @@ export function StepQuote({ quote, modelName }: { quote: Quote; modelName: strin
 
                 <div className="mt-3 flex items-center justify-between text-sm sm:mt-0 sm:block sm:text-right">
                   <span className="text-xs text-ink-faint sm:hidden">配件費</span>
-                  <span className="font-semibold text-ink">{formatHKD(item.partFee)}</span>
+                  <span className="font-semibold text-ink">{item.pending ? '—' : formatHKD(item.partFee)}</span>
                 </div>
                 <div className="mt-1.5 flex items-center justify-between text-sm sm:mt-0 sm:block sm:text-right">
                   <span className="text-xs text-ink-faint sm:hidden">人工費</span>
-                  <span className="font-semibold text-ink">{formatHKD(item.laborFee)}</span>
+                  <span className="font-semibold text-ink">{item.pending ? '—' : formatHKD(item.laborFee)}</span>
                 </div>
                 <div className="mt-1.5 flex items-center justify-between text-sm sm:mt-0 sm:block sm:text-right">
                   <span className="text-xs text-ink-faint sm:hidden">小計</span>
-                  <span className="font-extrabold text-brand-600">{formatHKD(item.subtotal)}</span>
+                  <span className="font-extrabold text-brand-600">{item.pending ? '待定' : formatHKD(item.subtotal)}</span>
                 </div>
               </li>
             );

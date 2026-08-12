@@ -2,6 +2,7 @@ import { deviceModels as DEFAULT_MODELS, deviceGroups } from '../data/devices';
 import { symptoms as DEFAULT_SYMPTOMS } from '../data/symptoms';
 import { isSupabaseConfigured } from './supabase/client';
 import { getServerSupabase } from './supabase/server';
+import { ensurePricingForSymptom, deletePricingBySymptom } from './pricing-store';
 import type { DeviceCategory, DeviceModel, Symptom } from '../types';
 
 const LS_MODELS = 'cathayrepair_models_overrides';
@@ -133,6 +134,8 @@ export async function saveSymptom(s: Symptom): Promise<{ ok: boolean; mode: stri
       updated_at: new Date().toISOString(),
     });
     if (error) return { ok: false, mode: 'supabase', error: error.message };
+    // 聯動：依故障適用機型補齊 repair_pricing 缺漏的價格行
+    await ensurePricingForSymptom(s.id, s.categories);
     return { ok: true, mode: 'supabase' };
   }
   const list = readLS<Symptom>(LS_SYMPTOMS);
@@ -147,6 +150,8 @@ export async function deleteSymptom(id: string): Promise<{ ok: boolean; mode: st
   if (isSupabaseConfigured()) {
     const supabase = getServerSupabase();
     if (!supabase) return { ok: false, mode: 'supabase', error: 'Supabase 未設定' };
+    // 先聯動清理該故障的所有關聯價格行，避免孤兒資料
+    await deletePricingBySymptom(id);
     const { error } = await supabase.from('device_symptoms').delete().eq('id', id);
     if (error) return { ok: false, mode: 'supabase', error: error.message };
     return { ok: true, mode: 'supabase' };

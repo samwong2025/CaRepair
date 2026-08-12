@@ -333,6 +333,7 @@ function SymptomPriceEditor({
               >
                 <span className="text-sm text-ink-muted">
                   <span className="font-semibold text-ink">{CATEGORY_LABEL[cat]}</span>：尚無價格
+                  <span className="ml-1 text-xs text-ink-faint">（新增後請填寫配件名）</span>
                 </span>
                 <Button
                   size="sm"
@@ -341,7 +342,8 @@ function SymptomPriceEditor({
                     onCreate({
                       symptomId: symptom.id,
                       category: cat,
-                      partName: symptom.name,
+                      // 配件名應填「更換的配件」而非故障名，留空由管理員補填
+                      partName: '',
                       basePartFee: 0,
                       baseLaborFee: 0,
                       durationMinutes: 30,
@@ -364,9 +366,23 @@ function SymptomPriceEditor({
             >
               <div className="mb-2 flex items-center justify-between">
                 <span className="text-sm font-semibold text-ink">{CATEGORY_LABEL[cat]}</span>
-                <span className="text-xs text-ink-faint">{rule.partName}</span>
+                {rule.preset ? (
+                  <span className="rounded bg-amber-50 px-1.5 py-0.5 text-[0.65rem] font-semibold text-amber-700">預設待確認</span>
+                ) : null}
               </div>
-              <div className="grid gap-2 sm:grid-cols-5">
+              <label className="block text-xs text-ink-muted">
+                配件名（更換的主要配件，顯示於報價明細）
+                <Input
+                  value={rule.partName}
+                  placeholder="如：原廠級 OLED 螢幕總成"
+                  onChange={(e) => updateRule(rule, { partName: e.target.value })}
+                  className={`mt-1 w-full ${rule.partName.trim() ? '' : 'border-amber-400 bg-amber-50'}`}
+                />
+                {rule.partName.trim() ? null : (
+                  <span className="mt-1 block text-[0.65rem] text-amber-600">尚未填寫配件名，線上報價將顯示提示待確認</span>
+                )}
+              </label>
+              <div className="mt-2 grid gap-2 sm:grid-cols-5">
                 <label className="text-xs text-ink-muted">
                   配件費
                   <Input

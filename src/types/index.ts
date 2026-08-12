@@ -63,6 +63,12 @@ export interface SymptomPricing {
   warrantyDays: number;
   /** 是否須送廠（不能即場完成） */
   requiresLab?: boolean;
+  /**
+   * 該規則是否來自預設定價（pricing.ts）而非雲端真值。
+   * 當雲端 repair_pricing 缺少 (category, symptomId) 組合時，
+   * loadPricing 會以預設值補齊並標記 preset=true，提示「待確認」。
+   */
+  preset?: boolean;
 }
 
 export interface QuoteLineItem {
@@ -75,6 +81,8 @@ export interface QuoteLineItem {
   durationMinutes: number;
   warrantyDays: number;
   requiresLab: boolean;
+  /** 價格表缺漏、以預設/待確認報價，須人工覆核 */
+  pending?: boolean;
 }
 
 export interface Quote {
