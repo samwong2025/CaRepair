@@ -24,7 +24,8 @@ type TabId = (typeof tabs)[number]['id'];
 /** 訂單追蹤主面板：查詢 + 即時進度 + 售後服務 */
 export function TrackPanel({ initialKeyword = '' }: { initialKeyword?: string }) {
   const [tab, setTab] = React.useState<TabId>('orders');
-  const [mode, setMode] = React.useState<TrackMode>(initialKeyword ? 'orderNo' : 'phone');
+  const initialIsPhone = initialKeyword.length > 0 && /^[\d\s-]+$/.test(initialKeyword);
+  const [mode, setMode] = React.useState<TrackMode>(initialIsPhone ? 'phone' : 'orderNo');
   const [keyword, setKeyword] = React.useState(initialKeyword);
   const [hint, setHint] = React.useState('');
 
@@ -34,7 +35,12 @@ export function TrackPanel({ initialKeyword = '' }: { initialKeyword?: string })
   React.useEffect(() => {
     if (autoSearched.current || !initialKeyword) return;
     autoSearched.current = true;
-    search('orderNo', initialKeyword.trim().toUpperCase());
+    const kw = initialKeyword.trim();
+    if (/^[\d\s-]+$/.test(kw)) {
+      search('phone', phoneDigits(kw));
+    } else {
+      search('orderNo', kw.toUpperCase());
+    }
   }, [initialKeyword, search]);
 
   const submit = (event: React.FormEvent) => {

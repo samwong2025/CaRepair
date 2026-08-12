@@ -32,7 +32,11 @@ const notes = [
   },
 ];
 
-export default function TrackPage({ searchParams }: { searchParams?: { q?: string } }) {
+export default function TrackPage({
+  searchParams,
+}: {
+  searchParams?: { q?: string; phone?: string };
+}) {
   return (
     <>
       <section className="relative overflow-hidden bg-ink pb-14 pt-12 sm:pb-16 sm:pt-16">
@@ -71,7 +75,7 @@ export default function TrackPage({ searchParams }: { searchParams?: { q?: strin
 
       <section className="bg-surface-muted py-10 sm:py-14">
         <div className="section-shell">
-          <TrackPanel initialKeyword={searchParams?.q ?? ''} />
+          <TrackPanel initialKeyword={searchParams?.q ?? searchParams?.phone ?? ''} />
         </div>
       </section>
     </>

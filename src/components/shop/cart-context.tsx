@@ -227,7 +227,7 @@ type Step = 'cart' | 'checkout' | 'success';
 function CartDrawer() {
   const cart = useCart();
   const [step, setStep] = React.useState<Step>('cart');
-  const [result, setResult] = React.useState<{ orderNos: string[]; message: string } | null>(null);
+  const [result, setResult] = React.useState<{ orderNos: string[]; message: string; phone: string } | null>(null);
 
   // 每次打開重置到購物車步驟
   React.useEffect(() => {
@@ -401,7 +401,7 @@ function CheckoutForm({
   onSuccess,
 }: {
   onBack: () => void;
-  onSuccess: (data: { orderNos: string[]; message: string }) => void;
+  onSuccess: (data: { orderNos: string[]; message: string; phone: string }) => void;
 }) {
   const cart = useCart();
   const [customerName, setCustomerName] = React.useState('');
@@ -454,7 +454,11 @@ function CheckoutForm({
         message?: string;
       } | null;
       if (res.ok && data?.orderNos) {
-        onSuccess({ orderNos: data.orderNos, message: data.message ?? '多件訂單已落單成功。' });
+        onSuccess({
+          orderNos: data.orderNos,
+          message: data.message ?? '多件訂單已落單成功。',
+          phone: customerPhone.trim(),
+        });
         return;
       }
       setErrors({ form: data?.message ?? '落單失敗，請檢查資料後再試。' });
@@ -618,13 +622,15 @@ function SuccessView({
   result,
   onClose,
 }: {
-  result: { orderNos: string[]; message: string };
+  result: { orderNos: string[]; message: string; phone: string };
   onClose: () => void;
 }) {
   const router = useRouter();
   const goTrack = () => {
     if (result.orderNos.length === 1) {
       router.push(`/track?q=${encodeURIComponent(result.orderNos[0])}`);
+    } else if (result.phone) {
+      router.push(`/track?phone=${encodeURIComponent(result.phone)}`);
     } else {
       router.push('/track');
     }
@@ -646,7 +652,7 @@ function SuccessView({
           ))}
         </ul>
         {result.orderNos.length > 1 ? (
-          <p className="mt-2 text-xs text-ink-faint">多張訂單？前往查單頁輸入電話即可一次查看全部。</p>
+          <p className="mt-2 text-xs text-ink-faint">多張訂單將自動帶入你的電話，前往查單頁即可一次查看全部。</p>
         ) : null}
       </div>
       <div className="mt-5 flex w-full gap-3">
