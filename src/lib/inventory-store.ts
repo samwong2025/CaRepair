@@ -65,6 +65,7 @@ export async function recordMovement(input: {
   unitCost?: number;
   note?: string;
   refOrderNo?: string;
+  supplierId?: string;
 }): Promise<{ movement: StockMovement; part: Part }> {
   const qty = Math.max(0, Math.round(input.qty));
   const currentStock = input.part.stock;
@@ -87,10 +88,16 @@ export async function recordMovement(input: {
     unitCost: input.unitCost,
     note: input.note,
     refOrderNo: input.refOrderNo,
+    supplierId: input.supplierId,
     createdAt: new Date().toISOString(),
   };
 
-  const updatedPart: Part = { ...input.part, stock: newStock, updatedAt: movement.createdAt };
+  const updatedPart: Part = {
+    ...input.part,
+    stock: newStock,
+    updatedAt: movement.createdAt,
+    ...(input.supplierId ? { supplierId: input.supplierId } : {}),
+  };
 
   if (isSupabaseConfigured()) {
     const supabase = getServerSupabase();
@@ -105,6 +112,7 @@ export async function recordMovement(input: {
         unit_cost: movement.unitCost ?? null,
         note: movement.note ?? null,
         ref_order_no: movement.refOrderNo ?? null,
+        supplier_id: movement.supplierId ?? null,
         created_at: movement.createdAt,
       });
       if (mErr) console.error('[inventory] insert movement', mErr.message);
@@ -175,6 +183,8 @@ export async function fetchInventoryFromSupabase(): Promise<Part[] | null> {
     unitCost: Number(row.unit_cost ?? 0),
     unitPrice: row.unit_price != null ? Number(row.unit_price) : undefined,
     supplier: (row.supplier as string) ?? undefined,
+    supplierId: (row.supplier_id as string) ?? undefined,
+    categoryId: (row.category_id as string) ?? undefined,
     updatedAt: (row.updated_at as string) ?? undefined,
   }));
 }
@@ -212,6 +222,8 @@ export async function saveInventory(part: Part): Promise<SaveInventoryResult> {
         unit_cost: part.unitCost,
         unit_price: part.unitPrice ?? null,
         supplier: part.supplier ?? null,
+        supplier_id: part.supplierId ?? null,
+        category_id: part.categoryId ?? null,
         updated_at: new Date().toISOString(),
       },
       { onConflict: 'id' },

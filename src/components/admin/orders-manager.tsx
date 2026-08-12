@@ -55,6 +55,7 @@ export function OrdersManager({
   const [statusFilter, setStatusFilter] = React.useState<OrderStatus | 'all'>(initialStatus);
   const [dateFrom, setDateFrom] = React.useState('');
   const [dateTo, setDateTo] = React.useState('');
+  const [sourceFilter, setSourceFilter] = React.useState<'all' | 'online' | 'manual'>('all');
   const [pendingId, setPendingId] = React.useState('');
   const [printTarget, setPrintTarget] = React.useState<PrintTarget>(null);
 
@@ -95,15 +96,18 @@ export function OrdersManager({
     const kw = keyword.trim().toLowerCase();
     return scopedOrders.filter((order) => {
       const matchStatus = statusFilter === 'all' || order.status === statusFilter;
+      const matchSource =
+        sourceFilter === 'all' ||
+        (sourceFilter === 'manual' ? (order.source ?? 'manual') === 'manual' : order.source === 'online');
       const matchKeyword =
         !kw ||
         order.orderNo.toLowerCase().includes(kw) ||
         order.customerName.toLowerCase().includes(kw) ||
         order.customerPhone.includes(kw) ||
         order.deviceModelName.toLowerCase().includes(kw);
-      return matchStatus && matchKeyword && applyPreset(order) && matchDate(order);
+      return matchStatus && matchKeyword && applyPreset(order) && matchDate(order) && matchSource;
     });
-  }, [scopedOrders, keyword, statusFilter, applyPreset, matchDate]);
+  }, [scopedOrders, keyword, statusFilter, applyPreset, matchDate, sourceFilter]);
 
   const operatorName =
     currentUser?.name ?? (isTechnician ? currentUser?.technicianName ?? '師傅' : '後台管理員');
@@ -152,6 +156,16 @@ export function OrdersManager({
               {meta.label}
             </option>
           ))}
+        </Select>
+        <Select
+          value={sourceFilter}
+          onChange={(event) => setSourceFilter(event.target.value as 'all' | 'online' | 'manual')}
+          className="sm:w-40"
+          aria-label="來源篩選"
+        >
+          <option value="all">全部來源</option>
+          <option value="online">網上預約</option>
+          <option value="manual">手動建單</option>
         </Select>
         <div className="flex items-center gap-2">
           <Input
@@ -243,6 +257,15 @@ export function OrdersManager({
                       <Badge variant={meta.tone} size="sm">
                         {meta.label}
                       </Badge>
+                      {order.source === 'online' ? (
+                        <Badge variant="accent" size="sm">
+                          網上預約
+                        </Badge>
+                      ) : order.source === 'manual' ? (
+                        <Badge variant="neutral" size="sm">
+                          手動建單
+                        </Badge>
+                      ) : null}
                       {order.quote.requiresLab ? (
                         <Badge variant="warning" size="sm">
                           需送實驗室

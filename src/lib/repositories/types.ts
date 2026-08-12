@@ -61,6 +61,17 @@ export interface DataRepository {
   listShopOrders(): Promise<ShopOrder[]>;
   updateShopOrderStatus(id: string, status: ShopOrder['status']): Promise<ShopOrder | null>;
 
+  /* 商品分類（庫存與二手商城共用） */
+  listCategories(): Promise<import('../../types').ProductCategory[]>;
+  upsertCategory(data: import('../../types').ProductCategory): Promise<import('../../types').ProductCategory>;
+  deleteCategory(id: string): Promise<boolean>;
+
+  /* 往來單位（供應商 / 客戶） */
+  listCounterparties(): Promise<import('../../types').Counterparty[]>;
+  upsertCounterparty(data: import('../../types').Counterparty): Promise<import('../../types').Counterparty>;
+  getCounterparty(id: string): Promise<import('../../types').Counterparty | null>;
+  deleteCounterparty(id: string): Promise<boolean>;
+
   /* 維修價格（後台可編輯，取代寫死的 pricing.ts） */
   listPricing(): Promise<import('../../types').SymptomPricing[]>;
   upsertPricing(rule: import('../../types').SymptomPricing): Promise<import('../../types').SymptomPricing | null>;
@@ -76,5 +87,6 @@ export interface DataRepository {
     unitCost?: number;
     note?: string;
     refOrderNo?: string;
+    supplierId?: string;
   }): Promise<{ movement: import('../../types').StockMovement; part: import('../../types').Part }>;
 }

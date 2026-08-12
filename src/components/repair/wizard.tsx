@@ -185,6 +185,7 @@ export function RepairWizard({ initialCategory }: { initialCategory?: DeviceCate
       customerPhone: form.customerPhone.replace(/\s|-/g, ''),
       customerEmail: form.customerEmail.trim() || undefined,
       remark: form.remark.trim() || undefined,
+      source: 'online',
     };
 
     const response = await fetch('/api/orders', {

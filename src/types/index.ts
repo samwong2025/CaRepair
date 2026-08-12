@@ -116,6 +116,9 @@ export interface Customer {
 
 export type ServiceMode = 'walk_in' | 'pickup' | 'mail_in';
 
+/** 工單來源：online = 網上自助預約（含 WhatsApp / 表單），manual = 後台手動代客建單 */
+export type OrderSource = 'online' | 'manual';
+
 export type OrderStatus =
   | 'submitted'
   | 'confirmed'
@@ -161,6 +164,8 @@ export interface RepairOrder {
   manualPrice?: number;
   /** 改價說明（如「老客戶優惠 -$200」），展示與歷程用 */
   priceNote?: string;
+  /** 工單來源；undefined 兼容舊資料（預設視為 manual） */
+  source?: OrderSource;
   createdAt: string;
   updatedAt: string;
 }
@@ -217,6 +222,10 @@ export interface Part {
   /** 向客戶收的配件報價（與 quote.partFee 對齊，僅作展示用） */
   unitPrice?: number;
   supplier?: string;
+  /** 關聯往來單位（供應商）id，替代純文字 supplier */
+  supplierId?: string;
+  /** 關聯商品分類 id（與二手商城共用分類體系，實現庫存與商城連通） */
+  categoryId?: string;
   updatedAt?: string;
 }
 
@@ -246,6 +255,8 @@ export interface StockMovement {
   note?: string;
   /** 關聯工單編號（出庫維修用料時帶入） */
   refOrderNo?: string;
+  /** 關聯往來單位（供應商）id，入庫採購時帶入 */
+  supplierId?: string;
   createdAt: string;
 }
 
@@ -312,6 +323,8 @@ export interface Product {
    * 這裡刻意放寬成 string，避免被 DeviceCategory enum 限制導致無法擴充新品類。
    */
   category: string;
+  /** 關聯商品分類 id（product_categories），用於統一分類管理 */
+  categoryId?: string;
   storage: string;
   color: string;
   grade: ProductGrade;
@@ -328,6 +341,37 @@ export interface Product {
   /** 品質保證與售後服務，如檢測報告、門市保養 */
   services: string[];
   hot?: boolean;
+}
+
+/* ─── 商品分類（庫存與二手商城共用） ───────────────── */
+export interface ProductCategory {
+  id: string;
+  name: string;
+  /** 關聯的產品大類（二手商城用），如 iphone / ipad / watch / macbook；可留空表示通用 */
+  group?: string;
+  sortOrder?: number;
+  updatedAt?: string;
+}
+
+/* ─── 往來單位（供應商 / 客戶）檔案 ─────────────────── */
+export type CounterpartyType = 'supplier' | 'customer' | 'both';
+
+export interface Counterparty {
+  id: string;
+  /** 單位名稱 */
+  name: string;
+  type: CounterpartyType;
+  /** 聯絡人 */
+  contact?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  /** 稅號 / 統一編號 */
+  taxNo?: string;
+  /** 結算條件，如「月結 30 天」「貨到付款」「預付」 */
+  settlement?: string;
+  note?: string;
+  updatedAt?: string;
 }
 
 export type ShopOrderStatus = 'pending' | 'paid' | 'shipped' | 'picked' | 'completed' | 'cancelled';
@@ -406,6 +450,7 @@ export interface RepairOrderInput {
   customerEmail?: string;
   district?: string;
   remark?: string;
+  source?: OrderSource;
 }
 
 export interface ShopOrderInput {

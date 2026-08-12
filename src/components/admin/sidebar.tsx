@@ -13,6 +13,8 @@ import {
   Package,
   ShoppingBag,
   Stethoscope,
+  Tag,
+  Building2,
   Users,
   Warehouse,
   Wrench,
@@ -44,6 +46,7 @@ const navGroups: { title?: string; items: NavItem[] }[] = [
     title: '二手商城',
     items: [
       { href: '/admin/products', label: '商品管理', icon: Package, description: '上架・庫存・價格' },
+      { href: '/admin/categories', label: '商品分類', icon: Tag, description: '統一分類管理' },
       { href: '/admin/shop-orders', label: '商城訂單', icon: ShoppingBag, description: '出貨・退換貨' },
     ],
   },
@@ -51,6 +54,7 @@ const navGroups: { title?: string; items: NavItem[] }[] = [
     title: '倉庫管理',
     items: [
       { href: '/admin/inventory', label: '配件庫存', icon: Warehouse, description: '維修用料管理' },
+      { href: '/admin/counterparties', label: '往來單位', icon: Building2, description: '供應商・客戶檔案' },
       { href: '/admin/inventory-report', label: '進銷存報表', icon: BarChart3, description: '入庫・出庫・盤點' },
     ],
   },

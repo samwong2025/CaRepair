@@ -54,6 +54,16 @@ export interface AfterSalesStat {
   pending: number;
 }
 
+export interface SourceSlice {
+  key: 'online' | 'manual';
+  label: string;
+  count: number;
+  revenue: number;
+  completed: number;
+  /** 完成率（已完成 / 總單） */
+  completionRate: number;
+}
+
 export interface ReportsData {
   kpi: KpiSummary;
   monthly: MonthPoint[];
@@ -62,6 +72,8 @@ export interface ReportsData {
   categoryRevenue: CategorySlice[];
   topModels: TopModel[];
   afterSales: AfterSalesStat[];
+  /** 工單來源分析（評估 online marketing 成效用） */
+  sourceBreakdown: SourceSlice[];
 }
 
 /* ─── 工具 ─────────────────────────────────────────── */
@@ -237,6 +249,24 @@ export function buildReports(
     pending: v.pending,
   }));
 
+  // 來源分析：online（網上自助預約）vs manual（後台手動代客建單）
+  const sourceBreakdown: SourceSlice[] = (['online', 'manual'] as const).map((key) => {
+    const list = repairsIn.filter((o) => (o.source ?? 'manual') === key);
+    const count = list.length;
+    const revenue = list
+      .filter((o) => o.status === 'completed')
+      .reduce((sum, o) => sum + orderRevenue(o), 0);
+    const completed = list.filter((o) => o.status === 'completed').length;
+    return {
+      key,
+      label: key === 'online' ? '網上預約' : '手動建單',
+      count,
+      revenue,
+      completed,
+      completionRate: count > 0 ? completed / count : 0,
+    };
+  });
+
   return {
     kpi,
     monthly,
@@ -245,6 +275,7 @@ export function buildReports(
     categoryRevenue,
     topModels,
     afterSales: afterSalesStat,
+    sourceBreakdown,
   };
 }
 

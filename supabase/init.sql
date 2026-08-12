@@ -59,6 +59,8 @@ create table if not exists public.repair_orders (
   technician        text,
   manual_price      numeric(12,2),
   price_note        text,
+  source            text not null default 'manual'
+                    check (source in ('online','manual')),
   created_at        timestamptz not null default now(),
   updated_at        timestamptz not null default now()
 );
@@ -193,6 +195,7 @@ create table if not exists public.products (
   accessories    text[] default '{}',
   services       text[] not null default '{}',
   hot            boolean not null default false,
+  category_id    text,
   created_at     timestamptz not null default now(),
   updated_at     timestamptz not null default now()
 );
@@ -246,6 +249,8 @@ create table if not exists public.inventory_parts (
   unit_cost          numeric(10,2) not null default 0,
   unit_price         numeric(10,2),
   supplier           text,
+  supplier_id        text,
+  category_id        text,
   updated_at         timestamptz not null default now()
 );
 create table if not exists public.inventory_movements (
@@ -264,6 +269,35 @@ create index if not exists inventory_movements_part_idx on public.inventory_move
 create index if not exists inventory_movements_created_idx on public.inventory_movements (created_at);
 
 -- ═══════════════════════════════════════════════════════════
+-- 10b. 商品分類（庫存與二手商城共用）
+-- ═══════════════════════════════════════════════════════════
+create table if not exists public.product_categories (
+  id          text primary key,
+  name        text not null,
+  group_      text,
+  sort_order  integer not null default 0,
+  updated_at  timestamptz not null default now()
+);
+
+-- ═══════════════════════════════════════════════════════════
+-- 10c. 往來單位（供應商 / 客戶）檔案
+-- ═══════════════════════════════════════════════════════════
+create table if not exists public.counterparties (
+  id          text primary key,
+  name        text not null,
+  type        text not null default 'supplier' check (type in ('supplier','customer','both')),
+  contact     text,
+  phone       text,
+  email       text,
+  address     text,
+  tax_no      text,
+  settlement  text,
+  note        text,
+  updated_at  timestamptz not null default now()
+);
+create index if not exists counterparties_type_idx on public.counterparties (type);
+
+-- ═══════════════════════════════════════════════════════════
 -- 11. Row Level Security（public 表）
 -- ═══════════════════════════════════════════════════════════
 alter table public.customers      enable row level security;
@@ -279,6 +313,8 @@ alter table public.repair_tier_multipliers enable row level security;
 alter table public.technicians     enable row level security;
 alter table public.inventory_parts enable row level security;
 alter table public.inventory_movements enable row level security;
+alter table public.product_categories enable row level security;
+alter table public.counterparties enable row level security;
 
 -- 公開可讀：商品目錄、訂單狀態追蹤、價格/級距/機型/庫存（前台與報表用 anon）
 drop policy if exists "products_public_read" on public.products;
@@ -307,6 +343,12 @@ create policy "inventory_parts_read" on public.inventory_parts for select using 
 
 drop policy if exists "inventory_movements_read" on public.inventory_movements;
 create policy "inventory_movements_read" on public.inventory_movements for select using (true);
+
+drop policy if exists "product_categories_public_read" on public.product_categories;
+create policy "product_categories_public_read" on public.product_categories for select using (true);
+
+drop policy if exists "counterparties_public_read" on public.counterparties;
+create policy "counterparties_public_read" on public.counterparties for select using (true);
 
 -- 僅 service_role（伺服器端 API）可寫入敏感資料
 drop policy if exists "customers_service_only" on public.customers;
@@ -361,6 +403,14 @@ drop policy if exists "inventory_movements_service_write" on public.inventory_mo
 create policy "inventory_movements_service_write" on public.inventory_movements
   for all using (auth.role() = 'service_role') with check (auth.role() = 'service_role');
 
+drop policy if exists "product_categories_service_write" on public.product_categories;
+create policy "product_categories_service_write" on public.product_categories
+  for all using (auth.role() = 'service_role') with check (auth.role() = 'service_role');
+
+drop policy if exists "counterparties_service_write" on public.counterparties;
+create policy "counterparties_service_write" on public.counterparties
+  for all using (auth.role() = 'service_role') with check (auth.role() = 'service_role');
+
 -- ═══════════════════════════════════════════════════════════
 -- 12. Realtime 發布
 -- ═══════════════════════════════════════════════════════════
@@ -374,6 +424,8 @@ alter publication supabase_realtime add table public.repair_tier_multipliers;
 alter publication supabase_realtime add table public.technicians;
 alter publication supabase_realtime add table public.inventory_parts;
 alter publication supabase_realtime add table public.inventory_movements;
+alter publication supabase_realtime add table public.product_categories;
+alter publication supabase_realtime add table public.counterparties;
 
 -- ═══════════════════════════════════════════════════════════
 -- 13. 初始種子資料

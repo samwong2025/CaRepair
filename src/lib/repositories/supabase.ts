@@ -26,6 +26,8 @@ import type {
   StockMovement,
   StockMovementType,
   SymptomPricing,
+  ProductCategory,
+  Counterparty,
 } from '../../types';
 
 const normalizePhone = (phone: string) => phone.replace(/\D/g, '');
@@ -88,6 +90,7 @@ function rowToOrder(row: Record<string, unknown>): RepairOrder {
     partsUsed: (row.parts_used as RepairOrder['partsUsed']) ?? undefined,
     manualPrice: row.manual_price != null ? Number(row.manual_price) : undefined,
     priceNote: (row.price_note as string) ?? undefined,
+    source: (row.source as RepairOrder['source']) ?? undefined,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
   };
@@ -153,6 +156,33 @@ function rowToProduct(row: Record<string, unknown>): Product {
     accessories: (row.accessories as string[]) ?? [],
     services: (row.services as string[]) ?? [],
     hot: Boolean(row.hot),
+    categoryId: (row.category_id as string) ?? undefined,
+  };
+}
+
+function rowToCategory(row: Record<string, unknown>): ProductCategory {
+  return {
+    id: row.id as string,
+    name: row.name as string,
+    group: (row.group_ as string) ?? undefined,
+    sortOrder: Number(row.sort_order ?? 0),
+    updatedAt: (row.updated_at as string) ?? undefined,
+  };
+}
+
+function rowToCounterparty(row: Record<string, unknown>): Counterparty {
+  return {
+    id: row.id as string,
+    name: row.name as string,
+    type: (row.type as Counterparty['type']) ?? 'supplier',
+    contact: (row.contact as string) ?? undefined,
+    phone: (row.phone as string) ?? undefined,
+    email: (row.email as string) ?? undefined,
+    address: (row.address as string) ?? undefined,
+    taxNo: (row.tax_no as string) ?? undefined,
+    settlement: (row.settlement as string) ?? undefined,
+    note: (row.note as string) ?? undefined,
+    updatedAt: (row.updated_at as string) ?? undefined,
   };
 }
 
@@ -331,6 +361,7 @@ export const supabaseRepository: DataRepository = {
         address: input.address,
         appointment_at: input.appointmentAt,
         remark: input.remark,
+        source: input.source ?? 'manual',
         status: 'submitted',
         timeline: [
           {
@@ -742,6 +773,7 @@ export const supabaseRepository: DataRepository = {
         accessories: product.accessories,
         services: product.services,
         hot: product.hot,
+        category_id: product.categoryId ?? null,
       })
       .select('*')
       .maybeSingle();
@@ -852,6 +884,93 @@ export const supabaseRepository: DataRepository = {
   }) {
     const { recordMovement } = await import('../inventory-store');
     return recordMovement(input);
+  },
+
+  /* 商品分類 */
+  async listCategories() {
+    const { data, error } = await client().from('product_categories').select('*').order('sort_order');
+    if (error) {
+      console.error('[supabase] listCategories', error.message);
+      return [];
+    }
+    return (data ?? []).map(rowToCategory);
+  },
+  async upsertCategory(data: ProductCategory) {
+    const { data: row, error } = await client()
+      .from('product_categories')
+      .upsert({
+        id: data.id,
+        name: data.name,
+        group_: data.group ?? null,
+        sort_order: data.sortOrder ?? 0,
+        updated_at: new Date().toISOString(),
+      })
+      .select('*')
+      .maybeSingle();
+    if (error) {
+      console.error('[supabase] upsertCategory', error.message);
+      throw new Error(`儲存分類失敗：${error.message}`);
+    }
+    return row ? rowToCategory(row) : data;
+  },
+  async deleteCategory(id: string) {
+    const { error } = await client().from('product_categories').delete().eq('id', id);
+    if (error) {
+      console.error('[supabase] deleteCategory', error.message);
+      return false;
+    }
+    return true;
+  },
+
+  /* 往來單位 */
+  async listCounterparties() {
+    const { data, error } = await client().from('counterparties').select('*').order('name');
+    if (error) {
+      console.error('[supabase] listCounterparties', error.message);
+      return [];
+    }
+    return (data ?? []).map(rowToCounterparty);
+  },
+  async upsertCounterparty(data: Counterparty) {
+    const { data: row, error } = await client()
+      .from('counterparties')
+      .upsert({
+        id: data.id,
+        name: data.name,
+        type: data.type,
+        contact: data.contact ?? null,
+        phone: data.phone ?? null,
+        email: data.email ?? null,
+        address: data.address ?? null,
+        tax_no: data.taxNo ?? null,
+        settlement: data.settlement ?? null,
+        note: data.note ?? null,
+        updated_at: new Date().toISOString(),
+      })
+      .select('*')
+      .maybeSingle();
+    if (error) {
+      console.error('[supabase] upsertCounterparty', error.message);
+      throw new Error(`儲存往來單位失敗：${error.message}`);
+    }
+    return row ? rowToCounterparty(row) : data;
+  },
+  async getCounterparty(id: string) {
+    const { data, error } = await client()
+      .from('counterparties')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+    if (error || !data) return null;
+    return rowToCounterparty(data);
+  },
+  async deleteCounterparty(id: string) {
+    const { error } = await client().from('counterparties').delete().eq('id', id);
+    if (error) {
+      console.error('[supabase] deleteCounterparty', error.message);
+      return false;
+    }
+    return true;
   },
 };
 

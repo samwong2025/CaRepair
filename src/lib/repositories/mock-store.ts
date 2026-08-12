@@ -7,8 +7,10 @@ import {
 } from '../../data/seed';
 import type {
   AfterSalesRecord,
+  Counterparty,
   Customer,
   Product,
+  ProductCategory,
   RepairOrder,
   RepairTicket,
   ShopOrder,
@@ -21,6 +23,8 @@ export interface MockStore {
   afterSales: AfterSalesRecord[];
   products: Product[];
   shopOrders: ShopOrder[];
+  categories: ProductCategory[];
+  counterparties: Counterparty[];
 }
 
 /**
@@ -38,6 +42,23 @@ function createStore(): MockStore {
     afterSales: seedAfterSales.map((a) => ({ ...a })),
     products: seedProducts.map((p) => ({ ...p })),
     shopOrders: [],
+    categories: [
+      { id: 'cat-iphone', name: 'iPhone', group: 'iphone', sortOrder: 1 },
+      { id: 'cat-ipad', name: 'iPad', group: 'ipad', sortOrder: 2 },
+      { id: 'cat-watch', name: 'Apple Watch', group: 'watch', sortOrder: 3 },
+      { id: 'cat-macbook', name: 'Mac', group: 'macbook', sortOrder: 4 },
+      { id: 'cat-accessory', name: '配件 / 周邊', sortOrder: 5 },
+    ],
+    counterparties: [
+      {
+        id: 'cp-seed-acme',
+        name: 'ACME 零件供應商',
+        type: 'supplier',
+        contact: '李小姐',
+        phone: '23456789',
+        settlement: '月結 30 天',
+      },
+    ],
   };
 }
 

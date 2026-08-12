@@ -112,6 +112,7 @@ export function OrderCreateForm({
           remark: remark.trim() || undefined,
           technician: technician,
           operator: operatorName,
+          source: 'manual',
         }),
       });
       const data = await res.json().catch(() => null);

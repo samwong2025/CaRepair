@@ -15,7 +15,7 @@ import {
 import { Button } from '../../components/ui/button';
 import { formatHKD } from '../../lib/format';
 import { genProductId } from '../../lib/shop-store';
-import type { Product, ProductGrade } from '../../types';
+import type { Product, ProductCategory, ProductGrade } from '../../types';
 import { categoryLabel } from '../../lib/labels';
 
 const CATEGORY_SUGGESTIONS = ['Apple Watch', 'iPhone', 'iPad', 'MacBook'] as const;
@@ -70,6 +70,8 @@ function CategoryCombo({
 
 interface ProductsManagerProps {
   initialProducts: Product[];
+  /** 統一分類（product_categories），提供給新增/編輯商品時選用並回寫 categoryId */
+  initialCategories?: ProductCategory[];
 }
 
 const emptyProduct = (): Product => ({
@@ -102,7 +104,10 @@ function useAllCategories(products: Product[], currentEditing: string | undefine
   }, [products, currentEditing]);
 }
 
-export function ProductsManager({ initialProducts }: ProductsManagerProps) {
+export function ProductsManager({
+  initialProducts,
+  initialCategories = [],
+}: ProductsManagerProps) {
   const [products, setProducts] = React.useState<Product[]>(initialProducts);
   const [keyword, setKeyword] = React.useState('');
   const [editing, setEditing] = React.useState<Product | null>(null);
@@ -113,16 +118,25 @@ export function ProductsManager({ initialProducts }: ProductsManagerProps) {
     `${p.name} ${p.category} ${p.color}`.toLowerCase().includes(keyword.toLowerCase()),
   );
 
+  const categoryNames = React.useMemo(() => {
+    const s = new Set<string>();
+    products.forEach((p) => p.category && s.add(p.category));
+    initialCategories.forEach((c) => c.name && s.add(c.name));
+    return Array.from(s);
+  }, [products, initialCategories]);
+
   const openCreate = () => setEditing(emptyProduct());
   const openEdit = (p: Product) => setEditing({ ...p });
 
   const persist = async (product: Product) => {
     setSavingId(product.id);
     try {
+      const matched = initialCategories.find((c) => c.name === product.category);
+      const toSave: Product = { ...product, categoryId: matched?.id };
       const res = await fetch('/api/admin/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(product),
+        body: JSON.stringify(toSave),
       });
       if (!res.ok) throw new Error('儲存失敗');
       const saved = (await res.json()) as Product;
@@ -257,6 +271,7 @@ export function ProductsManager({ initialProducts }: ProductsManagerProps) {
           product={editing}
           savingId={savingId}
           allProducts={products}
+          categoryList={categoryNames}
           onClose={() => setEditing(null)}
           onSave={persist}
         />
@@ -269,18 +284,24 @@ function ProductEditor({
   product,
   savingId,
   allProducts,
+  categoryList,
   onClose,
   onSave,
 }: {
   product: Product;
   savingId: string | null;
   allProducts: Product[];
+  categoryList?: string[];
   onClose: () => void;
   onSave: (p: Product) => void;
 }) {
   const [draft, setDraft] = React.useState<Product>(product);
   const patch = (p: Partial<Product>) => setDraft((prev) => ({ ...prev, ...p }));
-  const existingCategories = useAllCategories(allProducts, draft.category);
+  const baseCategories = useAllCategories(allProducts, draft.category);
+  const existingCategories = React.useMemo(
+    () => Array.from(new Set([...baseCategories, ...(categoryList ?? [])])),
+    [baseCategories, categoryList],
+  );
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">

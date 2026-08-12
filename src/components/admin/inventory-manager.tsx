@@ -19,8 +19,12 @@ import { getRepository } from '../../lib/repositories';
 import { formatHKD } from '../../lib/format';
 import {
   STOCK_MOVEMENT_LABELS,
+  type Counterparty,
+  type DeviceCategory,
   type InventoryAlert,
   type Part,
+  type PartCategory,
+  type ProductCategory,
   type StockMovement,
   type StockMovementType,
 } from '../../types';
@@ -34,14 +38,24 @@ const TYPE_TONE: Record<StockMovementType, string> = {
 interface InventoryManagerProps {
   initialInventory: Part[];
   initialAlerts: InventoryAlert[];
+  /** 供應商（往來單位 type=supplier/both），入庫異動時可關聯 */
+  supplierOptions?: Counterparty[];
+  /** 商品分類（預留：庫存料件可歸類到統一分類） */
+  categoryOptions?: ProductCategory[];
 }
 
-export function InventoryManager({ initialInventory, initialAlerts }: InventoryManagerProps) {
+export function InventoryManager({
+  initialInventory,
+  initialAlerts,
+  supplierOptions = [],
+  categoryOptions = [],
+}: InventoryManagerProps) {
   const [inventory, setInventory] = React.useState<Part[]>(initialInventory);
   const [alerts, setAlerts] = React.useState<InventoryAlert[]>(initialAlerts);
   const [savingId, setSavingId] = React.useState<string | null>(null);
   const [ledgerId, setLedgerId] = React.useState<string | null>(null);
   const [movementPart, setMovementPart] = React.useState<Part | null>(null);
+  const [createOpen, setCreateOpen] = React.useState(false);
 
   const updateLocal = (id: string, patch: Partial<Part>) => {
     setInventory((prev) => prev.map((p) => (p.id === id ? { ...p, ...patch } : p)));
@@ -52,6 +66,9 @@ export function InventoryManager({ initialInventory, initialAlerts }: InventoryM
       prev.map((p) => (p.id === id ? { ...p, stock: Math.max(0, p.stock + delta) } : p)),
     );
   };
+
+  const supplierName = (part: Part) =>
+    supplierOptions.find((c) => c.id === part.supplierId)?.name ?? part.supplier ?? '—';
 
   const save = async (part: Part) => {
     setSavingId(part.id);
@@ -70,6 +87,18 @@ export function InventoryManager({ initialInventory, initialAlerts }: InventoryM
     <div className="space-y-4">
       <InventoryAlertBanner alerts={alerts} />
 
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-extrabold text-ink">庫存配件</h2>
+          <p className="text-xs text-ink-faint">共 {inventory.length} 項料件</p>
+        </div>
+        <Button size="sm" onClick={() => setCreateOpen(true)}>
+          <Plus className="h-3.5 w-3.5" />
+          新增配件
+        </Button>
+      </div>
+
+
       <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-card">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -81,6 +110,7 @@ export function InventoryManager({ initialInventory, initialAlerts }: InventoryM
                 <th className="py-2 pr-3 font-semibold">預警線</th>
                 <th className="py-2 pr-3 font-semibold">成本</th>
                 <th className="py-2 pr-3 font-semibold">報價</th>
+                <th className="py-2 pr-3 font-semibold">供應商</th>
                 <th className="py-2 font-semibold">操作</th>
               </tr>
             </thead>
@@ -149,6 +179,7 @@ export function InventoryManager({ initialInventory, initialAlerts }: InventoryM
                     <td className="py-3 pr-3 tabular text-ink-muted">
                       {part.unitPrice != null ? formatHKD(part.unitPrice) : '—'}
                     </td>
+                    <td className="py-3 pr-3 text-xs text-ink-muted">{supplierName(part)}</td>
                     <td className="py-3">
                       <div className="flex items-center gap-1.5">
                         <Button
@@ -192,6 +223,7 @@ export function InventoryManager({ initialInventory, initialAlerts }: InventoryM
       {movementPart && (
         <MovementDialog
           part={movementPart}
+          supplierOptions={supplierOptions}
           onClose={() => setMovementPart(null)}
           onDone={(updated) => {
             setInventory((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
@@ -206,16 +238,229 @@ export function InventoryManager({ initialInventory, initialAlerts }: InventoryM
           onClose={() => setLedgerId(null)}
         />
       )}
+
+      {createOpen && (
+        <PartCreateDialog
+          supplierOptions={supplierOptions}
+          categoryOptions={categoryOptions}
+          onClose={() => setCreateOpen(false)}
+          onDone={(created) => {
+            setInventory((prev) => [created, ...prev]);
+            setCreateOpen(false);
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+/** 新增配件：建立一筆全新的庫存料件記錄 */
+function PartCreateDialog({
+  supplierOptions,
+  categoryOptions,
+  onClose,
+  onDone,
+}: {
+  supplierOptions: Counterparty[];
+  categoryOptions: ProductCategory[];
+  onClose: () => void;
+  onDone: (part: Part) => void;
+}) {
+  const [name, setName] = React.useState('');
+  const [category, setCategory] = React.useState<PartCategory>('battery');
+  const [deviceCategory, setDeviceCategory] = React.useState<DeviceCategory | ''>('');
+  const [sku, setSku] = React.useState('');
+  const [stock, setStock] = React.useState(0);
+  const [lowStockThreshold, setLowStockThreshold] = React.useState(5);
+  const [unitCost, setUnitCost] = React.useState(0);
+  const [unitPrice, setUnitPrice] = React.useState(0);
+  const [supplierId, setSupplierId] = React.useState('');
+  const [categoryId, setCategoryId] = React.useState('');
+  const [saving, setSaving] = React.useState(false);
+  const [error, setError] = React.useState('');
+
+  const submit = async () => {
+    if (!name.trim()) {
+      setError('請填寫配件名稱');
+      return;
+    }
+    setSaving(true);
+    setError('');
+    try {
+      const part: Part = {
+        id: `prt_${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`,
+        name: name.trim(),
+        category,
+        deviceCategory: deviceCategory || undefined,
+        sku: sku.trim() || undefined,
+        stock: Math.max(0, stock),
+        lowStockThreshold: Math.max(0, lowStockThreshold),
+        unitCost: Math.max(0, unitCost),
+        unitPrice: unitPrice > 0 ? unitPrice : undefined,
+        supplierId: supplierId || undefined,
+        categoryId: categoryId || undefined,
+      };
+      const saved = await getRepository().upsertInventory(part);
+      if (!saved) {
+        setError('儲存失敗，請稍後再試');
+        return;
+      }
+      onDone(saved);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+      <div className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 shadow-2xl">
+        <div className="mb-4 flex items-center justify-between">
+          <h3 className="text-lg font-extrabold text-ink">新增配件</h3>
+          <button onClick={onClose} className="rounded-lg p-1.5 text-ink-faint hover:bg-slate-100">
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+
+        <div className="space-y-3">
+          <label className="block">
+            <span className="mb-1 block text-xs font-semibold text-ink-muted">配件名稱 *</span>
+            <input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="如 iPhone 電池（原廠）"
+              className="form-input"
+            />
+          </label>
+
+          <div className="grid grid-cols-2 gap-3">
+            <label className="block">
+              <span className="mb-1 block text-xs font-semibold text-ink-muted">配件類別</span>
+              <select value={category} onChange={(e) => setCategory(e.target.value as PartCategory)} className="form-input">
+                <option value="battery">電池</option>
+                <option value="screen">螢幕</option>
+                <option value="glass">外玻璃</option>
+                <option value="back_glass">背蓋玻璃</option>
+                <option value="camera">鏡頭</option>
+                <option value="speaker">喇叭</option>
+                <option value="charging">充電模組</option>
+                <option value="other">其他</option>
+              </select>
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-xs font-semibold text-ink-muted">適用裝置</span>
+              <select
+                value={deviceCategory}
+                onChange={(e) => setDeviceCategory(e.target.value as DeviceCategory | '')}
+                className="form-input"
+              >
+                <option value="">不指定</option>
+                <option value="iphone">iPhone</option>
+                <option value="ipad">iPad</option>
+                <option value="watch">Apple Watch</option>
+                <option value="macbook">MacBook</option>
+              </select>
+            </label>
+          </div>
+
+          <div className="grid grid-cols-3 gap-3">
+            <label className="block">
+              <span className="mb-1 block text-xs font-semibold text-ink-muted">初始庫存</span>
+              <input
+                type="number"
+                min={0}
+                value={stock}
+                onChange={(e) => setStock(Math.max(0, Number(e.target.value) || 0))}
+                className="form-input tabular"
+              />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-xs font-semibold text-ink-muted">預警線</span>
+              <input
+                type="number"
+                min={0}
+                value={lowStockThreshold}
+                onChange={(e) => setLowStockThreshold(Math.max(0, Number(e.target.value) || 0))}
+                className="form-input tabular"
+              />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-xs font-semibold text-ink-muted">SKU</span>
+              <input value={sku} onChange={(e) => setSku(e.target.value)} className="form-input" />
+            </label>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <label className="block">
+              <span className="mb-1 block text-xs font-semibold text-ink-muted">成本（HK$）</span>
+              <input
+                type="number"
+                min={0}
+                value={unitCost}
+                onChange={(e) => setUnitCost(Math.max(0, Number(e.target.value) || 0))}
+                className="form-input tabular"
+              />
+            </label>
+            <label className="block">
+              <span className="mb-1 block text-xs font-semibold text-ink-muted">報價（HK$，選填）</span>
+              <input
+                type="number"
+                min={0}
+                value={unitPrice}
+                onChange={(e) => setUnitPrice(Math.max(0, Number(e.target.value) || 0))}
+                className="form-input tabular"
+              />
+            </label>
+          </div>
+
+          <label className="block">
+            <span className="mb-1 block text-xs font-semibold text-ink-muted">供應商（往來單位）</span>
+            <select value={supplierId} onChange={(e) => setSupplierId(e.target.value)} className="form-input">
+              <option value="">不指定</option>
+              {supplierOptions.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="block">
+            <span className="mb-1 block text-xs font-semibold text-ink-muted">商品分類（與二手商城連通）</span>
+            <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className="form-input">
+              <option value="">不指定</option>
+              {categoryOptions.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+
+        {error && <p className="mt-3 text-xs font-semibold text-state-danger">{error}</p>}
+
+        <div className="mt-5 flex justify-end gap-2">
+          <Button variant="ghost" onClick={onClose} disabled={saving}>
+            取消
+          </Button>
+          <Button onClick={submit} disabled={saving}>
+            {saving ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Save className="h-3.5 w-3.5" />}
+            建立配件
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }
 
 function MovementDialog({
   part,
+  supplierOptions,
   onClose,
   onDone,
 }: {
   part: Part;
+  supplierOptions: Counterparty[];
   onClose: () => void;
   onDone: (part: Part) => void;
 }) {
@@ -223,6 +468,7 @@ function MovementDialog({
   const [qty, setQty] = React.useState(1);
   const [unitCost, setUnitCost] = React.useState(part.unitCost || 0);
   const [note, setNote] = React.useState('');
+  const [supplierId, setSupplierId] = React.useState(part.supplierId ?? '');
   const [saving, setSaving] = React.useState(false);
 
   const submit = async () => {
@@ -235,6 +481,7 @@ function MovementDialog({
         qty,
         unitCost: type === 'inbound' ? unitCost : part.unitCost,
         note,
+        supplierId: type === 'inbound' ? supplierId || undefined : undefined,
       });
       void movement;
       onDone(updated);
@@ -296,6 +543,24 @@ function MovementDialog({
               onChange={(e) => setUnitCost(Math.max(0, Number(e.target.value) || 0))}
               className="form-input tabular"
             />
+          </label>
+        )}
+
+        {type === 'inbound' && (
+          <label className="mb-3 block">
+            <span className="mb-1 block text-xs font-semibold text-ink-muted">關聯供應商（往來單位）</span>
+            <select
+              value={supplierId}
+              onChange={(e) => setSupplierId(e.target.value)}
+              className="form-input"
+            >
+              <option value="">不指定</option>
+              {supplierOptions.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
           </label>
         )}
 

@@ -230,6 +230,55 @@ export function ReportsManager({ initial }: ReportsManagerProps) {
             </div>
           </Panel>
 
+          {/* 工單來源分析（online marketing 成效） */}
+          <Panel title="工單來源分析" subtitle="網上自助預約 vs 後台手動建單 — 評估線上推廣成效">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {data.sourceBreakdown.map((s) => {
+                const totalCount = data.sourceBreakdown.reduce((sum, x) => sum + x.count, 0) || 1;
+                const totalRev = data.sourceBreakdown.reduce((sum, x) => sum + x.revenue, 0) || 1;
+                return (
+                  <div key={s.key} className="rounded-xl border border-slate-200 bg-white p-4">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-bold text-ink">{s.label}</p>
+                      <span
+                        className={`rounded-full px-2 py-0.5 text-[0.7rem] font-bold ${
+                          s.key === 'online' ? 'bg-cyan-50 text-cyan-700' : 'bg-slate-100 text-ink-muted'
+                        }`}
+                      >
+                        佔比 {((s.count / totalCount) * 100).toFixed(0)}%
+                      </span>
+                    </div>
+                    <p className="mt-1 text-2xl font-extrabold text-ink">{s.count} 單</p>
+                    <p className="mt-0.5 text-xs text-ink-faint">
+                      已成交營收 {formatHKD(s.revenue)}（{((s.revenue / totalRev) * 100).toFixed(0)}%）
+                    </p>
+                    <div className="mt-3 space-y-1.5">
+                      <div className="flex items-center gap-2 text-xs">
+                        <span className="w-16 text-ink-faint">完成率</span>
+                        <div className="h-2 flex-1 overflow-hidden rounded-full bg-slate-100">
+                          <div
+                            className={`h-full rounded-full ${s.key === 'online' ? 'bg-cyan-500' : 'bg-slate-400'}`}
+                            style={{ width: `${Math.max(4, s.completionRate * 100)}%` }}
+                          />
+                        </div>
+                        <span className="w-12 text-right font-semibold text-ink">
+                          {(s.completionRate * 100).toFixed(0)}%
+                        </span>
+                      </div>
+                      <p className="text-[0.7rem] text-ink-faint">
+                        完成 {s.completed} 單 ・ 客單均價 {formatHKD(s.count ? s.revenue / s.completed : 0)}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <p className="mt-3 text-xs text-ink-faint">
+              說明：<span className="font-semibold text-ink">網上預約</span> 為官網/WhatsApp 自助下單，
+              <span className="font-semibold text-ink">手動建單</span> 為門市或電話代客建單。兩者佔比與成交營收差異，可反映線上推廣（online marketing）帶來的訂單轉化效果。
+            </p>
+          </Panel>
+
           {/* 售後統計 */}
           <Panel title="售後個案統計" subtitle="各類型數量與未結案">
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">

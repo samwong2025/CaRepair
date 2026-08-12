@@ -137,6 +137,7 @@ export const mockRepository: DataRepository = {
       address: input.address,
       appointmentAt: input.appointmentAt,
       remark: input.remark,
+      source: input.source ?? 'manual',
       status: 'submitted',
       timeline: [
         {
@@ -524,6 +525,46 @@ export const mockRepository: DataRepository = {
   }) {
     const { recordMovement } = await import('../inventory-store');
     return recordMovement(input);
+  },
+
+  /* 商品分類 */
+  async listCategories() {
+    return clone(getStore().categories);
+  },
+  async upsertCategory(data: import('../../types').ProductCategory) {
+    const store = getStore();
+    const idx = store.categories.findIndex((c) => c.id === data.id);
+    const next: import('../../types').ProductCategory = { ...data, updatedAt: new Date().toISOString() };
+    if (idx >= 0) store.categories[idx] = next;
+    else store.categories.push(next);
+    return clone(next);
+  },
+  async deleteCategory(id: string) {
+    const store = getStore();
+    store.categories = store.categories.filter((c) => c.id !== id);
+    return true;
+  },
+
+  /* 往來單位 */
+  async listCounterparties() {
+    return clone(getStore().counterparties);
+  },
+  async upsertCounterparty(data: import('../../types').Counterparty) {
+    const store = getStore();
+    const idx = store.counterparties.findIndex((c) => c.id === data.id);
+    const next: import('../../types').Counterparty = { ...data, updatedAt: new Date().toISOString() };
+    if (idx >= 0) store.counterparties[idx] = next;
+    else store.counterparties.push(next);
+    return clone(next);
+  },
+  async getCounterparty(id: string) {
+    const found = getStore().counterparties.find((c) => c.id === id);
+    return found ? clone(found) : null;
+  },
+  async deleteCounterparty(id: string) {
+    const store = getStore();
+    store.counterparties = store.counterparties.filter((c) => c.id !== id);
+    return true;
   },
 };
 
