@@ -1,22 +1,30 @@
 import { NextResponse } from 'next/server';
 import { getCurrentUser } from '@/lib/auth';
+import { getRepository } from '@/lib/repositories';
+import { loadInventory } from '@/lib/inventory-store';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
-  const info: Record<string, unknown> = {
-    NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL ? 'SET' : 'MISSING',
-    NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? 'SET' : 'MISSING',
-    SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY ? 'SET' : 'MISSING',
-  };
-  try {
-    const u = await getCurrentUser();
-    info.user = u ? { id: u.id, email: u.email, name: u.name, role: u.role } : null;
-    info.result = 'getCurrentUser OK';
-  } catch (e) {
-    info.result = 'getCurrentUser THREW';
-    info.error = e instanceof Error ? e.message : String(e);
-    info.stack = e instanceof Error ? e.stack : undefined;
+  const out: Record<string, unknown> = {};
+  const repo = getRepository();
+  const steps: Array<[string, () => Promise<unknown>]> = [
+    ['getCurrentUser', async () => getCurrentUser()],
+    ['listRepairOrders', async () => repo.listRepairOrders()],
+    ['listCustomers', async () => repo.listCustomers()],
+    ['listShopOrders', async () => repo.listShopOrders()],
+    ['listTickets', async () => repo.listTickets()],
+    ['listAfterSales', async () => repo.listAfterSales()],
+    ['loadInventory', async () => loadInventory()],
+  ];
+  for (const [name, fn] of steps) {
+    try {
+      const v = await fn();
+      out[name] = Array.isArray(v) ? `OK array len=${v.length}` : `OK ${typeof v}`;
+    } catch (e) {
+      out[name] = 'THREW: ' + (e instanceof Error ? e.message + ' | ' + (e.stack || '') : String(e));
+      break;
+    }
   }
-  return NextResponse.json(info);
+  return NextResponse.json(out);
 }
