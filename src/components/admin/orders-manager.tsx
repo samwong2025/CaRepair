@@ -7,6 +7,7 @@ import {
   ChevronRight,
   Loader2,
   MessageCircle,
+  Plus,
   Printer,
   ReceiptText,
   Search,
@@ -135,9 +136,16 @@ export function OrdersManager({
             </option>
           ))}
         </Select>
-        <p className="shrink-0 text-xs text-ink-faint sm:w-24 sm:text-right">
-          共 {filtered.length} 張
-        </p>
+        <div className="flex shrink-0 items-center gap-3 sm:ml-auto">
+          <Link
+            href="/admin/orders/new"
+            className="inline-flex items-center gap-1.5 rounded-xl bg-brand-gradient px-3.5 py-2 text-xs font-bold text-white shadow-brand transition-transform hover:scale-[1.03] active:scale-95"
+          >
+            <Plus className="h-3.5 w-3.5" />
+            新增工單
+          </Link>
+          <p className="text-xs text-ink-faint sm:text-right">共 {filtered.length} 張</p>
+        </div>
       </div>
 
       {/* 視圖標記 */}
