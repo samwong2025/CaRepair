@@ -31,8 +31,8 @@ export function CaseCompare() {
         {/* 案例切換：明確標示「這是可切換的案例篩選」 */}
         <Reveal className="mt-10">
           <div className="flex flex-col items-center gap-3">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-3 py-1.5 text-xs font-bold text-brand-700">
-              <Filter className="h-3.5 w-3.5" />
+            <div className="inline-flex items-center gap-2 rounded-full border border-brand-200 bg-brand-50 px-4 py-2 text-sm font-bold text-brand-700 shadow-sm sm:text-base">
+              <Filter className="h-4 w-4 sm:h-5 sm:w-5" />
               切換案例・點擊查看不同機型
             </div>
 
