@@ -131,3 +131,33 @@ export async function PATCH(request: Request, { params }: { params: { id: string
 
   return NextResponse.json({ order });
 }
+
+/** DELETE /api/orders/[id] 永久刪除工單（危險操作，前端須二次確認） */
+export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+  const body = (await request.json().catch(() => ({}))) as { confirm?: boolean };
+  if (!body.confirm) {
+    return NextResponse.json({ message: '請先確認刪除動作' }, { status: 400 });
+  }
+
+  const repo = getRepository();
+  const ok = await repo
+    .deleteRepairOrder(params.id)
+    .catch((error: unknown) => {
+      const reason = error instanceof Error ? error.message : '未知錯誤';
+      console.error('刪除訂單失敗', error);
+      return { __error: reason } as { __error: string };
+    });
+
+  if (ok && typeof ok === 'object' && '__error' in ok) {
+    return NextResponse.json({ message: `刪除失敗：${ok.__error}` }, { status: 500 });
+  }
+
+  if (!ok) {
+    return NextResponse.json(
+      { message: '找不到指定訂單（可能已被刪除或 ID 有誤，請重新整理頁面後再試）' },
+      { status: 404 },
+    );
+  }
+
+  return NextResponse.json({ ok: true });
+}

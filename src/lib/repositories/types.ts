@@ -41,6 +41,8 @@ export interface DataRepository {
     id: string,
     patch: import('../../types').RepairOrderEditPatch,
   ): Promise<RepairOrder | null>;
+  /** 永久刪除工單（關聯工單會一併刪除）—— 危險操作，僅供後台取消 / 清帳使用 */
+  deleteRepairOrder(id: string): Promise<boolean>;
 
   /* 維修工單 */
   listTickets(): Promise<RepairTicket[]>;

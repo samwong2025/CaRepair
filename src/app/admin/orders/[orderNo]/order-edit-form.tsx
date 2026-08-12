@@ -2,9 +2,10 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import { AlertTriangle, Loader2, Save } from 'lucide-react';
+import { AlertTriangle, Ban, Loader2, Save, Trash2 } from 'lucide-react';
 import { Badge } from '../../../../components/ui/badge';
 import { Button } from '../../../../components/ui/button';
+import { Modal } from '../../../../components/ui/modal';
 import { Input, Select, Textarea } from '../../../../components/ui/input';
 import { PartsPicker } from '../../../../components/admin/parts-picker';
 import { statusMeta } from '../../../../data/seed';
@@ -70,6 +71,11 @@ export function OrderEditForm({
 
   const [saving, setSaving] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+
+  /* 取消 / 刪除確認 */
+  const [confirmCancel, setConfirmCancel] = React.useState(false);
+  const [confirmDelete, setConfirmDelete] = React.useState(false);
+  const [actionBusy, setActionBusy] = React.useState<'' | 'cancel' | 'delete'>('');
 
   const modelsInCategory = React.useMemo(
     () => allModels.filter((m) => m.category === category),
@@ -145,6 +151,60 @@ export function OrderEditForm({
       setError('儲存時發生錯誤，請稍後重試');
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleCancelOrder() {
+    setActionBusy('cancel');
+    setError(null);
+    try {
+      const res = await fetch(`/api/orders/${encodeURIComponent(order.id)}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          status: 'cancelled',
+          operator: currentUser?.name ?? '後台管理員',
+          note: '客戶到店後取消（報價過高 / 不修理）',
+        }),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        setError(data?.message ?? `取消失敗（${res.status}）`);
+        setConfirmCancel(false);
+        return;
+      }
+      router.push('/admin/orders');
+      router.refresh();
+    } catch (err) {
+      console.error(err);
+      setError('取消時發生錯誤，請稍後重試');
+    } finally {
+      setActionBusy('');
+    }
+  }
+
+  async function handleDeleteOrder() {
+    setActionBusy('delete');
+    setError(null);
+    try {
+      const res = await fetch(`/api/orders/${encodeURIComponent(order.id)}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ confirm: true }),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        setError(data?.message ?? `刪除失敗（${res.status}）`);
+        setConfirmDelete(false);
+        return;
+      }
+      router.push('/admin/orders');
+      router.refresh();
+    } catch (err) {
+      console.error(err);
+      setError('刪除時發生錯誤，請稍後重試');
+    } finally {
+      setActionBusy('');
     }
   }
 
@@ -422,9 +482,106 @@ export function OrderEditForm({
               )}
               {dirty ? '儲存變更' : '沒有變更'}
             </Button>
+
+            <div className="mt-4 border-t border-slate-200 pt-4 sm:mt-0 sm:border-l sm:border-t-0 sm:pl-4">
+              <p className="mb-2 text-xs font-semibold text-ink-faint">危險操作</p>
+              <div className="flex flex-col gap-2 sm:flex-row">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="md"
+                  disabled={saving || actionBusy !== ''}
+                  onClick={() => setConfirmCancel(true)}
+                  className="border-amber-300 text-amber-700 hover:bg-amber-50"
+                >
+                  <Ban className="h-4 w-4" />
+                  取消此工單
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="md"
+                  disabled={saving || actionBusy !== ''}
+                  onClick={() => setConfirmDelete(true)}
+                  className="border-red-300 text-red-700 hover:bg-red-50"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  永久刪除工單
+                </Button>
+              </div>
+              <p className="mt-2 text-[11px] leading-snug text-ink-muted">
+                客戶到店後覺得報價太高而取消，可「取消此工單」保留紀錄；若要徹底移除再選「永久刪除」。
+              </p>
+            </div>
           </div>
         </div>
       </section>
+
+      <Modal
+        open={confirmCancel}
+        onClose={() => !actionBusy && setConfirmCancel(false)}
+        title="取消此工單？"
+        description={`工單編號 ${order.orderNo}`}
+        size="sm"
+        disableBackdropClose={actionBusy !== ''}
+        footer={
+          <>
+            <Button type="button" variant="ghost" onClick={() => setConfirmCancel(false)} disabled={actionBusy !== ''}>
+              返回
+            </Button>
+            <Button
+              type="button"
+              onClick={handleCancelOrder}
+              disabled={actionBusy !== ''}
+              className="border-amber-400 bg-amber-600 text-white hover:bg-amber-700"
+            >
+              {actionBusy === 'cancel' ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Ban className="h-4 w-4" />
+              )}
+              確認取消
+            </Button>
+          </>
+        }
+      >
+        <p className="text-sm leading-relaxed text-ink">
+          此工單會標記為「已取消」，紀錄會保留供日後查閱，對應的維修工單也會同步更新為取消。
+        </p>
+      </Modal>
+
+      <Modal
+        open={confirmDelete}
+        onClose={() => !actionBusy && setConfirmDelete(false)}
+        title="永久刪除工單？"
+        description={`工單編號 ${order.orderNo}（此動作無法復原）`}
+        size="sm"
+        disableBackdropClose={actionBusy !== ''}
+        footer={
+          <>
+            <Button type="button" variant="ghost" onClick={() => setConfirmDelete(false)} disabled={actionBusy !== ''}>
+              返回
+            </Button>
+            <Button
+              type="button"
+              onClick={handleDeleteOrder}
+              disabled={actionBusy !== ''}
+              variant="danger"
+            >
+              {actionBusy === 'delete' ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Trash2 className="h-4 w-4" />
+              )}
+              確認刪除
+            </Button>
+          </>
+        }
+      >
+        <p className="text-sm leading-relaxed text-ink">
+          工單與其關聯的維修工單將被永久移除，無法復原。若只是客戶不修理，建議改用「取消此工單」保留紀錄。
+        </p>
+      </Modal>
     </form>
   );
 }

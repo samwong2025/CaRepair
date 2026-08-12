@@ -325,6 +325,16 @@ export const mockRepository: DataRepository = {
     return clone(order);
   },
 
+  async deleteRepairOrder(id: string) {
+    const store = getStore();
+    const idx = store.orders.findIndex((o) => o.id === id);
+    if (idx === -1) return false;
+    store.orders.splice(idx, 1);
+    /* 一併移除關聯工單 */
+    store.tickets = store.tickets.filter((t) => t.orderId !== id);
+    return true;
+  },
+
   /* ── 維修工單 ─────────────────────────────── */
   async listTickets() {
     return clone(

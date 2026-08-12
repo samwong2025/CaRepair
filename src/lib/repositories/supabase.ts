@@ -633,6 +633,17 @@ export const supabaseRepository: DataRepository = {
     return data ? rowToOrder(data) : null;
   },
 
+  async deleteRepairOrder(id: string) {
+    const supabase = client();
+    /* repair_tickets 設有 ON DELETE CASCADE，會一併移除 */
+    const { error } = await supabase.from('repair_orders').delete().eq('id', id);
+    if (error) {
+      console.error('[supabase] deleteRepairOrder', error.message);
+      throw new Error('刪除工單失敗：' + error.message);
+    }
+    return true;
+  },
+
   async listTickets() {
     const { data, error } = await client()
       .from('repair_tickets')
