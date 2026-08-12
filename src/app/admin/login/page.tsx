@@ -18,21 +18,26 @@ export default function AdminLoginPage() {
     setLoading(true);
     setError('');
     try {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 12000);
       const res = await fetch('/api/admin/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
+        signal: controller.signal,
       });
-      const data = await res.json();
+      clearTimeout(timer);
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(data.message ?? '登入失敗');
+        setError(data?.message ?? '登入失敗');
         setLoading(false);
         return;
       }
-      router.replace('/admin');
-      router.refresh();
-    } catch {
-      setError('網絡錯誤，請重試');
+      // 硬跳以避免 RSC 緩存導致登入後又被踢回登入頁
+      window.location.assign('/admin');
+    } catch (err) {
+      const aborted = err instanceof DOMException && err.name === 'AbortError';
+      setError(aborted ? '登入逾時（12 秒），請稍後重試' : '網絡錯誤，請重試');
       setLoading(false);
     }
   };

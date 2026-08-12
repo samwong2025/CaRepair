@@ -41,23 +41,49 @@ export default function DashboardClient() {
 
   React.useEffect(() => {
     let active = true;
-    fetch('/api/admin/dashboard')
-      .then(async (res) => {
-        if (res.status === 401) {
-          router.replace('/admin/login');
-          return undefined;
-        }
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return (await res.json()) as DashboardData;
-      })
-      .then((json) => {
-        if (active && json) setData(json);
-      })
-      .catch((e) => {
-        if (active) setError(e instanceof Error ? e.message : String(e));
-      });
+    let retryTimer: ReturnType<typeof setTimeout> | null = null;
+
+    const load = () => {
+      fetch('/api/admin/dashboard')
+        .then(async (res) => {
+          if (res.status === 401) {
+            // 登入後第一時間 cookie 可能尚未同步，重試一次再判定
+            return new Promise<DashboardData>((resolve, reject) => {
+              retryTimer = setTimeout(() => {
+                fetch('/api/admin/dashboard')
+                  .then(async (r2) => {
+                    if (r2.status === 401) {
+                      router.replace('/admin/login');
+                      reject(new Error('UNAUTHORIZED'));
+                      return;
+                    }
+                    if (!r2.ok) {
+                      reject(new Error(`HTTP ${r2.status}`));
+                      return;
+                    }
+                    resolve((await r2.json()) as DashboardData);
+                  })
+                  .catch(reject);
+              }, 250);
+            });
+          }
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          return (await res.json()) as DashboardData;
+        })
+        .then((json) => {
+          if (active && json) setData(json);
+        })
+        .catch((e) => {
+          if (active && e?.message !== 'UNAUTHORIZED') {
+            setError(e instanceof Error ? e.message : String(e));
+          }
+        });
+    };
+
+    load();
     return () => {
       active = false;
+      if (retryTimer) clearTimeout(retryTimer);
     };
   }, [router]);
 
