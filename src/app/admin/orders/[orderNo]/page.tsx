@@ -5,7 +5,7 @@ import { getRepository } from '../../../../lib/repositories';
 import { getCurrentUser } from '../../../../lib/auth';
 import { loadModels, loadSymptoms, findModel, findSymptom } from '../../../../lib/catalog-store';
 import { getTechnicianOptions } from '../../../../lib/technician-options';
-import { OrderEditForm } from './order-edit-form';
+import OrderDetailClient from './order-detail-client';
 
 export default async function OrderDetailPage({
   params,
@@ -49,7 +49,7 @@ export default async function OrderDetailPage({
         </p>
       </div>
 
-      <OrderEditForm
+      <OrderDetailClient
         order={order}
         currentUser={currentUser}
         allModels={allModels}

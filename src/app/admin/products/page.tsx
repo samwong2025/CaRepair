@@ -1,6 +1,6 @@
 import { getRepository } from '../../../lib/repositories';
 import { AdminPageHeader } from '../../../components/admin/page-header';
-import { ProductsManager } from '../../../components/admin/products-manager';
+import LazyAdmin from '../../../components/admin/lazy-admin';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,7 +14,7 @@ export default async function AdminProductsPage() {
         title="二手商城・商品管理"
         description="上架、編輯與下架二手商品，調整價格、庫存與成色評級。變更會即時同步到前台商店頁。"
       />
-      <ProductsManager initialProducts={products} />
+      <LazyAdmin name="products" props={{ initialProducts: products }} />
     </>
   );
 }

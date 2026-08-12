@@ -1,5 +1,5 @@
 import { AdminPageHeader } from '../../../components/admin/page-header';
-import { InventoryReportManager } from '../../../components/admin/inventory-report-manager';
+import LazyAdmin from '../../../components/admin/lazy-admin';
 import { buildInventoryReport } from '../../../lib/inventory-reports';
 import { loadInventory, loadMovements } from '../../../lib/inventory-store';
 
@@ -16,7 +16,7 @@ export default async function AdminInventoryReportPage() {
         title="倉庫進銷存報表"
         description="追蹤配件入庫、出庫與盤點調整，掌握庫存價值、低庫存預警與異動流水。"
       />
-      <InventoryReportManager data={data} />
+      <LazyAdmin name="inventoryReport" props={{ data }} />
     </>
   );
 }

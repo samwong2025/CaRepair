@@ -1,6 +1,6 @@
 import { getRepository } from '../../../lib/repositories';
 import { AdminPageHeader } from '../../../components/admin/page-header';
-import { ReportsManager } from '../../../components/admin/reports-manager';
+import LazyAdmin from '../../../components/admin/lazy-admin';
 import { buildReports } from '../../../lib/reports';
 
 export const dynamic = 'force-dynamic';
@@ -23,7 +23,7 @@ export default async function AdminReportsPage() {
         title="報表分析"
         description="整合維修、二手商城與售後數據，掌握營收走勢、訂單結構與熱門機型，支援 CSV 匯出。"
       />
-      <ReportsManager initial={data} />
+      <LazyAdmin name="reports" props={{ initial: data }} />
     </>
   );
 }

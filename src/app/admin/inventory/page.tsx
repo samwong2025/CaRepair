@@ -1,7 +1,6 @@
 import { AdminPageHeader } from '../../../components/admin/page-header';
-import { InventoryManager } from '../../../components/admin/inventory-manager';
+import LazyAdmin from '../../../components/admin/lazy-admin';
 import { computeInventoryAlerts, loadInventory } from '../../../lib/inventory-store';
-import { getRepository } from '../../../lib/repositories';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,7 +15,7 @@ export default async function AdminInventoryPage() {
         titleEn="Inventory"
         description="維修配件庫存與低庫存預警。調整庫存後會同步至師傅工作台的「選用配件」。"
       />
-      <InventoryManager initialInventory={inventory} initialAlerts={alerts} />
+      <LazyAdmin name="inventory" props={{ initialInventory: inventory, initialAlerts: alerts }} />
     </>
   );
 }
