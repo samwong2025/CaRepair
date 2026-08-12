@@ -80,12 +80,23 @@ export async function PATCH(request: Request, { params }: { params: { id: string
     };
 
     const order = await repo.updateRepairOrder(params.id, patch).catch((error: unknown) => {
+      const reason = error instanceof Error ? error.message : '未知錯誤';
       console.error('編輯訂單失敗', error);
-      return null;
+      return { __error: reason };
     });
 
+    if (order && '__error' in order) {
+      return NextResponse.json(
+        { message: `儲存變更失敗：${(order as { __error: string }).__error}` },
+        { status: 500 },
+      );
+    }
+
     if (!order) {
-      return NextResponse.json({ message: '找不到指定訂單' }, { status: 404 });
+      return NextResponse.json(
+        { message: '找不到指定訂單（可能已被刪除或 ID 有誤，請重新整理頁面後再試）' },
+        { status: 404 },
+      );
     }
 
     return NextResponse.json({ order });
@@ -99,12 +110,23 @@ export async function PATCH(request: Request, { params }: { params: { id: string
   const order = await repo
     .updateRepairOrderStatus(params.id, body.status, body.note, body.operator ?? '後台管理員')
     .catch((error: unknown) => {
+      const reason = error instanceof Error ? error.message : '未知錯誤';
       console.error('更新訂單狀態失敗', error);
-      return null;
+      return { __error: reason } as { __error: string };
     });
 
+  if (order && typeof order === 'object' && '__error' in order) {
+    return NextResponse.json(
+      { message: `更新狀態失敗：${order.__error}` },
+      { status: 500 },
+    );
+  }
+
   if (!order) {
-    return NextResponse.json({ message: '找不到指定訂單' }, { status: 404 });
+    return NextResponse.json(
+      { message: '找不到指定訂單（可能已被刪除或 ID 有誤，請重新整理頁面後再試）' },
+      { status: 404 },
+    );
   }
 
   return NextResponse.json({ order });

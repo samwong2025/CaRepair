@@ -491,8 +491,11 @@ export const supabaseRepository: DataRepository = {
       .select('*')
       .eq('id', id)
       .maybeSingle();
-    if (readError || !current) {
+    if (readError) {
       console.error('[supabase] updateRepairOrder read', readError?.message);
+      throw new Error('讀取訂單失敗：' + readError.message);
+    }
+    if (!current) {
       return null;
     }
 
@@ -607,7 +610,7 @@ export const supabaseRepository: DataRepository = {
       .maybeSingle();
     if (error) {
       console.error('[supabase] updateRepairOrder', error.message);
-      return null;
+      throw new Error('更新訂單失敗：' + error.message);
     }
 
     /* 同步工單 */

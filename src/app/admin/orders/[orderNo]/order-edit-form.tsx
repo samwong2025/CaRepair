@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, Save } from 'lucide-react';
+import { AlertTriangle, Loader2, Save } from 'lucide-react';
 import { Badge } from '../../../../components/ui/badge';
 import { Button } from '../../../../components/ui/button';
 import { Input, Select, Textarea } from '../../../../components/ui/input';
@@ -406,7 +406,13 @@ export function OrderEditForm({
           </div>
           <div className="flex flex-col items-stretch gap-2 sm:items-end">
             {error ? (
-              <p className="rounded-lg bg-red-50 px-3 py-2 text-xs text-red-600">{error}</p>
+              <div
+                role="alert"
+                className="flex max-w-xs items-start gap-2 rounded-xl border border-red-200 bg-red-50 px-3.5 py-2.5 text-sm font-medium text-red-700 shadow-sm sm:max-w-sm"
+              >
+                <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+                <span className="break-words">{error}</span>
+              </div>
             ) : null}
             <Button type="submit" variant="cta" size="lg" disabled={saving || !dirty}>
               {saving ? (
