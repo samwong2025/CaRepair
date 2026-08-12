@@ -6,6 +6,7 @@ import { Check, Home, Loader2, PackageSearch, Store, Truck } from 'lucide-react'
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Input, Label, Select, Textarea } from '../ui/input';
+import { DeliveryPaymentSection } from './delivery-payment';
 import { formatHKD } from '../../lib/format';
 import { cn } from '../../lib/utils';
 import { siteConfig } from '../../config/site';
@@ -25,7 +26,11 @@ export function ProductDetail({ product }: { product: Product }) {
   const [remark, setRemark] = React.useState('');
   const [errors, setErrors] = React.useState<Record<string, string>>({});
   const [submitting, setSubmitting] = React.useState(false);
-  const [result, setResult] = React.useState<{ orderNo: string; message: string } | null>(null);
+  const [result, setResult] = React.useState<{
+    orderNo: string;
+    message: string;
+    fulfillment: FulfillmentMethod;
+  } | null>(null);
 
   const total = product.price * qty;
 
@@ -36,7 +41,8 @@ export function ProductDetail({ product }: { product: Product }) {
       next.deliveryAddress = '請填寫完整送貨地址';
     if (fulfillment === 'pickup' && !pickupShop) next.pickupShop = '請選擇自取門市';
     if (customerName.trim().length < 2) next.customerName = '請填寫聯絡人姓名';
-    if (customerPhone.replace(/\D/g, '').length < 8) next.customerPhone = '請填寫正確的聯絡電話';
+    const phone = customerPhone.replace(/\D/g, '');
+    if (!/^[2-9]\d{7}$/.test(phone)) next.customerPhone = '請輸入 8 位香港手提號碼';
     setErrors(next);
     return Object.keys(next).length === 0;
   };
@@ -74,7 +80,11 @@ export function ProductDetail({ product }: { product: Product }) {
       message?: string;
     } | null;
     if (response.ok && data?.order) {
-      setResult({ orderNo: data.order.orderNo, message: data.message ?? '落單成功。' });
+      setResult({
+        orderNo: data.order.orderNo,
+        message: data.message ?? '落單成功。',
+        fulfillment,
+      });
       return;
     }
     setErrors({ form: data?.message ?? '落單失敗，請檢查資料。' });
@@ -91,6 +101,13 @@ export function ProductDetail({ product }: { product: Product }) {
         <p className="mt-3 font-mono text-sm font-bold text-brand-600">
           訂單編號：{result.orderNo}
         </p>
+        {result.fulfillment === 'delivery' ? (
+          <DeliveryPaymentSection orderNos={[result.orderNo]} />
+        ) : (
+          <p className="mt-5 text-xs leading-relaxed text-ink-muted">
+            自取訂單請於到店時付款，落單後我們會盡快準備貨品。
+          </p>
+        )}
         <div className="mt-5 flex flex-col gap-2.5 sm:flex-row sm:justify-center">
           <Link
             href={`/track?q=${encodeURIComponent(result.orderNo)}`}

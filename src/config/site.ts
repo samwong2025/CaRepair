@@ -30,6 +30,35 @@ export const siteConfig = {
   },
 } as const;
 
+/* ───────────────────────── 送貨付款方式 ─────────────────────────
+ * 僅「送貨上門」訂單需先付款；收款碼圖片請放於 /public/pay/ 下，
+ * 檔名對應下方 qr 路徑。缺少圖片時前台會自動顯示佔位提示。
+ */
+export type PaymentMethodId = 'fps' | 'alipay' | 'payme' | 'wechat';
+
+export interface PaymentMethod {
+  id: PaymentMethodId;
+  label: string;
+  qr: string;
+  hint?: string;
+}
+
+export const paymentConfig = {
+  methods: [
+    { id: 'fps', label: 'FPS 轉數快', qr: '/pay/fps.png', hint: '識別碼請向門市查詢' },
+    { id: 'alipay', label: '支付寶 Alipay', qr: '/pay/alipay.png' },
+    { id: 'payme', label: 'PayMe', qr: '/pay/payme.png' },
+    { id: 'wechat', label: '微信支付 WeChat Pay', qr: '/pay/wechat.png' },
+  ] as PaymentMethod[],
+  note: '付款後請保留付款截圖，並透過 WhatsApp 或致電門市確認收款，我們會於一個工作天內更新訂單狀態。',
+};
+
+/** 由設定中的 WhatsApp 號碼組出 wa.me 連結（含香港區號 852） */
+export function buildWhatsappLink(text: string): string {
+  const digits = siteConfig.whatsapp.replace(/\D/g, '');
+  return `https://wa.me/852${digits}?text=${encodeURIComponent(text)}`;
+}
+
 export type NavItem = {
   label: string;
   href: string;

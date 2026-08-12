@@ -17,6 +17,7 @@ import { Button } from '../ui/button';
 import { Input, Label, Select, Textarea, FieldError } from '../ui/input';
 import { formatHKD } from '../../lib/format';
 import { cn } from '../../lib/utils';
+import { DeliveryPaymentSection } from './delivery-payment';
 import { siteConfig } from '../../config/site';
 import type { FulfillmentMethod, Product } from '../../types';
 
@@ -227,7 +228,12 @@ type Step = 'cart' | 'checkout' | 'success';
 function CartDrawer() {
   const cart = useCart();
   const [step, setStep] = React.useState<Step>('cart');
-  const [result, setResult] = React.useState<{ orderNos: string[]; message: string; phone: string } | null>(null);
+  const [result, setResult] = React.useState<{
+    orderNos: string[];
+    message: string;
+    phone: string;
+    fulfillment: FulfillmentMethod;
+  } | null>(null);
 
   // 每次打開重置到購物車步驟
   React.useEffect(() => {
@@ -401,7 +407,9 @@ function CheckoutForm({
   onSuccess,
 }: {
   onBack: () => void;
-  onSuccess: (data: { orderNos: string[]; message: string; phone: string }) => void;
+  onSuccess: (
+    data: { orderNos: string[]; message: string; phone: string; fulfillment: FulfillmentMethod },
+  ) => void;
 }) {
   const cart = useCart();
   const [customerName, setCustomerName] = React.useState('');
@@ -459,6 +467,7 @@ function CheckoutForm({
           orderNos: data.orderNos,
           message: data.message ?? '多件訂單已落單成功。',
           phone: customerPhone.replace(/\D/g, ''),
+          fulfillment,
         });
         return;
       }
@@ -624,7 +633,7 @@ function SuccessView({
   result,
   onClose,
 }: {
-  result: { orderNos: string[]; message: string; phone: string };
+  result: { orderNos: string[]; message: string; phone: string; fulfillment: FulfillmentMethod };
   onClose: () => void;
 }) {
   const router = useRouter();
@@ -657,6 +666,16 @@ function SuccessView({
           <p className="mt-2 text-xs text-ink-faint">多張訂單將自動帶入你的電話，前往查單頁即可一次查看全部。</p>
         ) : null}
       </div>
+
+      {result.fulfillment === 'delivery' ? (
+        <DeliveryPaymentSection orderNos={result.orderNos} />
+      ) : (
+        <div className="mt-5 w-full rounded-xl bg-slate-50 p-3 text-left">
+          <p className="text-xs leading-relaxed text-ink-muted">
+            自取訂單請於到店時付款，落單後我們會盡快準備貨品。
+          </p>
+        </div>
+      )}
       <div className="mt-5 flex w-full gap-3">
         <Button variant="outline" block onClick={onClose}>
           繼續購物

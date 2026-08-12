@@ -157,8 +157,12 @@ function RepairOrderCard({ order, defaultOpen = false }: { order: RepairOrder; d
 /** 二手購買訂單卡：商品、交收方式、狀態，無維修時間軸 */
 function ShopOrderCard({ order, defaultOpen = false }: { order: ShopOrder; defaultOpen?: boolean }) {
   const [open, setOpen] = React.useState(defaultOpen);
-  const meta = shopStatusMeta[order.status];
   const isPickup = order.fulfillment === 'pickup';
+  // 送貨訂單的 pending 狀態代表「待付款」
+  const meta =
+    order.status === 'pending' && !isPickup
+      ? { ...shopStatusMeta.pending, label: '待付款' }
+      : shopStatusMeta[order.status];
   const total = order.price * order.qty;
 
   const stepLabel: Record<ShopOrderStatus, string> = {
@@ -169,6 +173,9 @@ function ShopOrderCard({ order, defaultOpen = false }: { order: ShopOrder; defau
     completed: '交易完成，進入本店保養期',
     cancelled: '訂單已取消',
   };
+  const pendingNote = isPickup
+    ? '門市收到落單，會致電確認庫存與自取安排'
+    : '送貨訂單待付款，請依落單成功頁指示付款後聯絡客服確認';
 
   return (
     <article className="glow-card rounded-2xl border border-slate-200 bg-white shadow-card">
@@ -246,7 +253,7 @@ function ShopOrderCard({ order, defaultOpen = false }: { order: ShopOrder; defau
         <div className="space-y-3 border-t border-slate-100 px-5 py-5 text-sm sm:px-6">
           <p className="flex items-start gap-2 text-ink-muted">
             <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" />
-            <span>{stepLabel[order.status]}</span>
+            <span>{order.status === 'pending' ? pendingNote : stepLabel[order.status]}</span>
           </p>
           <p className="text-xs text-ink-faint">聯絡電話：{maskPhone(order.customerPhone)}</p>
           {order.remark ? (
