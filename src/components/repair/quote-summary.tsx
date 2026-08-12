@@ -18,7 +18,7 @@ export function QuoteSummary({
   const hasItems = quote.items.length > 0;
 
   return (
-    <aside className="lg:sticky lg:top-28">
+    <aside className="min-w-0 lg:sticky lg:top-28">
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-card">
         <div className="bg-brand-gradient px-5 py-4">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/70">

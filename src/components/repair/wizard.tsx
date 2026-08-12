@@ -265,8 +265,8 @@ export function RepairWizard({ initialCategory }: { initialCategory?: DeviceCate
         <WizardProgress current={step} maxReached={maxReached} onJump={goStep} />
       </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_20rem] lg:gap-8">
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 pb-[calc(96px+env(safe-area-inset-bottom))] shadow-card sm:p-7 sm:pb-[calc(112px+env(safe-area-inset-bottom))] lg:p-8 lg:pb-8">
+      <div className="mt-6 grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:gap-8">
+        <div className="min-w-0 rounded-2xl border border-slate-200 bg-white p-5 pb-[calc(96px+env(safe-area-inset-bottom))] shadow-card sm:p-7 sm:pb-[calc(112px+env(safe-area-inset-bottom))] lg:p-8 lg:pb-8">
           {/* 步驟 1：揀產品分類（點類別即跳步驟 2） */}
           {step === 1 ? (
             <StepDevice
@@ -312,7 +312,7 @@ export function RepairWizard({ initialCategory }: { initialCategory?: DeviceCate
                     allSymptoms={allSymptoms}
                   />
 
-                  <div className="flex items-center gap-3 border-t border-slate-100 pt-6">
+                  <div className="flex flex-col gap-3 border-t border-slate-100 pt-6 sm:flex-row sm:items-center">
                     <Button variant="ghost" size="md" onClick={() => goStep(1)}>
                       <ArrowLeft className="h-4 w-4" />
                       上一步
@@ -321,7 +321,7 @@ export function RepairWizard({ initialCategory }: { initialCategory?: DeviceCate
                       variant="cta"
                       size="lg"
                       onClick={() => goStep(3)}
-                      className="ml-auto sm:min-w-[14rem]"
+                      className="w-full sm:w-auto sm:ml-auto sm:min-w-[14rem]"
                     >
                       {symptomIds.length > 0 ? '下一步・睇報價' : '跳過・直接睇報價'}
                       <ArrowRight className="h-4 w-4" />
@@ -339,7 +339,7 @@ export function RepairWizard({ initialCategory }: { initialCategory?: DeviceCate
 
               <StepQuote quote={quote} modelName={modelId === OTHER_MODEL_ID ? customModel.trim() : (model?.name ?? '')} />
 
-              <div className="flex items-center gap-3 border-t border-slate-100 pt-6">
+              <div className="flex flex-col gap-3 border-t border-slate-100 pt-6 sm:flex-row sm:items-center">
                 <Button variant="ghost" size="md" onClick={() => goStep(2)}>
                   <ArrowLeft className="h-4 w-4" />
                   上一步
@@ -364,7 +364,7 @@ export function RepairWizard({ initialCategory }: { initialCategory?: DeviceCate
 
               <StepBooking form={form} errors={errors} onChange={updateForm} />
 
-              <div className="flex items-center gap-3 border-t border-slate-100 pt-6">
+              <div className="flex flex-col gap-3 border-t border-slate-100 pt-6 sm:flex-row sm:items-center">
                 <Button variant="ghost" size="md" onClick={() => goStep(3)}>
                   <ArrowLeft className="h-4 w-4" />
                   上一步
@@ -374,7 +374,7 @@ export function RepairWizard({ initialCategory }: { initialCategory?: DeviceCate
                   size="lg"
                   disabled={submitting}
                   onClick={handleSubmit}
-                  className="ml-auto sm:min-w-[15rem]"
+                  className="w-full sm:w-auto sm:ml-auto sm:min-w-[15rem]"
                 >
                   {submitting ? (
                     <>
