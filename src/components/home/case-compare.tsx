@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { ArrowRight, CalendarDays, Clock3, UserCog, Wrench } from 'lucide-react';
+import { ArrowRight, CalendarDays, Clock3, Filter, Smartphone, UserCog, Wrench } from 'lucide-react';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { CompareSlider } from '../ui/compare-slider';
@@ -28,28 +28,51 @@ export function CaseCompare() {
           description="以下全部為門市實際完成的個案，拖曳中間的滑桿即可對比維修前後效果。"
         />
 
-        {/* 案例切換 */}
+        {/* 案例切換：明確標示「這是可切換的案例篩選」 */}
         <Reveal className="mt-10">
-          <div className="-mx-4 flex flex-wrap gap-2.5 px-4 pb-2 lg:mx-0 lg:justify-center lg:px-0">
-            {repairCases.map((item) => {
-              const selected = item.id === active.id;
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => setActiveId(item.id)}
-                  aria-pressed={selected}
-                  className={cn(
-                    'shrink-0 cursor-pointer rounded-full border px-4 py-2 text-sm font-semibold transition-all duration-200 ease-smooth',
-                    selected
-                      ? 'border-transparent bg-brand-gradient text-white shadow-brand'
-                      : 'border-slate-200 bg-white text-ink-muted hover:border-brand-300 hover:text-brand-700',
-                  )}
-                >
-                  {item.deviceModelName}
-                </button>
-              );
-            })}
+          <div className="flex flex-col items-center gap-3">
+            <div className="inline-flex items-center gap-1.5 rounded-full bg-brand-50 px-3 py-1.5 text-xs font-bold text-brand-700">
+              <Filter className="h-3.5 w-3.5" />
+              切換案例・點擊查看不同機型
+            </div>
+
+            <div
+              role="tablist"
+              aria-label="切換維修案例"
+              className="relative -mx-4 w-full px-4 pb-2 lg:mx-0 lg:flex lg:justify-center lg:px-0"
+            >
+              <div
+                className="flex flex-nowrap gap-2.5 overflow-x-auto lg:flex-wrap lg:justify-center"
+                style={{ scrollbarWidth: 'none' }}
+              >
+                {repairCases.map((item) => {
+                  const selected = item.id === active.id;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      role="tab"
+                      aria-selected={selected}
+                      onClick={() => setActiveId(item.id)}
+                      className={cn(
+                        'inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full border-2 px-4 py-2 text-sm font-bold transition-all duration-200 ease-smooth',
+                        selected
+                          ? 'border-brand-500 bg-brand-gradient text-white shadow-brand ring-2 ring-brand-200 ring-offset-1'
+                          : 'border-slate-200 bg-white text-ink hover:border-brand-400 hover:text-brand-700 hover:shadow-sm',
+                      )}
+                    >
+                      <Smartphone className="h-3.5 w-3.5" />
+                      {item.deviceModelName}
+                    </button>
+                  );
+                })}
+              </div>
+              {/* 手機端右側漸層：提示可橫向滑動 */}
+              <span
+                aria-hidden
+                className="pointer-events-none absolute right-0 top-0 h-full w-10 bg-gradient-to-l from-surface-muted to-transparent sm:hidden"
+              />
+            </div>
           </div>
         </Reveal>
 
