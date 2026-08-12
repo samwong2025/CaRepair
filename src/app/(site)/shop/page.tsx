@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import { Sparkles, Tag, ShieldCheck } from 'lucide-react';
+import Link from 'next/link';
+import { Sparkles, Tag, ShieldCheck, PackageSearch } from 'lucide-react';
 import { getRepository } from '../../../lib/repositories';
 import { ShopCatalog } from '../../../components/shop/shop-catalog';
 import { SectionHeading } from '../../../components/ui/section';
@@ -40,6 +41,29 @@ export default async function ShopPage() {
             <ShieldCheck className="h-4 w-4" />
             30 日本店保養
           </span>
+        </div>
+      </div>
+
+      <div className="mt-10">
+        <div className="flex flex-col items-start justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-card sm:flex-row sm:items-center">
+          <div className="flex items-center gap-3">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
+              <PackageSearch className="h-5 w-5" />
+            </span>
+            <div>
+              <p className="text-sm font-bold text-ink">已落單？查詢二手購買進度</p>
+              <p className="mt-0.5 text-xs text-ink-muted">
+                用手機號碼或訂單編號即可查看出貨、到店自取與保養狀態。
+              </p>
+            </div>
+          </div>
+          <Link
+            href="/track"
+            className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-brand-gradient px-4 py-2.5 text-sm font-bold text-white shadow-brand transition-transform hover:scale-[1.03] active:scale-95"
+          >
+            <PackageSearch className="h-4 w-4" />
+            查訂單
+          </Link>
         </div>
       </div>
 

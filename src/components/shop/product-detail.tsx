@@ -1,7 +1,8 @@
 'use client';
 
 import * as React from 'react';
-import { Check, Home, Loader2, Store, Truck } from 'lucide-react';
+import Link from 'next/link';
+import { Check, Home, Loader2, PackageSearch, Store, Truck } from 'lucide-react';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import { Input, Label, Select, Textarea } from '../ui/input';
@@ -90,9 +91,21 @@ export function ProductDetail({ product }: { product: Product }) {
         <p className="mt-3 font-mono text-sm font-bold text-brand-600">
           訂單編號：{result.orderNo}
         </p>
-        <Button variant="outline" className="mt-5" onClick={() => setResult(null)}>
-          再落一單
-        </Button>
+        <div className="mt-5 flex flex-col gap-2.5 sm:flex-row sm:justify-center">
+          <Link
+            href={`/track?q=${encodeURIComponent(result.orderNo)}`}
+            className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-brand-gradient px-4 py-2.5 text-sm font-bold text-white shadow-brand transition-transform hover:scale-[1.03] active:scale-95"
+          >
+            <PackageSearch className="h-4 w-4" />
+            查看訂單狀態
+          </Link>
+          <Button variant="outline" onClick={() => setResult(null)}>
+            再落一單
+          </Button>
+        </div>
+        <p className="mt-4 text-[0.72rem] text-ink-faint">
+          你亦可用訂單編號或聯絡電話在「查訂單」頁查詢二手購買進度。
+        </p>
       </div>
     );
   }

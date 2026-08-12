@@ -7,6 +7,7 @@ import {
   ChevronRight,
   Clock3,
   Menu,
+  PackageSearch,
   PhoneCall,
   Search,
   ShieldCheck,
@@ -189,18 +190,25 @@ export function Navbar() {
           ))}
 
           <div className="mt-3 grid grid-cols-2 gap-2.5 border-t border-slate-100 pt-4">
+            <Link href="/track">
+              <Button variant="outline" size="md" block>
+                <PackageSearch className="h-4 w-4" />
+                查訂單
+              </Button>
+            </Link>
             <a href={`tel:${siteConfig.hotline.replace(/\s/g, '')}`}>
               <Button variant="outline" size="md" block>
                 <PhoneCall className="h-4 w-4" />
                 致電客服
               </Button>
             </a>
-            <Link href="/repair">
-              <Button variant="cta" size="md" block>
-                即時報價
-              </Button>
-            </Link>
           </div>
+          <Link href="/repair" className="block pt-2.5">
+            <Button variant="cta" size="md" block>
+              即時報價
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </Link>
         </div>
       </div>
     </header>
