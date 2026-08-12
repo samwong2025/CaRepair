@@ -630,7 +630,7 @@ function SuccessView({
     if (result.orderNos.length === 1) {
       router.push(`/track?q=${encodeURIComponent(result.orderNos[0])}`);
     } else if (result.phone) {
-      router.push(`/track?phone=${encodeURIComponent(result.phone)}`);
+      router.push(`/track?shopPhone=${encodeURIComponent(result.phone)}`);
     } else {
       router.push('/track');
     }

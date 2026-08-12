@@ -35,8 +35,15 @@ const notes = [
 export default function TrackPage({
   searchParams,
 }: {
-  searchParams?: { q?: string; phone?: string };
+  searchParams?: { q?: string; phone?: string; shopPhone?: string };
 }) {
+  // 根據訂單編號前綴自動分流：SH- 開頭視為商城訂單
+  const rawKeyword = searchParams?.q ?? searchParams?.phone ?? '';
+  const shopKeyword = searchParams?.shopPhone ?? '';
+  const isShopOrderNo = typeof searchParams?.q === 'string' && /^SH-/i.test(searchParams.q);
+  const initialKeyword = isShopOrderNo ? '' : rawKeyword;
+  const initialShopKeyword = isShopOrderNo ? rawKeyword : shopKeyword;
+
   return (
     <>
       <section className="relative overflow-hidden bg-ink pb-14 pt-12 sm:pb-16 sm:pt-16">
@@ -75,7 +82,7 @@ export default function TrackPage({
 
       <section className="bg-surface-muted py-10 sm:py-14">
         <div className="section-shell">
-          <TrackPanel initialKeyword={searchParams?.q ?? searchParams?.phone ?? ''} />
+          <TrackPanel initialKeyword={initialKeyword} initialShopKeyword={initialShopKeyword} />
         </div>
       </section>
     </>

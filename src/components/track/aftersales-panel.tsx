@@ -8,7 +8,12 @@ import { FieldError, Input, Label, Select, Textarea } from '../ui/input';
 import { formatDateTime } from '../../lib/format';
 import type { AfterSalesRecord, AfterSalesType } from '../../types';
 
-const HK_PHONE = /^[2-9]\d{7}$/;
+// 支援香港 8 位、台灣 10 位、內地 11 位等號碼；去除非數字後至少 6 位即可
+const phoneDigits = (value: string): string => value.replace(/[^\d]/g, '');
+const phoneValid = (value: string): boolean => {
+  const digits = phoneDigits(value);
+  return digits.length >= 6 && digits.length <= 16;
+};
 
 const typeOptions: { value: AfterSalesType; label: string }[] = [
   { value: 'warranty', label: '保養期內再維修' },
@@ -66,8 +71,8 @@ export function AfterSalesPanel() {
 
   const handleSearch = async (event: React.FormEvent) => {
     event.preventDefault();
-    if (!HK_PHONE.test(phone.trim())) {
-      setErrors((prev) => ({ ...prev, customerPhone: '請輸入 8 位香港手提號碼' }));
+    if (!phoneValid(phone.trim())) {
+      setErrors((prev) => ({ ...prev, customerPhone: '請輸入有效手提號碼（至少 6 位數字）' }));
       return;
     }
     setErrors((prev) => ({ ...prev, customerPhone: undefined }));
@@ -102,7 +107,7 @@ export function AfterSalesPanel() {
     const next: Partial<Record<keyof FormState, string>> = {};
     if (!form.orderNo.trim()) next.orderNo = '請填寫維修訂單編號';
     if (form.customerName.trim().length < 2) next.customerName = '請填寫稱呼';
-    if (!HK_PHONE.test(form.customerPhone.trim())) next.customerPhone = '請填寫有效手提號碼';
+    if (!phoneValid(form.customerPhone.trim())) next.customerPhone = '請填寫有效手提號碼（至少 6 位數字）';
     if (!form.subject.trim()) next.subject = '請填寫主題';
     if (form.detail.trim().length < 10) next.detail = '請詳述問題（不少於 10 個字）';
 
@@ -157,9 +162,9 @@ export function AfterSalesPanel() {
               setPhone(event.target.value);
               setErrors((prev) => ({ ...prev, customerPhone: undefined }));
             }}
-            placeholder="8 位手提號碼"
+            placeholder="輸入手提號碼（香港 8 位或台灣／內地號碼）"
             inputMode="numeric"
-            maxLength={8}
+            maxLength={16}
             aria-label="售後查詢手提號碼"
           />
           <Button type="submit" variant="primary" size="lg" disabled={searching}>
@@ -279,9 +284,9 @@ export function AfterSalesPanel() {
                 id="as-phone"
                 value={form.customerPhone}
                 onChange={(event) => updateForm('customerPhone', event.target.value)}
-                placeholder="8 位手提號碼"
+                placeholder="輸入手提號碼（香港 8 位或台灣／內地號碼）"
                 inputMode="numeric"
-                maxLength={8}
+                maxLength={16}
                 invalid={Boolean(errors.customerPhone)}
               />
               <FieldError>{errors.customerPhone}</FieldError>

@@ -21,12 +21,17 @@ interface TrackState {
 
 const POLL_INTERVAL_MS = 20000;
 
+interface UseOrderTrackingOptions {
+  /** 查詢範圍：repair（維修訂單）、shop（商城／二手購買訂單）、all（全部） */
+  kind?: 'repair' | 'shop' | 'all';
+}
+
 /**
  * 訂單查詢與狀態即時追蹤。
  * 已連線 Supabase 時透過 Realtime 訂閱 repair_orders 變更即時刷新；
  * 未連線（Mock 模式）時自動回退為 20 秒輪詢，確保功能一致可用。
  */
-export function useOrderTracking() {
+export function useOrderTracking({ kind = 'all' }: UseOrderTrackingOptions = {}) {
   const [state, setState] = React.useState<TrackState>({
     orders: [],
     loading: false,
@@ -45,13 +50,17 @@ export function useOrderTracking() {
     params.set(mode === 'orderNo' ? 'orderNo' : 'phone', keyword);
     const query = params.toString();
 
-    // 同時查維修訂單與二手購買訂單，合併呈現
+    // 根據 kind 決定查詢範圍
+    const fetchRepair = kind === 'all' || kind === 'repair';
+    const fetchShop = kind === 'all' || kind === 'shop';
+
     const [repairRes, shopRes] = await Promise.all([
-      fetch(`/api/orders?${query}`).catch(() => null),
-      fetch(`/api/shop-orders?${query}`).catch(() => null),
+      fetchRepair ? fetch(`/api/orders?${query}`).catch(() => null) : Promise.resolve(null),
+      fetchShop ? fetch(`/api/shop-orders?${query}`).catch(() => null) : Promise.resolve(null),
     ]);
 
-    if (!repairRes || !repairRes.ok) {
+    const anyRes = repairRes ?? shopRes;
+    if (!anyRes || !anyRes.ok) {
       setState((prev) => ({
         ...prev,
         loading: false,
@@ -61,7 +70,7 @@ export function useOrderTracking() {
       return;
     }
 
-    const repairData = (await repairRes.json().catch(() => null)) as { orders: RepairOrder[] } | null;
+    const repairData = (await repairRes?.json().catch(() => null)) as { orders: RepairOrder[] } | null;
     const shopData = (await shopRes?.json().catch(() => null)) as { orders: ShopOrder[] } | null;
 
     const merged: TrackOrder[] = [
