@@ -58,7 +58,7 @@ export function buildReceiptMessage(order: RepairOrder): string {
     `實收總額：${formatHKD(total)}`,
     ...(isDiscounted(order)
       ? [
-          `（講價優惠 HK$${(sys - total).toLocaleString()}，原價 ${formatHKD(sys)}）`,
+          `（尊享折扣 HK$${(sys - total).toLocaleString()}，原價 ${formatHKD(sys)}）`,
           ...(order.priceNote ? [`改價說明：${order.priceNote}`] : []),
         ]
       : []),
@@ -201,7 +201,7 @@ export function buildPrintableReceiptHtml(order: RepairOrder): string {
       : '';
 
   const discountRow = isDiscounted(order)
-    ? `<div class="row discount"><dt>講價優惠</dt><dd>−${escapeHtml(formatHKD(sys - total))}</dd></div>`
+    ? `<div class="row discount"><dt>尊享折扣</dt><dd>−${escapeHtml(formatHKD(sys - total))}</dd></div>`
     : '';
 
   const priceNoteRow = order.priceNote

@@ -72,7 +72,7 @@ function RepairOrderCard({ order, defaultOpen = false }: { order: RepairOrder; d
           </p>
           {isDiscounted(order) ? (
             <p className="mt-0.5 text-xs text-emerald-600">
-              講價優惠 HK${(order.quote.total - effectivePrice(order)).toLocaleString()}（原 {formatHKD(order.quote.total)}）
+              尊享折扣 HK${(order.quote.total - effectivePrice(order)).toLocaleString()}（原 {formatHKD(order.quote.total)}）
             </p>
           ) : null}
         </div>

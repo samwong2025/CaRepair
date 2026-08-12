@@ -128,7 +128,7 @@ export function Receipt({ order }: { order: RepairOrder }) {
           </div>
           {isDiscounted(order) ? (
             <div className="flex justify-between text-emerald-700">
-              <dt>講價優惠</dt>
+              <dt>尊享折扣</dt>
               <dd>−{formatHKD(order.quote.total - effectivePrice(order))}</dd>
             </div>
           ) : null}
