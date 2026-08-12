@@ -53,6 +53,8 @@ export function OrdersManager({
   const router = useRouter();
   const [keyword, setKeyword] = React.useState('');
   const [statusFilter, setStatusFilter] = React.useState<OrderStatus | 'all'>(initialStatus);
+  const [dateFrom, setDateFrom] = React.useState('');
+  const [dateTo, setDateTo] = React.useState('');
   const [pendingId, setPendingId] = React.useState('');
   const [printTarget, setPrintTarget] = React.useState<PrintTarget>(null);
 
@@ -74,6 +76,21 @@ export function OrdersManager({
     [statusPreset],
   );
 
+  // 日期篩選：以預約日期為準，缺預約日期時回退建立日期
+  const matchDate = React.useCallback(
+    (order: RepairOrder) => {
+      if (!dateFrom && !dateTo) return true;
+      const raw = order.appointmentAt ?? order.createdAt;
+      if (!raw) return false;
+      const t = new Date(raw as string | number | Date).getTime();
+      if (Number.isNaN(t)) return false;
+      const dayStart = dateFrom ? new Date(dateFrom + 'T00:00:00').getTime() : -Infinity;
+      const dayEnd = dateTo ? new Date(dateTo + 'T23:59:59.999').getTime() : Infinity;
+      return t >= dayStart && t <= dayEnd;
+    },
+    [dateFrom, dateTo],
+  );
+
   const filtered = React.useMemo(() => {
     const kw = keyword.trim().toLowerCase();
     return scopedOrders.filter((order) => {
@@ -84,9 +101,9 @@ export function OrdersManager({
         order.customerName.toLowerCase().includes(kw) ||
         order.customerPhone.includes(kw) ||
         order.deviceModelName.toLowerCase().includes(kw);
-      return matchStatus && matchKeyword && applyPreset(order);
+      return matchStatus && matchKeyword && applyPreset(order) && matchDate(order);
     });
-  }, [scopedOrders, keyword, statusFilter, applyPreset]);
+  }, [scopedOrders, keyword, statusFilter, applyPreset, matchDate]);
 
   const operatorName =
     currentUser?.name ?? (isTechnician ? currentUser?.technicianName ?? '師傅' : '後台管理員');
@@ -136,6 +153,38 @@ export function OrdersManager({
             </option>
           ))}
         </Select>
+        <div className="flex items-center gap-2">
+          <Input
+            type="date"
+            value={dateFrom}
+            onChange={(event) => setDateFrom(event.target.value)}
+            className="w-auto"
+            aria-label="預約起始日"
+            title="預約起始日"
+          />
+          <span className="text-xs text-ink-faint">至</span>
+          <Input
+            type="date"
+            value={dateTo}
+            onChange={(event) => setDateTo(event.target.value)}
+            className="w-auto"
+            aria-label="預約結束日"
+            title="預約結束日"
+          />
+          {(dateFrom || dateTo) && (
+            <button
+              type="button"
+              onClick={() => {
+                setDateFrom('');
+                setDateTo('');
+              }}
+              className="rounded-lg px-2 py-1 text-xs font-semibold text-ink-muted transition-colors hover:bg-slate-100 hover:text-ink"
+              aria-label="清除日期篩選"
+            >
+              清除
+            </button>
+          )}
+        </div>
         <div className="flex shrink-0 items-center gap-3 sm:ml-auto">
           <Link
             href="/admin/orders/new"
